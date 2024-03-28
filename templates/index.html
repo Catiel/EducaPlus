@@ -1,66 +1,129 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>EducaPlus</title>
-    <style>
-        :root {
-            --blue-chill-50: #f2f9f9;
-            --blue-chill-100: #ddeff0;
-            --blue-chill-200: #bfe0e2;
-            --blue-chill-300: #92cace;
-            --blue-chill-400: #5faab1;
-            --blue-chill-500: #438e96;
-            --blue-chill-600: #3b757f;
-            --blue-chill-700: #356169;
-            --blue-chill-800: #325158;
-            --blue-chill-900: #2d464c;
-            --blue-chill-950: #1a2c32;
-        }
-        .course-card {
-            width: 200px;
-            border: 1px solid var(--blue-chill-500);
-            margin: 10px;
-            padding: 10px;
-            background-color: var(--blue-chill-50);
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            background-color: var(--blue-chill-900);
-            padding: 10px;
-        }
-        .navbar a {
-            margin-right: 15px;
-            color: var(--blue-chill-50);
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
 </head>
 <body>
-    <div class="navbar">
-        <a href="/">Inicio</a>
-        <form action="/search" method="get">
-            <input type="text" name="q" placeholder="Buscar...">
-            <input type="submit" value="Buscar">
-        </form>
-        <a href="/profile">Perfil</a>
+<nav class="navbar">
+    <div class="left">
+        <ul>
+            <li><a href="/">Home</a></li>
+        </ul>
     </div>
-
-    <h1 style="color: var(--blue-chill-500);">Categorias</h1>
+    <div class="center">
+        <ul>
+            <li>
+                <form action="/search" method="get">
+                    <label>
+                        <input type="text" name="q" placeholder="Buscar...">
+                    </label>
+                    <input type="submit" value="Buscar">
+                </form>
+            </li>
+        </ul>
+    </div>
+    <div class="right">
+        <ul>
+            <li><a>Estudiante</a></li>
+            <li><a>Aprendiendo</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="main-content">
+    <h1 id="tit">Categorias</h1>
 
     <details>
         <summary>Medicina</summary>
         <div class="course-card">
-            <h2 style="color: var(--blue-chill-600);">Curso 1</h2>
-            <p style="color: var(--blue-chill-700);">Descripción del curso 1</p>
-            <p style="color: var(--blue-chill-700);">Instructor: Nombre del instructor</p>
-            <p style="color: var(--blue-chill-700);">Precio: $100</p>
-            <button style="background-color: var(--blue-chill-400); color: var(--blue-chill-50);">Comprar ahora</button>
+            <div class="left">
+                <h2>Curso 1</h2>
+                <p>Instructor: Nombre del instructor</p>
+                <p>Dificultad: Intermedio</p>
+            </div>
+            <div class="right">
+                <p>Precio: $100</p>
+                <button>Comprar ahora</button>
+            </div>
         </div>
-        <!-- Repite el div de course-card para cada curso que tengas en la categoría de Medicina -->
+        <div class="course-card">
+            <div class="left">
+                <h2>Curso 1</h2>
+                <p>Instructor: Nombre del instructor</p>
+                <p>Dificultad: Intermedio</p>
+            </div>
+            <div class="right">
+                <p>Precio: $100</p>
+                <button>Comprar ahora</button>
+            </div>
+        </div>
+        <div class="course-card">
+            <div class="left">
+                <h2>Curso 1</h2>
+                <p>Instructor: Nombre del instructor</p>
+                <p>Dificultad: Intermedio</p>
+            </div>
+            <div class="right">
+                <p>Precio: $100</p>
+                <button>Comprar ahora</button>
+            </div>
+        </div>
     </details>
 
-    <!-- Repite el elemento details para cada categoría que tengas -->
+    <details>
+        <summary>Medici</summary>
+        <div class="course-card">
+            <div class="left">
+                <h2>Curso 1</h2>
+                <p>Instructor: Nombre del instructor</p>
+                <p>Dificultad: Intermedio</p>
+            </div>
+            <div class="right">
+                <p>Precio: $100</p>
+                <button>Comprar ahora</button>
+            </div>
+        </div>
+    </details>
 
+    <details>
+        <summary>Me</summary>
+        <div class="course-card">
+            <div class="left">
+                <h2>Curso 1</h2>
+                <p>Instructor: Nombre del instructor</p>
+                <p>Dificultad: Intermedio</p>
+            </div>
+            <div class="right">
+                <p>Precio: $100</p>
+                <button>Comprar ahora</button>
+            </div>
+        </div>
+    </details>
+
+    <details>
+        <summary>Medicin</summary>
+        <div class="course-card">
+            <div class="left">
+                <h2>Curso 1</h2>
+                <p>Instructor: Nombre del instructor</p>
+                <p>Dificultad: Intermedio</p>
+            </div>
+            <div class="right">
+                <p>Precio: $100</p>
+                <button>Comprar ahora</button>
+            </div>
+        </div>
+    </details>
+</div>
+
+<footer>
+    <h2>Información de la empresa</h2>
+    <p>Nombre de la empresa: EducaPlus</p>
+    <p>Dirección: Calle 123, Ciudad, País</p>
+    <p>Teléfono: 123-456-7890</p>
+    <p>Email: info@educaplus.com</p>
+</footer>
 </body>
 </html>
