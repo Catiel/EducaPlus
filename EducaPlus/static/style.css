@@ -25,68 +25,102 @@ html, body {
 
 body {
     overflow-x: hidden;
+    user-select: none;
 }
 
+/* Course Card Styles */
 .course-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 800px;
     height: 150px;
-    border: 1px solid var(--blue-chill-500);
+    border: 1px solid var(--blue-chill-800);
     margin: 10px;
     padding: 10px;
     background-color: var(--blue-chill-50);
-    flex-direction: row; /* Añade esta línea */
 }
 
 .course-card .left, .course-card .right {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    color : var(--blue-chill-950);
 }
 
+/* Navbar Styles */
 .navbar {
-    position: fixed;
+    position: page;
     top: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: var(--blue-chill-500);
-    color: var(--blue-chill-50);
-    height: 10px;
+    background-color: var(--blue-chill-50);
+    color: var(--blue-chill-950);
+    height: 30px;
+    box-shadow: 0 0 5px var(--blue-chill-950);
+    z-index: 1;
+}
+
+.navbar .left, .navbar .center, .navbar .right {
+    display: flex;
 }
 
 .navbar .center {
+    justify-content: center;
     flex-grow: 1;
+}
+
+.navbar .left {
+    justify-content: flex-start;
+}
+
+.navbar .right {
+    justify-content: flex-end;
 }
 
 .navbar ul {
     list-style: none;
     display: flex;
     gap: 20px;
+    align-items: center;
 }
 
 .navbar ul li a {
-    color: var(--blue-chill-50);
+    color: var(--blue-chill-950);
     text-decoration: none;
 }
 
-#tit {
-    text-align: center;
+.navbar ul li a:active {
+    color: var(--blue-chill-500);
+    background-color: var(--blue-chill-50);
 }
 
+/* Title Styles */
+#tit {
+    text-align: center;
+    color: var(--blue-chill-950);
+}
+
+/* Details Styles */
 details {
     margin-left: 100px;
 }
 
+details summary {
+    cursor: pointer;
+    max-width: 800px;
+}
+
+/* Main Content Styles */
 .main-content {
-    margin-top: 15px;
+    margin-top: 3px;
     flex-grow: 1;
 }
 
+/* Footer Styles */
 footer {
     background-color: var(--blue-chill-500);
     color: var(--blue-chill-50);
@@ -99,32 +133,75 @@ footer h2, footer p {
     margin: 0;
 }
 
-.navbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: var(--blue-chill-500);
-    color: var(--blue-chill-50);
-    height: 10px;
-    position: fixed;
-    top: 0;
-    width: 100%;
-}
-
-.navbar .left {
-    display: flex;
-    justify-content: flex-start;
-}
-
-.navbar .center {
+/* Center Styles */
+.center {
     display: flex;
     justify-content: center;
-    flex-grow: 1;
+    align-items: center;
 }
 
-.navbar .right {
+.center ul {
+    list-style: none;
+}
+
+.center form {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    width: 80%;
+}
+
+.center form input[type="text"] {
+    border: 1px solid var(--blue-chill-900);
+    border-radius: 10px;
+    margin-right: 10px;
+    padding: 5px;
+    flex-grow: 100;
+    min-width: 800px;
+}
+
+.center form input[type="text"]:focus {
+    outline: none;
+}
+
+.center form input[type="submit"] {
+    background-color: var(--blue-chill-500);
+    color: var(--blue-chill-50);
+    border: 2px solid var(--blue-chill-900);
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.center form input[type="submit"]:hover {
+    background-color: var(--blue-chill-600);
+}
+
+/* Button Styles */
+.button {
+    display: inline-block;
+    padding: 5px 10px;
+    color: var(--blue-chill-50);
+    background-color: var(--blue-chill-500);
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--blue-chill-600);
+}
+
+.button-register {
+    background-color: var(--blue-chill-950);
+    color: var(--blue-chill-50);
+    cursor: pointer;
+}
+
+.button-register:hover {
+    background-color: var(--blue-chill-950);
 }
