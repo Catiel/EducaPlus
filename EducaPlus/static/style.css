@@ -120,19 +120,6 @@ details summary {
     flex-grow: 1;
 }
 
-/* Footer Styles */
-footer {
-    background-color: var(--blue-chill-500);
-    color: var(--blue-chill-50);
-    padding: 5px;
-    text-align: center;
-    width: 100%;
-}
-
-footer h2, footer p {
-    margin: 0;
-}
-
 /* Center Styles */
 .center {
     display: flex;
