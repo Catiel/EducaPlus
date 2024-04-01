@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>EducaPlus</title>
+    <link rel="icon" href="{% static 'images/icon.jpg' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
+  <div class="container-fluid d-flex justify-content-between">
+    <div>
+      <a class="navbar-brand" href="/">Home</a>
+    </div>
+    <form class="d-flex" action="/search" method="get">
+      <input class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..." aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Buscar</button>
+    </form>
+    <div>
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Enseña en EducaPlus</a>
+        </li>
+        <li class="nav-item">
+          <button onclick="location.href='/login'" class="btn btn-outline-success custom-button button">Iniciar sesión</button>
+        </li>
+        <li class="nav-item">
+          <button onclick="location.href='/register'" class="btn btn-outline-success custom-button button-register">Registrate</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% block content %}{% endblock %}
+</body>
+</html>
