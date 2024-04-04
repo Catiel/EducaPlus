@@ -54,11 +54,13 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="registerName" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="registerName" name="name" required>
+                            <input type="text" class="form-control" id="registerName" name="name" required
+                                   maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="registerSurname" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="registerSurname" name="surname" required>
+                            <input type="text" class="form-control" id="registerSurname" name="surname" required
+                                   maxlength="50">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -101,11 +103,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control" id="name" name="name" required maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="surname" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="surname" name="surname" required>
+                            <input type="text" class="form-control" id="surname" name="surname" required maxlength="50">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -123,8 +125,8 @@
                                required>
                     </div>
                     <div class="mb-3">
-                        <label for="birthdate" class="form-label">Fecha de Cumpleaños</label>
-                        <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+                        <label for="registerBirthdate" class="form-label">Fecha de Cumpleaños</label>
+                        <input type="date" class="form-control" id="registerBirthdate1" name="birthdate" required>
                     </div>
                     <div class="mb-3">
                         <label for="specialization" class="form-label">Área de Especialización</label>
@@ -172,5 +174,41 @@
         </div>
     </div>
 </div>
+<script>
+    function validatePassword(modalId, passwordId, passwordConfirmId) {
+        document.getElementById(modalId).addEventListener('submit', function (event) {
+            var password = document.getElementById(passwordId).value;
+            var passwordConfirm = document.getElementById(passwordConfirmId).value;
+
+            var passwordElement = document.getElementById(passwordId);
+            var passwordConfirmElement = document.getElementById(passwordConfirmId);
+
+            if (password !== passwordConfirm) {
+                passwordElement.classList.add('input-error');
+                passwordConfirmElement.classList.add('input-error');
+                event.preventDefault();
+            } else {
+                passwordElement.classList.remove('input-error');
+                passwordConfirmElement.classList.remove('input-error');
+            }
+        });
+    }
+
+    function setMaxDate(inputId) {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById(inputId).setAttribute("max", today);
+    }
+
+    validatePassword('registerModal', 'registerPassword', 'registerPasswordConfirm');
+    validatePassword('teachModal', 'password', 'passwordConfirm');
+
+    setMaxDate('registerBirthdate');
+    setMaxDate('registerBirthdate1');
+</script>
 </body>
 </html>

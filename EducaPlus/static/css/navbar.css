@@ -95,3 +95,7 @@
     border-radius: 5px;
     padding: 5px 10px;
 }
+
+.input-error {
+    border-color: red;
+}
