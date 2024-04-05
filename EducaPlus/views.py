@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from .models import Student, Instructor
+from django.contrib.auth.models import Group
+from .decorators import group_required
 
 
 def register(request):
@@ -24,7 +27,10 @@ def register(request):
             else:
                 user = User.objects.create_user(username=email, password=password, email=email, first_name=name,
                                                 last_name=surname)
+                Student.objects.create(user=user, birthdate=birthdate)
                 user.save()
+                group = Group.objects.get(name='Estudiantes')
+                user.groups.add(group)
                 login(request, user)
                 messages.success(request, 'Te has registrado exitosamente')
                 return redirect('indexLog')
@@ -42,7 +48,7 @@ def teach(request):
         email = request.POST['email']
         password = request.POST['password']
         password_confirm = request.POST['passwordConfirm']
-        birthdate = request.POST['birthdate']
+        birthdate = request.POST['birthdate1']
         specialization = request.POST['specialization']
 
         if password == password_confirm:
@@ -52,9 +58,10 @@ def teach(request):
             else:
                 user = User.objects.create_user(username=email, password=password, email=email, first_name=name,
                                                 last_name=surname)
-                user.specialization = specialization
-                user.birthdate = birthdate
+                Instructor.objects.create(user=user, birthdate=birthdate, specialization=specialization)
                 user.save()
+                group = Group.objects.get(name='Instructores')
+                user.groups.add(group)
                 login(request, user)
                 messages.success(request, 'Te has registrado exitosamente como instructor')
                 return redirect('crearCursos')
@@ -73,26 +80,40 @@ def logout_view(request):
 
 # Create your views here.
 def index(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='Estudiantes').exists():
+            return redirect('indexLog')
+        elif request.user.groups.filter(name='Instructores').exists():
+            return redirect('crearCursos')
     return render(request, 'index.html')
 
 
 @login_required
+@group_required('Estudiantes', redirect_route='crearCursos')
 def indexLog(request):
     return render(request, 'indexLog.html')
 
+
 @login_required
+@group_required('Estudiantes', redirect_route='crearCursos')
 def compraCursos(request):
     return render(request, 'compraCursos.html')
 
+
 @login_required
+@group_required('Estudiantes', redirect_route='crearCursos')
 def cursosEstudiante(request):
     return render(request, 'cursosEstudiante.html')
 
+
 @login_required
+@group_required('Instructores', redirect_route='indexLog')
 def crearCursos(request):
     return render(request, 'crearCurso.html')
 
+
 @login_required
+@group_required('Instructores', redirect_route='indexLog')
 def crearDatosCursos(request):
     return render(request, 'crearDatosCurso.html')
 
