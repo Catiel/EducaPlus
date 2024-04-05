@@ -1,6 +1,74 @@
 import firebase_admin
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+
+def register(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        surname = request.POST['surname']
+        email = request.POST['email']
+        password = request.POST['password']
+        password_confirm = request.POST['password_confirm']
+        birthdate = request.POST['birthdate']
+
+        if password == password_confirm:
+            if User.objects.filter(username=email).exists():
+                messages.error(request, 'El correo electrónico ya está en uso')
+                return redirect('index')
+            else:
+                user = User.objects.create_user(username=email, password=password, email=email, first_name=name,
+                                                last_name=surname)
+                user.save()
+                login(request, user)
+                messages.success(request, 'Te has registrado exitosamente')
+                return redirect('indexLog')
+        else:
+            messages.error(request, 'Las contraseñas no coinciden')
+            return redirect('index')
+    else:
+        return render(request, 'index.html')
+
+
+def teach(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        surname = request.POST['surname']
+        email = request.POST['email']
+        password = request.POST['password']
+        password_confirm = request.POST['passwordConfirm']
+        birthdate = request.POST['birthdate']
+        specialization = request.POST['specialization']
+
+        if password == password_confirm:
+            if User.objects.filter(username=email).exists():
+                messages.error(request, 'El correo electrónico ya está en uso')
+                return redirect('index')
+            else:
+                user = User.objects.create_user(username=email, password=password, email=email, first_name=name,
+                                                last_name=surname)
+                user.specialization = specialization
+                user.birthdate = birthdate
+                user.save()
+                login(request, user)
+                messages.success(request, 'Te has registrado exitosamente como instructor')
+                return redirect('crearCursos')
+        else:
+            messages.error(request, 'Las contraseñas no coinciden')
+            return redirect('index')
+    else:
+        return render(request, 'index.html')
+
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'Has cerrado sesión exitosamente')
+    return redirect('index')
 
 
 # Create your views here.
@@ -8,22 +76,23 @@ def index(request):
     return render(request, 'index.html')
 
 
+@login_required
 def indexLog(request):
     return render(request, 'indexLog.html')
 
-
+@login_required
 def compraCursos(request):
     return render(request, 'compraCursos.html')
 
-
+@login_required
 def cursosEstudiante(request):
     return render(request, 'cursosEstudiante.html')
 
-
+@login_required
 def crearCursos(request):
     return render(request, 'crearCurso.html')
 
-
+@login_required
 def crearDatosCursos(request):
     return render(request, 'crearDatosCurso.html')
 

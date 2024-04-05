@@ -79,9 +79,13 @@ WSGI_APPLICATION = "eduApp.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'educaplus',
+        'USER': 'educaplus_user',
+        'PASSWORD': 'mG9L9tGqwkJQzOlk9RBKxu0dsm5tbeDe',
+        'HOST': 'dpg-co7j8h4f7o1s738hv9tg-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
 
