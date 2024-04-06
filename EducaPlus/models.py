@@ -18,12 +18,12 @@ class Instructor(models.Model):
 
 
 class Curso(models.Model):
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=70)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
-    descripcion = models.TextField(default="Sin descripción")
-    nivel = models.CharField(max_length=255)
-    precio = models.DecimalField(max_digits=6, decimal_places=2)
-    categoria = models.CharField(max_length=255)
+    descripcion = models.TextField(default="Sin descripción", max_length=1404)
+    nivel = models.CharField(max_length=15)
+    precio = models.DecimalField(max_digits=50, decimal_places=2)
+    categoria = models.CharField(max_length=20)
     duracion = models.IntegerField(default=0)  # Add this line
 
     def __str__(self):
