@@ -125,6 +125,8 @@ def crearDatosCursos(request):
     return render(request, 'crearDatosCurso.html')
 
 
+@login_required
+@group_required('Instructores', redirect_route='indexLog')
 def crear_curso(request):
     if request.method == 'POST':
         nombre = request.POST['courseName']
