@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="col-7 border m-5">
-            <form id="courseForm" method="POST">
+            <form id="courseForm" method="POST" action="{% url 'crear_curso' %}">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="courseName" class="form-label">Nombre del curso</label>

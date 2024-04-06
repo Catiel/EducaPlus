@@ -6,9 +6,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Student, Instructor
+from .models import Student, Instructor, Curso
 from django.contrib.auth.models import Group
 from .decorators import group_required
+from django.shortcuts import get_object_or_404
 
 
 def register(request):
@@ -85,19 +86,24 @@ def index(request):
             return redirect('indexLog')
         elif request.user.groups.filter(name='Instructores').exists():
             return redirect('crearCursos')
-    return render(request, 'index.html')
+    cursos = Curso.objects.all().order_by('nombre')
+    categorias = Curso.objects.values_list('categoria', flat=True).distinct()
+    return render(request, 'index.html', {'cursos': cursos, 'categorias': categorias})
 
 
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def indexLog(request):
-    return render(request, 'indexLog.html')
+    cursos = Curso.objects.all().order_by('nombre')
+    categorias = Curso.objects.values_list('categoria', flat=True).distinct()
+    return render(request, 'indexLog.html', {'cursos': cursos, 'categorias': categorias})
 
 
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
-def compraCursos(request):
-    return render(request, 'compraCursos.html')
+def compraCursos(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    return render(request, 'compraCursos.html', {'curso': curso})
 
 
 @login_required
@@ -109,13 +115,33 @@ def cursosEstudiante(request):
 @login_required
 @group_required('Instructores', redirect_route='indexLog')
 def crearCursos(request):
-    return render(request, 'crearCurso.html')
+    cursos_del_instructor = Curso.objects.filter(instructor__user=request.user)
+    return render(request, 'crearCurso.html', {'cursos_del_instructor': cursos_del_instructor})
 
 
 @login_required
 @group_required('Instructores', redirect_route='indexLog')
 def crearDatosCursos(request):
     return render(request, 'crearDatosCurso.html')
+
+
+def crear_curso(request):
+    if request.method == 'POST':
+        nombre = request.POST['courseName']
+        descripcion = request.POST['courseDescription']
+        categoria = request.POST['courseCategory']
+        duracion = request.POST['courseDuration']
+        nivel = request.POST['courseDifficulty']
+        coursePayment = request.POST['coursePayment']
+        precio = request.POST['courseCost'] if coursePayment == 'pago' else 0.0
+        curso = Curso(nombre=nombre, descripcion=descripcion, categoria=categoria, duracion=duracion,
+                      nivel=nivel, precio=precio, instructor=request.user.instructor)
+        curso.save()
+
+        messages.success(request, 'Curso creado exitosamente')
+        return redirect('crearCursos')
+    else:
+        return render(request, 'crearCurso.html')
 
 
 def check_firebase(request):
