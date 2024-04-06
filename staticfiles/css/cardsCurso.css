@@ -48,3 +48,13 @@ h1 {
     margin-bottom: 10px;
     text-align: center;
 }
+
+.limited-text {
+    overflow: auto;
+    max-height: 200px; /* Ajusta este valor según tus necesidades */
+    scrollbar-width: none;
+}
+
+.limited-text::-webkit-scrollbar {
+    display: none;
+}
