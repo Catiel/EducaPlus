@@ -8,6 +8,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/dist/bootstrap-icons.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -54,13 +56,13 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="registerName" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="registerName" name="name" required
-                                   maxlength="50">
+                            <input type="text" class="form-control" id="registerName" name="name"
+                            required pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres" required maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="registerSurname" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="registerSurname" name="surname" required
-                                   maxlength="50">
+                            <input type="text" class="form-control" id="registerSurname" name="surname"
+                            required pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres" required maxlength="50">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -70,20 +72,35 @@
                     </div>
                     <div class="mb-3">
                         <label for="registerPassword" class="form-label">Contraseña</label>
+                        <div class="input-group">
                         <input type="password" class="form-control" id="registerPassword" name="password"
+                               required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}" 
+                               title="La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial "
                                autocomplete="new-password" required>
+                               <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="passwordToggle"><i class="bi bi-eye-fill"></i></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="registerPasswordConfirm" class="form-label">Confirmar Contraseña</label>
+                        <div class="input-group">
                         <input type="password" class="form-control" id="registerPasswordConfirm" name="password_confirm"
+                               required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}" 
+                               title="Las contraseñas no coinciden " 
+                               required oninput="validatePassword()"
                                autocomplete="new-password" required>
+                               <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggle"><i class="bi bi-eye-fill"></i></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerBirthdate" class="form-label">Fecha de Cumpleaños</label>
+                        <label for="registerBirthdate" class="form-label">Fecha de nacimiento</label>
                         <input type="date" class="form-control" id="registerBirthdate" name="birthdate" required>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Registrarse</button>
+                        <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
                     </div>
                 </form>
             </div>
@@ -94,20 +111,22 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="teachModalLabel">Enseña en EducaPlus</h5>
+                <h5 class="modal-title" id="teachModalLabel">Instructor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/teach/" method="post">
+                <form action="/teach/" method="post" id="teachForm">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="name" name="name" required maxlength="50">
+                            <input type="text" class="form-control" id="name" name="name" 
+                            required pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres" required maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="surname" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="surname" name="surname" required maxlength="50">
+                            <input type="text" class="form-control" id="surname" name="surname" 
+                            required pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres" required maxlength="50">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -117,15 +136,32 @@
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" 
+                        required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}" 
+                        title="La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial "
+                        autocomplete="new-password" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="passwordToggleB"><i class="bi bi-eye-fill"></i></button>
+                        </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="passwordConfirm" class="form-label">Confirmar Contraseña</label>
+                        <div class="input-group">
                         <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
-                               required>
+                            autocomplete="new-password" required
+                            required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}" 
+                            title="Las contraseñas no coinciden " 
+                            required oninput="validatePassword()"
+                            autocomplete="new-password" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggleB"><i class="bi bi-eye-fill"></i></button>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerBirthdate1" class="form-label">Fecha de Cumpleaños</label>
+                        <label for="registerBirthdate1" class="form-label">Fecha de nacimiento </label>
                         <input type="date" class="form-control" id="registerBirthdate1" name="birthdate1" required>
                     </div>
                     <div class="mb-3">
@@ -141,7 +177,7 @@
                         </select>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Registrase</button>
+                        <button type="submit" class="btn btn-outline-success custom-button">Registrase</button>
                     </div>
                 </form>
             </div>
@@ -175,6 +211,65 @@
     </div>
 </div>
 <script>
+    document.getElementById('passwordToggleB').addEventListener('click', function (e) {
+        var passwordInput = document.getElementById('password');
+        var passwordToggleIcon = this.querySelector('i');
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordToggleIcon.classList.remove('bi-eye-fill');
+            passwordToggleIcon.classList.add('bi-eye-slash-fill');
+        } else {
+            passwordInput.type = "password";
+            passwordToggleIcon.classList.remove('bi-eye-slash-fill');
+            passwordToggleIcon.classList.add('bi-eye-fill');
+        }
+    });
+
+    
+    document.getElementById('passwordConfirmToggleB').addEventListener('click', function (e) {
+        var passwordConfirmInput = document.getElementById('passwordConfirm');
+        var passwordConfirmToggleIcon = this.querySelector('i');
+        if (passwordConfirmInput.type === "password") {
+            passwordConfirmInput.type = "text";
+            passwordConfirmToggleIcon.classList.remove('bi-eye-fill');
+            passwordConfirmToggleIcon.classList.add('bi-eye-slash-fill');
+        } else {
+            passwordConfirmInput.type = "password";
+            passwordConfirmToggleIcon.classList.remove('bi-eye-slash-fill');
+            passwordConfirmToggleIcon.classList.add('bi-eye-fill');
+        }
+    });
+
+
+    document.getElementById('passwordToggle').addEventListener('click', function (e) {
+        var passwordInput = document.getElementById('registerPassword');
+        var passwordToggleIcon = this.querySelector('i');
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordToggleIcon.classList.remove('bi-eye-fill');
+            passwordToggleIcon.classList.add('bi-eye-slash-fill');
+        } else {
+            passwordInput.type = "password";
+            passwordToggleIcon.classList.remove('bi-eye-slash-fill');
+            passwordToggleIcon.classList.add('bi-eye-fill');
+        }
+    });
+
+    document.getElementById('passwordConfirmToggle').addEventListener('click', function (e) {
+        var passwordConfirmInput = document.getElementById('registerPasswordConfirm');
+        var passwordConfirmToggleIcon = this.querySelector('i');
+        if (passwordConfirmInput.type === "password") {
+            passwordConfirmInput.type = "text";
+            passwordConfirmToggleIcon.classList.remove('bi-eye-fill');
+            passwordConfirmToggleIcon.classList.add('bi-eye-slash-fill');
+        } else {
+            passwordConfirmInput.type = "password";
+            passwordConfirmToggleIcon.classList.remove('bi-eye-slash-fill');
+            passwordConfirmToggleIcon.classList.add('bi-eye-fill');
+        }
+    });
+
+
     function validatePassword(modalId, passwordId, passwordConfirmId) {
         document.getElementById(modalId).addEventListener('submit', function (event) {
             var password = document.getElementById(passwordId).value;
@@ -190,6 +285,7 @@
             } else {
                 passwordElement.classList.remove('input-error');
                 passwordConfirmElement.classList.remove('input-error');
+                alert('Registro exitoso');
             }
         });
     }
