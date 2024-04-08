@@ -59,13 +59,13 @@
                         <div class="col-md-6 mb-3">
                             <label for="registerName" class="form-label">Nombre</label>
                             <input type="text" class="form-control" id="registerName" name="name"
-                                   required pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres" required
+                                   pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres" required
                                    maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="registerSurname" class="form-label">Apellido</label>
                             <input type="text" class="form-control" id="registerSurname" name="surname"
-                                   required pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres"
+                                   pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres"
                                    required maxlength="50">
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                         <label for="registerPassword" class="form-label">Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="registerPassword" name="password"
-                                   required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
                                    title="La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial "
                                    autocomplete="new-password" required>
                             <div class="input-group-append">
@@ -92,9 +92,9 @@
                         <div class="input-group">
                             <input type="password" class="form-control" id="registerPasswordConfirm"
                                    name="password_confirm"
-                                   required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
                                    title="Las contraseñas no coinciden "
-                                   required oninput="validatePassword()"
+                                   oninput="validatePassword()"
                                    autocomplete="new-password" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggle"><i
@@ -130,13 +130,13 @@
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Nombre</label>
                             <input type="text" class="form-control" id="name" name="name"
-                                   required pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres" required
+                                   required pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres"
                                    maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="surname" class="form-label">Apellido</label>
                             <input type="text" class="form-control" id="surname" name="surname"
-                                   required pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres"
+                                   pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres"
                                    required maxlength="50">
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                         <label for="password" class="form-label">Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password"
-                                   required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
                                    title="La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial "
                                    autocomplete="new-password" required>
                             <div class="input-group-append">
@@ -162,10 +162,8 @@
                         <label for="passwordConfirm" class="form-label">Confirmar Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
-                                   autocomplete="new-password" required
-                                   required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
+                                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
                                    title="Las contraseñas no coinciden "
-                                   required oninput="validatePassword()"
                                    autocomplete="new-password" required>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggleB"><i
@@ -224,9 +222,9 @@
     </div>
 </div>
 <script>
-    document.getElementById('passwordToggleB').addEventListener('click', function (e) {
-        var passwordInput = document.getElementById('password');
-        var passwordToggleIcon = this.querySelector('i');
+    document.getElementById('passwordToggleB').addEventListener('click', function () {
+        let passwordInput = document.getElementById('password');
+        let passwordToggleIcon = this.querySelector('i');
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
             passwordToggleIcon.classList.remove('bi-eye-fill');
@@ -239,9 +237,9 @@
     });
 
 
-    document.getElementById('passwordConfirmToggleB').addEventListener('click', function (e) {
-        var passwordConfirmInput = document.getElementById('passwordConfirm');
-        var passwordConfirmToggleIcon = this.querySelector('i');
+    document.getElementById('passwordConfirmToggleB').addEventListener('click', function () {
+        let passwordConfirmInput = document.getElementById('passwordConfirm');
+        let passwordConfirmToggleIcon = this.querySelector('i');
         if (passwordConfirmInput.type === "password") {
             passwordConfirmInput.type = "text";
             passwordConfirmToggleIcon.classList.remove('bi-eye-fill');
@@ -254,9 +252,9 @@
     });
 
 
-    document.getElementById('passwordToggle').addEventListener('click', function (e) {
-        var passwordInput = document.getElementById('registerPassword');
-        var passwordToggleIcon = this.querySelector('i');
+    document.getElementById('passwordToggle').addEventListener('click', function () {
+        let passwordInput = document.getElementById('registerPassword');
+        let passwordToggleIcon = this.querySelector('i');
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
             passwordToggleIcon.classList.remove('bi-eye-fill');
@@ -268,9 +266,9 @@
         }
     });
 
-    document.getElementById('passwordConfirmToggle').addEventListener('click', function (e) {
-        var passwordConfirmInput = document.getElementById('registerPasswordConfirm');
-        var passwordConfirmToggleIcon = this.querySelector('i');
+    document.getElementById('passwordConfirmToggle').addEventListener('click', function () {
+        let passwordConfirmInput = document.getElementById('registerPasswordConfirm');
+        let passwordConfirmToggleIcon = this.querySelector('i');
         if (passwordConfirmInput.type === "password") {
             passwordConfirmInput.type = "text";
             passwordConfirmToggleIcon.classList.remove('bi-eye-fill');
@@ -285,11 +283,11 @@
 
     function validatePassword(modalId, passwordId, passwordConfirmId) {
         document.getElementById(modalId).addEventListener('submit', function (event) {
-            var password = document.getElementById(passwordId).value;
-            var passwordConfirm = document.getElementById(passwordConfirmId).value;
+            let password = document.getElementById(passwordId).value;
+            let passwordConfirm = document.getElementById(passwordConfirmId).value;
 
-            var passwordElement = document.getElementById(passwordId);
-            var passwordConfirmElement = document.getElementById(passwordConfirmId);
+            let passwordElement = document.getElementById(passwordId);
+            let passwordConfirmElement = document.getElementById(passwordConfirmId);
 
             if (password !== passwordConfirm) {
                 passwordElement.classList.add('input-error');
@@ -304,10 +302,10 @@
     }
 
     function setMaxDate(inputId) {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0');
-        var yyyy = today.getFullYear();
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0');
+        let yyyy = today.getFullYear();
 
         today = yyyy + '-' + mm + '-' + dd;
         document.getElementById(inputId).setAttribute("max", today);
