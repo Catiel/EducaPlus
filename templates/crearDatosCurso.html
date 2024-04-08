@@ -89,13 +89,13 @@
         }
 
         function submitForm() {
-            var form = document.getElementById('courseForm');
+            let form = document.getElementById('courseForm');
 
             // Obtén los elementos select
-            var selects = form.querySelectorAll('select');
+            let selects = form.querySelectorAll('select');
 
             // Verifica si se ha seleccionado una opción válida en cada select
-            var allSelectsValid = Array.from(selects).every(function (select) {
+            let allSelectsValid = Array.from(selects).every(function (select) {
                 // Si la opción seleccionada es 'disabled', muestra un mensaje de error personalizado
                 if (select.options[select.selectedIndex].disabled) {
                     select.setCustomValidity('Por favor, selecciona una opción.');
