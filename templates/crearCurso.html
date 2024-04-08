@@ -1,0 +1,24 @@
+{% extends 'basest/baseLoginInstructor.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cardsCurso.css' %}">
+    <div class="cursos">
+        <h1>Cursos</h1>
+        <div class="cursos-container">
+            <div class="row">
+                {% for curso in cursos_del_instructor %}
+                    <div class="col-md-3">
+                        <a href="#" class="card-link">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ curso.nombre }}</h5>
+                                    <p class="card-text limited-text">{{ curso.descripcion }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

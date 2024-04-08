@@ -5,34 +5,25 @@
     <script src="{% static 'js/compra.js' %}"></script>
     <div class="contenedor">
         <div class="detalles_curso">
-            <h1> Desarrollo web</h1>
+            <h1> {{ curso.nombre }} </h1>
             <p >
-                Bienvenido al curso de "Desarrollo Web Completo". Este curso está diseñado para llevar a los estudiantes
-                desde los fundamentos hasta el dominio avanzado de las tecnologías web más modernas. Comenzaremos con
-                HTML, la piedra angular de todo el contenido web. Luego, aprenderemos CSS para diseñar y dar estilo a
-                nuestras páginas web. A continuación, nos adentraremos en JavaScript, donde aprenderás a crear
-                interactividad dinámica en tus páginas web. Después de dominar estas tecnologías del lado del cliente,
-                nos moveremos al desarrollo del lado del servidor con Node.js. Aprenderás a crear servidores web y APIs
-                RESTful, y a interactuar con bases de datos SQL y NoSQL. Finalmente, cubriremos las mejores prácticas de
-                desarrollo y despliegue de aplicaciones web modernas. Al final del curso, tendrás un portafolio de
-                proyectos completos que demostrarán tus habilidades y conocimientos como desarrollador web completo. No
-                se requiere experiencia previa en programación para este curso.
+                {{ curso.descripcion }}
             </p>
         </div>
         <div class="resumen_pago">
             <form class="small-form">
                 <h2 id="tit">Checkout</h2>
-                <div class="form-group">
+                <div class="form-group" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <label for="cardName">Nombre del titular</label>
                     <input type="text" class="form-control" id="cardName"
                            placeholder="Nombre tal como aparece en la tarjeta" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <label for="cardNumber">Número de tarjeta</label>
                     <input type="text" class="form-control" id="cardNumber" placeholder="Número de tarjeta" required
                            pattern="\d*">
                 </div>
-                <div class="form-row">
+                <div class="form-row" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <div class="form-group col-6">
                         <label for="expiryDate">Fecha de vencimiento</label>
                         <input type="text" class="form-control" id="expiryDate" placeholder="MM/AA" required
@@ -47,12 +38,16 @@
                     <h3>Resumen</h3>
                     <div class="resumen-item">
                         <span>Total</span>
-                        <span class="total-amount price">$100.00</span>
+                        <span class="total-amount price">
+                            {% if curso.precio == 0 %}Gratis{% else %}${{ curso.precio }}{% endif %}
+                        </span>
                     </div>
                 </div>
                 <div class="button-container">
-                    <button type="submit" class="btn btn-primary">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Realizar pago</button>
+                    <a href="{% url 'indexLog' %}" class="btn btn-primary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        {% if curso.precio == 0 %}Obtener gratis{% else %}Realizar pago{% endif %}
+                    </button>
                 </div>
             </form>
         </div>
