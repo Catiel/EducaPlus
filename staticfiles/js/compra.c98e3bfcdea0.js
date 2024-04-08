@@ -1,6 +1,7 @@
 function luhnCheck(cardNumber) {
     let sum = 0;
     let shouldDouble = false;
+    cardNumber = cardNumber.toString();
     for (let i = cardNumber.length - 1; i >= 0; i--) {
         let digit = parseInt(cardNumber.charAt(i));
 

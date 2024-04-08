@@ -1,6 +1,7 @@
 function luhnCheck(cardNumber) {
     let sum = 0;
     let shouldDouble = false;
+    cardNumber = cardNumber.toString();
     for (let i = cardNumber.length - 1; i >= 0; i--) {
         let digit = parseInt(cardNumber.charAt(i));
 
@@ -35,8 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector(".small-form");
     const cardNumberField = document.querySelector("#cardNumber");
     const expiryDateField = document.querySelector("#expiryDate"); // Asegúrate de seleccionar el campo correcto
+    const cvvField = document.querySelector("#cvv"); // Asegúrate de seleccionar el campo correcto
 
-    if (form && cardNumberField && expiryDateField) { // Asegúrate de que el campo de fecha de vencimiento exista
+    if (form && cardNumberField && expiryDateField && cvvField) { // Asegúrate de que los campos necesarios existan
         cardNumberField.addEventListener("input", function () {
             const cardNumber = cardNumberField.value.replace(/\D/g, '');
             if (!luhnCheck(cardNumber)) {
@@ -48,6 +50,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         expiryDateField.addEventListener("input", function () { // Agrega el evento de entrada al campo de fecha de vencimiento
             validateExpiryDate(expiryDateField);
+        });
+
+        cvvField.addEventListener("input", function () { // Agrega el evento de entrada al campo CVV
+            const cvv = cvvField.value;
+            if (!cvv.match(/^\d{3,4}$/)) {
+                cvvField.setCustomValidity("Por favor, introduce un CVV válido de 3 a 4 dígitos.");
+            } else {
+                cvvField.setCustomValidity("");
+            }
+        });
+
+        cvvField.addEventListener("keypress", function (event) {
+            if (!/\d/.test(String.fromCharCode(event.which))) {
+                event.preventDefault();
+            }
         });
 
         form.addEventListener("submit", function (event) {
