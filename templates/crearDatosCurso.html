@@ -52,7 +52,7 @@
                 </div>
                 <div class="mb-3" id="courseCostDiv" style="display: none;">
                     <label for="courseCost" class="form-label">Costo del curso (en dólares)</label>
-                    <input type="number" class="form-control" id="courseCost" name="courseCost">
+                    <input type="number" class="form-control" id="courseCost" name="courseCost" required>
                 </div>
             </form>
         </div>
@@ -76,6 +76,33 @@
         function autoResize() {
             this.style.height = 'auto';
             this.style.height = this.scrollHeight + 'px';
+        }
+
+        function submitForm() {
+            var form = document.getElementById('courseForm');
+
+            // Obtén los elementos select
+            var selects = form.querySelectorAll('select');
+
+            // Verifica si se ha seleccionado una opción válida en cada select
+            var allSelectsValid = Array.from(selects).every(function (select) {
+                // Si la opción seleccionada es 'disabled', muestra un mensaje de error personalizado
+                if (select.options[select.selectedIndex].disabled) {
+                    select.setCustomValidity('Por favor, selecciona una opción.');
+                    return false;
+                } else {
+                    select.setCustomValidity('');
+                    return true;
+                }
+            });
+
+            // Si todos los selects son válidos y el formulario es válido, envía el formulario
+            if (allSelectsValid && form.checkValidity()) {
+                form.submit();
+            } else {
+                // Si no, muestra los mensajes de error de validación
+                form.reportValidity();
+            }
         }
     </script>
 {% endblock %}
