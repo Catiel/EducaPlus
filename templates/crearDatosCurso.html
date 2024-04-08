@@ -30,7 +30,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="courseDuration" class="form-label">Duración del curso</label>
-                    <input type="number" class="form-control" id="courseDuration" name="courseDuration" required>
+                    <input type="number" class="form-control" id="courseDuration" name="courseDuration" required
+                           oninput="validateInput(this)">
                 </div>
                 <div class="mb-3">
                     <label for="courseDifficulty" class="form-label">Dificultad del curso</label>
@@ -52,7 +53,8 @@
                 </div>
                 <div class="mb-3" id="courseCostDiv" style="display: none;">
                     <label for="courseCost" class="form-label">Costo del curso (en dólares)</label>
-                    <input type="number" class="form-control" id="courseCost" name="courseCost" required>
+                    <input type="number" class="form-control" id="courseCost" name="courseCost" required
+                           oninput="validateInput(this)">
                 </div>
             </form>
         </div>
@@ -67,6 +69,14 @@
             } else {
                 costDiv.style.display = 'none';
                 document.getElementById('courseCost').required = false;
+            }
+        }
+
+        function validateInput(input) {
+            if (input.value <= 0 || !Number.isInteger(parseFloat(input.value))) {
+                input.setCustomValidity('El valor debe ser un número entero mayor a 0.');
+            } else {
+                input.setCustomValidity('');
             }
         }
 
