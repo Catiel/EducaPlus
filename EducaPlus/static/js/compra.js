@@ -14,25 +14,48 @@ function luhnCheck(cardNumber) {
     return (sum % 10) === 0;
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+function validateExpiryDate(input) {
+    // Obtén la fecha actual
+    let currentDate = new Date();
+    let currentMonth = Number(currentDate.getMonth() + 1); // Los meses en JavaScript van de 0 a 11
+    let currentYear = Number(currentDate.getFullYear().toString().substr(-2)); // Obtén los últimos dos dígitos del año
+
+    // Obtén el mes y el año de la fecha de vencimiento ingresada
+    let [expiryMonth, expiryYear] = input.value.split('/').map(Number);
+
+    // Comprueba si la fecha de vencimiento es una fecha pasada
+    if (expiryYear < currentYear || (expiryYear === currentYear && expiryMonth < currentMonth)) {
+        input.setCustomValidity('La fecha de vencimiento no puede ser una fecha pasada.');
+    } else {
+        input.setCustomValidity('');
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector(".small-form");
     const cardNumberField = document.querySelector("#cardNumber");
-    if(form && cardNumberField) {
-    cardNumberField.addEventListener("input", function() {
-        const cardNumber = cardNumberField.value.replace(/\D/g, '');
-        if (!luhnCheck(cardNumber)) {
-        cardNumberField.setCustomValidity("Por favor, introduce un número de tarjeta válido.");
-      } else {
-        cardNumberField.setCustomValidity("");
-      }
-    });
+    const expiryDateField = document.querySelector("#expiryDate"); // Asegúrate de seleccionar el campo correcto
 
-    form.addEventListener("submit", function(event) {
-      if (!form.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      form.classList.add('was-validated');
-    });
-  }
+    if (form && cardNumberField && expiryDateField) { // Asegúrate de que el campo de fecha de vencimiento exista
+        cardNumberField.addEventListener("input", function () {
+            const cardNumber = cardNumberField.value.replace(/\D/g, '');
+            if (!luhnCheck(cardNumber)) {
+                cardNumberField.setCustomValidity("Por favor, introduce un número de tarjeta válido.");
+            } else {
+                cardNumberField.setCustomValidity("");
+            }
+        });
+
+        expiryDateField.addEventListener("input", function () { // Agrega el evento de entrada al campo de fecha de vencimiento
+            validateExpiryDate(expiryDateField);
+        });
+
+        form.addEventListener("submit", function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    }
 });
