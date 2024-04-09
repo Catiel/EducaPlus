@@ -11,7 +11,10 @@
             </p>
         </div>
         <div class="resumen_pago">
-            <form class="small-form">
+            <form class="small-form" action="{% url 'procesar_pago' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="curso_id" value="{{ curso.id }}">
+                <input type="hidden" name="estudiante_id" value="{{ request.user.student.id }}">
                 <h2 id="tit">Checkout</h2>
                 <div class="form-group" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <label for="cardName" class="required">Nombre del titular</label>

@@ -13,4 +13,5 @@ urlpatterns = [
     path('teach/', views.teach, name='teach'),
     path('logout/', views.logout_view, name='logout'),
     path('crear_curso/', views.crear_curso, name='crear_curso'),
+    path('procesar_pago/', views.procesar_pago, name='procesar_pago'),
 ]

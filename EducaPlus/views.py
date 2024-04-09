@@ -1,12 +1,14 @@
 import firebase_admin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Student, Instructor, Curso
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import Student, Instructor, Curso, Compra
 from django.contrib.auth.models import Group
 from .decorators import group_required
 from django.shortcuts import get_object_or_404
@@ -152,6 +154,20 @@ def crear_curso(request):
         return redirect('crearCursos')
     else:
         return render(request, 'crearCurso.html')
+
+
+@csrf_exempt
+def procesar_pago(request):
+    if request.method == 'POST':
+        curso_id = request.POST.get('curso_id')
+        estudiante_id = request.POST.get('estudiante_id')
+        # Si el pago es exitoso, crea una nueva instancia de Compra
+        compra = Compra(estudiante_id=estudiante_id, curso_id=curso_id)
+        compra.save()
+
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'failed'})
 
 
 def check_firebase(request):
