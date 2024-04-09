@@ -30,10 +30,12 @@
 .navbar-personalizado .button-register:hover {
     background-color: var(--blue-chill-950) !important;
 }
+
 .navbar-personalizado .navbar-nav li {
     display: flex;
     flex-direction: row;
 }
+
 .navbar-personalizado .button, .navbar-personalizado .button-register {
     margin: 0 10px; /* Aumenta este valor para separar más los botones */
     padding: 3px 8px; /* Disminuye este valor para hacer los botones más pequeños */
@@ -98,4 +100,9 @@
 
 .input-error {
     border-color: red;
+}
+
+.required::after {
+    content: " *";
+    color: red;
 }
