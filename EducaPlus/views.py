@@ -156,16 +156,23 @@ def crear_curso(request):
         return render(request, 'crearCurso.html')
 
 
+@login_required
+@group_required('Estudiantes', redirect_route='crearCursos')
 @csrf_exempt
 def procesar_pago(request):
     if request.method == 'POST':
         curso_id = request.POST.get('curso_id')
         estudiante_id = request.POST.get('estudiante_id')
+
+        if Compra.objects.filter(estudiante_id=estudiante_id, curso_id=curso_id).exists():
+            return JsonResponse({'status': 'failed', 'message': 'Ya has comprado este curso'})
+
         # Si el pago es exitoso, crea una nueva instancia de Compra
         compra = Compra(estudiante_id=estudiante_id, curso_id=curso_id)
         compra.save()
 
-        return JsonResponse({'status': 'success'})
+        messages.success(request, 'Pago procesado exitosamente')
+        return redirect('cursosEstudiante')
     else:
         return JsonResponse({'status': 'failed'})
 
