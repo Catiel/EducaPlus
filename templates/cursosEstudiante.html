@@ -12,7 +12,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ curso.nombre }}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Instructor: {{ curso.instructor.user.username }}</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        Instructor: {{ curso.instructor.user.first_name }} {{ curso.instructor.user.last_name }}</h6>
                                     <p class="card-text">Nivel: {{ curso.nivel }}</p>
                                 </div>
                             </div>
