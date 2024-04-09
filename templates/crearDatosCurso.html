@@ -1,22 +1,29 @@
 {% extends 'basest/baseCrearCurso.html' %}
 {% load static %}
 {% block content %}
+    <style>
+        .required::after {
+            content:" *";
+            color: red;
+        }
+        /* Agrega más estilos aquí */
+    </style>
     <div class="row">
         <div class="col-7 border m-5">
             <form id="courseForm" method="POST" action="{% url 'crear_curso' %}">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="courseName" class="form-label">Nombre del curso</label>
+                    <label for="courseName" class="form-label required">Nombre del curso</label>
                     <input type="text" class="form-control" id="courseName" name="courseName" required minlength="20"
                            maxlength="50">
                 </div>
                 <div class="mb-3">
-                    <label for="courseDescription" class="form-label">Descripción del curso</label>
+                    <label for="courseDescription" class="form-label required">Descripción del curso</label>
                     <textarea class="form-control" id="courseDescription" name="courseDescription" required
                               maxlength="1404"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="courseCategory" class="form-label">Categoría del curso</label>
+                    <label for="courseCategory" class="form-label required">Categoría del curso</label>
                     <select class="form-select" id="courseCategory" name="courseCategory" required>
                         <option selected disabled>Selecciona una categoría</option>
                         <option value="Economia">Economia</option>
@@ -29,12 +36,12 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="courseDuration" class="form-label">Duración del curso</label>
+                    <label for="courseDuration" class="form-label required">Duración del curso</label>
                     <input type="number" class="form-control" id="courseDuration" name="courseDuration" required
                            oninput="validateInput(this)">
                 </div>
                 <div class="mb-3">
-                    <label for="courseDifficulty" class="form-label">Dificultad del curso</label>
+                    <label for="courseDifficulty" class="form-label required">Dificultad del curso</label>
                     <select class="form-select" id="courseDifficulty" name="courseDifficulty" required>
                         <option selected disabled>Selecciona una dificultad</option>
                         <option value="Principiante">Principiante</option>
@@ -43,7 +50,7 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="coursePayment" class="form-label">Tipo de curso</label>
+                    <label for="coursePayment" class="form-label required">Tipo de curso</label>
                     <select class="form-select" id="coursePayment" name="coursePayment" required
                             onchange="checkPayment(this)">
                         <option selected disabled>Selecciona un tipo</option>
@@ -52,7 +59,7 @@
                     </select>
                 </div>
                 <div class="mb-3" id="courseCostDiv" style="display: none;">
-                    <label for="courseCost" class="form-label">Costo del curso (en dólares)</label>
+                    <label for="courseCost" class="form-label required">Costo del curso (en dólares)</label>
                     <input type="number" class="form-control" id="courseCost" name="courseCost" required
                            oninput="validateInput(this)">
                 </div>
@@ -115,4 +122,5 @@
             }
         }
     </script>
+    
 {% endblock %}

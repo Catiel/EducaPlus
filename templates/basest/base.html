@@ -57,25 +57,25 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="registerName" class="form-label">Nombre</label>
+                            <label for="registerName" class="form-label required">Nombre</label>
                             <input type="text" class="form-control" id="registerName" name="name"
                                    pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres" required
                                    maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="registerSurname" class="form-label">Apellido</label>
+                            <label for="registerSurname" class="form-label required">Apellido</label>
                             <input type="text" class="form-control" id="registerSurname" name="surname"
                                    pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres"
                                    required maxlength="50">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerEmail" class="form-label">Correo electrónico</label>
+                        <label for="registerEmail" class="form-label required">Correo electrónico</label>
                         <input type="email" class="form-control" id="registerEmail" name="email" autocomplete="email"
                                required>
                     </div>
                     <div class="mb-3">
-                        <label for="registerPassword" class="form-label">Contraseña</label>
+                        <label for="registerPassword" class="form-label required">Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="registerPassword" name="password"
                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerPasswordConfirm" class="form-label">Confirmar Contraseña</label>
+                        <label for="registerPasswordConfirm" class="form-label required">Confirmar Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="registerPasswordConfirm"
                                    name="password_confirm"
@@ -103,11 +103,11 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerBirthdate" class="form-label">Fecha de nacimiento</label>
+                        <label for="registerBirthdate" class="form-label required">Fecha de nacimiento</label>
                         <input type="date" class="form-control" id="registerBirthdate" name="birthdate" required>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
+                        <button type="submit" class="btn btn-outline-success custom-button required">Registrarse</button>
                     </div>
                 </form>
             </div>
@@ -128,25 +128,25 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label">Nombre</label>
+                            <label for="name" class="form-label required">Nombre</label>
                             <input type="text" class="form-control" id="name" name="name"
                                    required pattern=".{2,}" title="El nombre debe tener al menos 2 caracteres"
                                    maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="surname" class="form-label">Apellido</label>
+                            <label for="surname" class="form-label required">Apellido</label>
                             <input type="text" class="form-control" id="surname" name="surname"
                                    pattern=".{2,}" title="El Apellido debe tener al menos 2 caracteres"
                                    required maxlength="50">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="teachEmail" class="form-label">Correo electrónico</label>
+                        <label for="teachEmail" class="form-label required">Correo electrónico</label>
                         <input type="email" class="form-control" id="teachEmail" name="email" autocomplete="email"
                                required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
+                        <label for="password" class="form-label required">Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password"
                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
@@ -159,7 +159,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="passwordConfirm" class="form-label">Confirmar Contraseña</label>
+                        <label for="passwordConfirm" class="form-label required">Confirmar Contraseña</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
                                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,}"
@@ -172,11 +172,11 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="registerBirthdate1" class="form-label">Fecha de nacimiento </label>
+                        <label for="registerBirthdate1" class="form-label required">Fecha de nacimiento </label>
                         <input type="date" class="form-control" id="registerBirthdate1" name="birthdate1" required>
                     </div>
                     <div class="mb-3">
-                        <label for="specialization" class="form-label">Área de Especialización</label>
+                        <label for="specialization" class="form-label required">Área de Especialización</label>
                         <select class="form-control" id="specialization" name="specialization">
                             <option value="Tecnologia">Tecnologia</option>
                             <option value="Economia">Economia</option>
@@ -206,12 +206,12 @@
                 <form action="/login/" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="loginEmail" class="form-label">Correo electrónico</label>
+                        <label for="loginEmail" class="form-label required">Correo electrónico</label>
                         <input type="email" class="form-control" id="loginEmail" name="email" autocomplete="email"
                                required>
                     </div>
                     <div class="mb-3">
-                        <label for="loginPassword" class="form-label">Contraseña</label>
+                        <label for="loginPassword" class="form-label required">Contraseña</label>
                         <input type="password" class="form-control" id="loginPassword" name="password"
                                autocomplete="current-password" required>
                     </div>
