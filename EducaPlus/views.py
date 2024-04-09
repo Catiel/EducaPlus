@@ -10,6 +10,7 @@ from .models import Student, Instructor, Curso
 from django.contrib.auth.models import Group
 from .decorators import group_required
 from django.shortcuts import get_object_or_404
+from django.db.models import Case, When
 
 
 def register(request):
@@ -86,17 +87,24 @@ def index(request):
             return redirect('indexLog')
         elif request.user.groups.filter(name='Instructores').exists():
             return redirect('crearCursos')
-    cursos = Curso.objects.all().order_by('nombre')
-    categorias = Curso.objects.values_list('categoria', flat=True).distinct()
+
+    categorias, cursos = obtener_categorias_cursos_ordenados()
     return render(request, 'index.html', {'cursos': cursos, 'categorias': categorias})
 
 
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def indexLog(request):
-    cursos = Curso.objects.all().order_by('nombre')
-    categorias = Curso.objects.values_list('categoria', flat=True).distinct()
+    categorias, cursos = obtener_categorias_cursos_ordenados()
     return render(request, 'indexLog.html', {'cursos': cursos, 'categorias': categorias})
+
+
+def obtener_categorias_cursos_ordenados():
+    orden_categorias = ['Tecnología', 'Economía', 'Humanidades', 'Medicina', 'Ciencias jurídicas', 'Arquitectura']
+    categorias = list(Curso.objects.values_list('categoria', flat=True).distinct())
+    categorias.sort(key=lambda x: orden_categorias.index(x) if x in orden_categorias else len(orden_categorias))
+    cursos = Curso.objects.all().order_by('nombre')
+    return categorias, cursos
 
 
 @login_required
