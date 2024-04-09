@@ -119,7 +119,9 @@ def compraCursos(request, curso_id):
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def cursosEstudiante(request):
-    return render(request, 'cursosEstudiante.html')
+    compras = Compra.objects.filter(estudiante_id=request.user.student.id)
+    cursos = [compra.curso for compra in compras]
+    return render(request, 'cursosEstudiante.html', {'cursos': cursos})
 
 
 @login_required
