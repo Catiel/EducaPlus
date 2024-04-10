@@ -14,6 +14,7 @@
     /* Cambia la dirección de la flecha cuando el acordeón está abierto */
     transform: rotate(90deg);
 }
+
 .container {
     display: flex;
     justify-content: center;
@@ -28,6 +29,7 @@
     margin-bottom: 10px;
     text-align: center;
 }
+
 .buy-button {
     background-color: var(--blue-chill-500);
     color: var(--blue-chill-50);

@@ -1,4 +1,5 @@
 from functools import wraps, WRAPPER_ASSIGNMENTS, WRAPPER_UPDATES
+
 from django.shortcuts import redirect
 
 

@@ -60,27 +60,28 @@
                         <div class="col-md-6 mb-3">
                             <label for="registerName" class="form-label required">Nombre</label>
                             <input type="text" class="form-control" id="registerName" name="name"
-                                required maxlength="20">
+                                   required maxlength="20">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="registerSurname" class="form-label required">Apellidos</label>
                             <input type="text" class="form-control" id="registerSurname" name="surname"
-                                required maxlength="20">
+                                   required maxlength="20">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="registerEmail" class="form-label required">Correo</label>
-                        <input type="email" class="form-control" id="registerEmail" name="email" autocomplete="email" 
-                        required>
-                               <div id="emailError" class="text-danger"></div>
+                        <input type="email" class="form-control" id="registerEmail" name="email" autocomplete="email"
+                               required>
+                        <div id="emailError" class="text-danger"></div>
                     </div>
                     <div class="mb-3">
                         <label for="registerPassword" class="form-label required">Contraseña</label>
                         <div class="input-group">
-                        <input type="password" class="form-control" id="registerPassword" name="password"
-                               autocomplete="new-password" required maxlength="15">
-                               <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordToggle"><i class="bi bi-eye-fill"></i></button>
+                            <input type="password" class="form-control" id="registerPassword" name="password"
+                                   autocomplete="new-password" required maxlength="15">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="passwordToggle"><i
+                                        class="bi bi-eye-fill"></i></button>
                             </div>
                         </div>
                         <span id="registerPasswordError"></span>
@@ -88,11 +89,13 @@
                     <div class="mb-3">
                         <label for="registerPasswordConfirm" class="form-label required">Repetir contraseña</label>
                         <div class="input-group">
-                        <input type="password" class="form-control" id="registerPasswordConfirm" name="password_confirm"
-                               oninput="validatePassword()"
-                               autocomplete="new-password" required maxlength="15">
-                               <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggle"><i class="bi bi-eye-fill"></i></button>
+                            <input type="password" class="form-control" id="registerPasswordConfirm"
+                                   name="password_confirm"
+                                   oninput="validatePassword()"
+                                   autocomplete="new-password" required maxlength="15">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggle"><i
+                                        class="bi bi-eye-fill"></i></button>
                             </div>
                         </div>
                         <span id="registerPasswordConfirmError"></span>
@@ -124,13 +127,13 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label required">Nombre</label>
-                            <input type="text" class="form-control" id="name" name="name" 
-                            required maxlength="20">
+                            <input type="text" class="form-control" id="name" name="name"
+                                   required maxlength="20">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="surname" class="form-label required">Apellidos</label>
-                            <input type="text" class="form-control" id="surname" name="surname" 
-                            required maxlength="20">
+                            <input type="text" class="form-control" id="surname" name="surname"
+                                   required maxlength="20">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -141,23 +144,25 @@
                     <div class="mb-3">
                         <label for="password" class="form-label required">Contraseña</label>
                         <div class="input-group">
-                        <input type="password" class="form-control" id="password" name="password" 
-                        autocomplete="new-password" required maxlength="15">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="passwordToggleB"><i class="bi bi-eye-fill"></i></button>
-                        </div>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   autocomplete="new-password" required maxlength="15">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="passwordToggleB"><i
+                                        class="bi bi-eye-fill"></i></button>
+                            </div>
                         </div>
                         <span id="passwordError" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label for="passwordConfirm" class="form-label required">Repetir contraseña</label>
                         <div class="input-group">
-                        <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
-                            autocomplete="new-password"
-                               oninput="validatePassword()"
-                               required maxlength="15">
+                            <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
+                                   autocomplete="new-password"
+                                   oninput="validatePassword()"
+                                   required maxlength="15">
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggleB"><i class="bi bi-eye-fill"></i></button>
+                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggleB"><i
+                                        class="bi bi-eye-fill"></i></button>
                             </div>
                         </div>
                         <span id="passwordConfirmError" class="text-danger"></span>
@@ -213,81 +218,79 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var registerName = document.getElementById('registerName');
-    var registerSurname = document.getElementById('registerSurname');
-    var form = document.getElementById('register');
+    document.addEventListener('DOMContentLoaded', function () {
+        var registerName = document.getElementById('registerName');
+        var registerSurname = document.getElementById('registerSurname');
+        var form = document.getElementById('register');
 
-    form.addEventListener('submit', function(e) {
-        var nameValid = validateInput(registerName, 'El nombre debe tener entre 2 y 20 caracteres y solo letras.');
-        var surnameValid = validateInput(registerSurname, 'El apellido debe tener entre 2 y 20 caracteres y solo letras.');
+        form.addEventListener('submit', function (e) {
+            var nameValid = validateInput(registerName, 'El nombre debe tener entre 2 y 20 caracteres y solo letras.');
+            var surnameValid = validateInput(registerSurname, 'El apellido debe tener entre 2 y 20 caracteres y solo letras.');
 
-        if (!nameValid || !surnameValid) {
-            e.preventDefault();
-        }
-    });
-
-    function validateInput(inputElement, errorMessage) {
-        var errorElement = document.getElementById(inputElement.id + 'Error');
-        var pattern = /^[a-zA-ZñÑ\s]{2,20}$/;
-        if (!pattern.test(inputElement.value)) {
-            if (!errorElement) {
-                errorElement = document.createElement('div');
-                errorElement.id = inputElement.id + 'Error';
-                errorElement.style.color = 'red';
-                inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+            if (!nameValid || !surnameValid) {
+                e.preventDefault();
             }
-            errorElement.textContent = errorMessage;
-            inputElement.classList.add('input-error');
-            return false;
-        }
-        if (errorElement) {
-            errorElement.textContent = '';
-        }
-        inputElement.classList.remove('input-error');
-        return true;
-    }
-});
+        });
 
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    var nameInput = document.getElementById('name');
-    var surnameInput = document.getElementById('surname');
-    var form = document.getElementById('teachForm');
-
-    form.addEventListener('submit', function(e) {
-        var nameValid = validateInput(nameInput, 'El nombre debe tener entre 2 y 20 caracteres y solo letras.');
-        var surnameValid = validateInput(surnameInput, 'El apellido debe tener entre 2 y 20 caracteres y solo letras.');
-
-        if (!nameValid || !surnameValid) {
-            e.preventDefault();
-        }
-    });
-
-    function validateInput(inputElement, errorMessage) {
-        var errorElement = document.getElementById(inputElement.id + 'Error');
-        if (!errorElement) {
-            errorElement = document.createElement('div');
-            errorElement.style.color = 'red';
-            errorElement.id = inputElement.id + 'Error';
-            inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
-        }
-
-        var pattern = /^[a-zA-ZñÑ\s]{2,20}$/;
-        if (!pattern.test(inputElement.value)) {
-            errorElement.textContent = errorMessage;
-            inputElement.dataset.valid = 'false';
-            return false;
-        } else {
-            errorElement.textContent = '';
-            inputElement.dataset.valid = 'true';
+        function validateInput(inputElement, errorMessage) {
+            var errorElement = document.getElementById(inputElement.id + 'Error');
+            var pattern = /^[a-zA-ZñÑ\s]{2,20}$/;
+            if (!pattern.test(inputElement.value)) {
+                if (!errorElement) {
+                    errorElement = document.createElement('div');
+                    errorElement.id = inputElement.id + 'Error';
+                    errorElement.style.color = 'red';
+                    inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+                }
+                errorElement.textContent = errorMessage;
+                inputElement.classList.add('input-error');
+                return false;
+            }
+            if (errorElement) {
+                errorElement.textContent = '';
+            }
+            inputElement.classList.remove('input-error');
             return true;
         }
-    }
-});
-    document.getElementById('register').addEventListener('submit', function(e) {
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var nameInput = document.getElementById('name');
+        var surnameInput = document.getElementById('surname');
+        var form = document.getElementById('teachForm');
+
+        form.addEventListener('submit', function (e) {
+            var nameValid = validateInput(nameInput, 'El nombre debe tener entre 2 y 20 caracteres y solo letras.');
+            var surnameValid = validateInput(surnameInput, 'El apellido debe tener entre 2 y 20 caracteres y solo letras.');
+
+            if (!nameValid || !surnameValid) {
+                e.preventDefault();
+            }
+        });
+
+        function validateInput(inputElement, errorMessage) {
+            var errorElement = document.getElementById(inputElement.id + 'Error');
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.style.color = 'red';
+                errorElement.id = inputElement.id + 'Error';
+                inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+            }
+
+            var pattern = /^[a-zA-ZñÑ\s]{2,20}$/;
+            if (!pattern.test(inputElement.value)) {
+                errorElement.textContent = errorMessage;
+                inputElement.dataset.valid = 'false';
+                return false;
+            } else {
+                errorElement.textContent = '';
+                inputElement.dataset.valid = 'true';
+                return true;
+            }
+        }
+    });
+    document.getElementById('register').addEventListener('submit', function (e) {
         var passwordR = document.getElementById('registerPassword');
         var passwordConfirmR = document.getElementById('registerPasswordConfirm');
         var pattern = new RegExp('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{8,}');
@@ -328,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('teachForm').addEventListener('submit', function(e) {
+    document.getElementById('teachForm').addEventListener('submit', function (e) {
         var password = document.getElementById('password');
         var passwordConfirm = document.getElementById('passwordConfirm');
         var pattern = new RegExp('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{8,}');
@@ -454,15 +457,15 @@ document.addEventListener('DOMContentLoaded', function() {
     setMaxDate('registerBirthdate');
     setMaxDate('registerBirthdate1');
 
-    $(document).ready(function() {
-        $('#register').on('submit', function(e) {
+    $(document).ready(function () {
+        $('#register').on('submit', function (e) {
             e.preventDefault(); // Evitar el envío del formulario por defecto
             var correo = $('#registerEmail').val();
             $.ajax({
                 url: '/api/verificar-correo/',  // URL de la vista de Django para verificar correo
                 method: 'POST',
-                data: { correo: correo },
-                success: function(response) {
+                data: {correo: correo},
+                success: function (response) {
                     if (response.existe) {
                         $('#emailError').text('El correo electrónico ya está registrado');
                     } else {
@@ -472,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     }
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     console.log(xhr.status + ": " + xhr.responseText);
                     $('#emailError').text('Error al verificar el correo');
                 }
