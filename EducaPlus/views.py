@@ -13,6 +13,22 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
 
 
+@csrf_exempt
+def verificar_correo(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo', None)
+        if correo:
+            try:
+                user_obj = User.objects.get(email=correo)
+                return JsonResponse({'existe': True})
+            except User.DoesNotExist:
+                return JsonResponse({'existe': False})
+        else:
+            return JsonResponse({'error': 'Correo no proporcionado en la solicitud'}, status=400)
+
+    return JsonResponse({'error': 'Solicitud inválida'}, status=400)
+
+
 def register(request):
     if request.method == 'POST':
         name = request.POST['name']
@@ -23,7 +39,7 @@ def register(request):
         birthdate = request.POST['birthdate']
 
         if password == password_confirm:
-            if User.objects.filter(username=email).exists():
+            if User.objects.filter(email=email).exists():
                 messages.error(request, 'El correo electrónico ya está en uso')
                 return redirect('index')
             else:
