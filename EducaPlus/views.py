@@ -1,18 +1,16 @@
 import firebase_admin
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from django.contrib.auth.models import User
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Student, Instructor, Curso, Compra
-from django.contrib.auth.models import Group
 from .decorators import group_required
-from django.shortcuts import get_object_or_404
-from django.db.models import Case, When
+from .models import Student, Instructor, Curso, Compra
 
 
 def register(request):
@@ -146,8 +144,8 @@ def crear_curso(request):
         categoria = request.POST['courseCategory']
         duracion = request.POST['courseDuration']
         nivel = request.POST['courseDifficulty']
-        coursePayment = request.POST['coursePayment']
-        precio = request.POST['courseCost'] if coursePayment == 'pago' else 0.0
+        coursepayment = request.POST['coursePayment']
+        precio = request.POST['courseCost'] if coursepayment == 'pago' else 0.0
         curso = Curso(nombre=nombre, descripcion=descripcion, categoria=categoria, duracion=duracion,
                       nivel=nivel, precio=precio, instructor=request.user.instructor)
         curso.save()
