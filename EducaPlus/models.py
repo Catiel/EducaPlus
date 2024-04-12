@@ -1,6 +1,5 @@
-from django.db import models
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 
 class Student(models.Model):
@@ -28,4 +27,12 @@ class Curso(models.Model):
 
     def __str__(self):
         return self.nombre
+
+
 # Create your models here.
+
+
+class Compra(models.Model):
+    estudiante = models.ForeignKey(Student, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    fecha_transaccion = models.DateTimeField(auto_now_add=True)

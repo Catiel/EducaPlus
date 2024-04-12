@@ -1,15 +1,32 @@
 import firebase_admin
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.contrib.auth.models import User
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Student, Instructor, Curso
 from django.contrib.auth.models import Group
-from .decorators import group_required
+from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+
+from .decorators import group_required
+from .models import Student, Instructor, Curso, Compra
+
+
+@csrf_exempt
+def verificar_correo(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo', None)
+        if correo:
+            try:
+                user_obj = User.objects.get(email=correo)
+                return JsonResponse({'existe': True})
+            except User.DoesNotExist:
+                return JsonResponse({'existe': False})
+        else:
+            return JsonResponse({'error': 'Correo no proporcionado en la solicitud'}, status=400)
+
+    return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 
 
 def register(request):
@@ -22,7 +39,7 @@ def register(request):
         birthdate = request.POST['birthdate']
 
         if password == password_confirm:
-            if User.objects.filter(username=email).exists():
+            if User.objects.filter(email=email).exists():
                 messages.error(request, 'El correo electrónico ya está en uso')
                 return redirect('index')
             else:
@@ -86,17 +103,24 @@ def index(request):
             return redirect('indexLog')
         elif request.user.groups.filter(name='Instructores').exists():
             return redirect('crearCursos')
-    cursos = Curso.objects.all().order_by('nombre')
-    categorias = Curso.objects.values_list('categoria', flat=True).distinct()
+
+    categorias, cursos = obtener_categorias_cursos_ordenados()
     return render(request, 'index.html', {'cursos': cursos, 'categorias': categorias})
 
 
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def indexLog(request):
-    cursos = Curso.objects.all().order_by('nombre')
-    categorias = Curso.objects.values_list('categoria', flat=True).distinct()
+    categorias, cursos = obtener_categorias_cursos_ordenados()
     return render(request, 'indexLog.html', {'cursos': cursos, 'categorias': categorias})
+
+
+def obtener_categorias_cursos_ordenados():
+    orden_categorias = ['Tecnología', 'Economía', 'Humanidades', 'Medicina', 'Ciencias jurídicas', 'Arquitectura']
+    categorias = list(Curso.objects.values_list('categoria', flat=True).distinct())
+    categorias.sort(key=lambda x: orden_categorias.index(x) if x in orden_categorias else len(orden_categorias))
+    cursos = Curso.objects.all().order_by('nombre')
+    return categorias, cursos
 
 
 @login_required
@@ -109,7 +133,9 @@ def compraCursos(request, curso_id):
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def cursosEstudiante(request):
-    return render(request, 'cursosEstudiante.html')
+    compras = Compra.objects.filter(estudiante_id=request.user.student.id)
+    cursos = [compra.curso for compra in compras]
+    return render(request, 'cursosEstudiante.html', {'cursos': cursos})
 
 
 @login_required
@@ -134,8 +160,8 @@ def crear_curso(request):
         categoria = request.POST['courseCategory']
         duracion = request.POST['courseDuration']
         nivel = request.POST['courseDifficulty']
-        coursePayment = request.POST['coursePayment']
-        precio = request.POST['courseCost'] if coursePayment == 'pago' else 0.0
+        coursepayment = request.POST['coursePayment']
+        precio = request.POST['courseCost'] if coursepayment == 'pago' else 0.0
         curso = Curso(nombre=nombre, descripcion=descripcion, categoria=categoria, duracion=duracion,
                       nivel=nivel, precio=precio, instructor=request.user.instructor)
         curso.save()
@@ -144,6 +170,27 @@ def crear_curso(request):
         return redirect('crearCursos')
     else:
         return render(request, 'crearCurso.html')
+
+
+@login_required
+@group_required('Estudiantes', redirect_route='crearCursos')
+@csrf_exempt
+def procesar_pago(request):
+    if request.method == 'POST':
+        curso_id = request.POST.get('curso_id')
+        estudiante_id = request.POST.get('estudiante_id')
+
+        if Compra.objects.filter(estudiante_id=estudiante_id, curso_id=curso_id).exists():
+            return JsonResponse({'status': 'failed', 'message': 'Ya has comprado este curso'})
+
+        # Si el pago es exitoso, crea una nueva instancia de Compra
+        compra = Compra(estudiante_id=estudiante_id, curso_id=curso_id)
+        compra.save()
+
+        messages.success(request, 'Pago procesado exitosamente')
+        return redirect('cursosEstudiante')
+    else:
+        return JsonResponse({'status': 'failed'})
 
 
 def check_firebase(request):
