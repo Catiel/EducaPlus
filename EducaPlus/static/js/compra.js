@@ -33,6 +33,18 @@ function validateExpiryDate(input) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    var notificationElement = document.getElementById('notificationContent');
+    var notification = new bootstrap.Toast(notificationElement);
+
+    function hideNotification() {
+        notification.hide();
+    }
+
+    function showNotification() {
+        notification.show();
+        setTimeout(hideNotification, 5000); // Oculta la notificación después de 5 segundos
+    }
+
     const form = document.querySelector(".small-form");
     const cardNumberField = document.querySelector("#cardNumber");
     const expiryDateField = document.querySelector("#expiryDate"); // Asegúrate de seleccionar el campo correcto
@@ -72,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 event.preventDefault();
                 event.stopPropagation();
             }
+            showNotification('Compra realizada', '¡Gracias por tu compra!', 'success');
             form.classList.add('was-validated');
         });
     }
