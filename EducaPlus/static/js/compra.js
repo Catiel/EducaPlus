@@ -35,6 +35,14 @@ function validateExpiryDate(input) {
 document.addEventListener("DOMContentLoaded", function () {
         var notificationElement = document.getElementById('notificationContent');
         var notification = new bootstrap.Toast(notificationElement);
+        var cursoPrecio = document.getElementById('curso-precio').value;
+
+        if (cursoPrecio == 0) {
+            document.getElementById('cardName').required = false;
+            document.getElementById('cardNumber').required = false;
+            document.getElementById('expiryDate').required = false;
+            document.getElementById('cvv').required = false;
+        }
 
         function hideNotification() {
             notification.hide();
@@ -87,13 +95,16 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             form.addEventListener("submit", function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
+                if (cursoPrecio != 0) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
                 }
                 showNotification('Compra realizada', '¡Gracias por tu compra!', 'success');
                 form.classList.add('was-validated');
             });
+
         }
     }
 )
