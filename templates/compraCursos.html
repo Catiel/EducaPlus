@@ -23,8 +23,8 @@
                 </div>
                 <div class="form-group" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <label for="cardNumber" class="required">Número tarjeta</label>
-                    <input type="number" class="form-control" id="cardNumber" placeholder="Número de tarjeta" required
-                           step="1">
+                    <input type="text" class="form-control" id="cardNumber" placeholder="Número de tarjeta" required
+                           oninput="validateInput(this)" pattern="\d*">
                 </div>
                 <div class="form-row" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <div class="form-group col-6">

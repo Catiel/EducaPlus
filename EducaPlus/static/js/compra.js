@@ -33,59 +33,66 @@ function validateExpiryDate(input) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    var notificationElement = document.getElementById('notificationContent');
-    var notification = new bootstrap.Toast(notificationElement);
+        var notificationElement = document.getElementById('notificationContent');
+        var notification = new bootstrap.Toast(notificationElement);
 
-    function hideNotification() {
-        notification.hide();
+        function hideNotification() {
+            notification.hide();
+        }
+
+        function showNotification() {
+            notification.show();
+            setTimeout(hideNotification, 5000); // Oculta la notificación después de 5 segundos
+        }
+
+        const form = document.querySelector(".small-form");
+        const cardNumberField = document.querySelector("#cardNumber");
+        const expiryDateField = document.querySelector("#expiryDate"); // Asegúrate de seleccionar el campo correcto
+        const cvvField = document.querySelector("#cvv"); // Asegúrate de seleccionar el campo correcto
+
+        if (form && cardNumberField && expiryDateField && cvvField) { // Asegúrate de que los campos necesarios existan
+            cardNumberField.addEventListener("keypress", function (event) {
+                const char = String.fromCharCode(event.which);
+                if (!/\d/.test(char) || char.toLowerCase() === 'e') {
+                    event.preventDefault();
+                } else {
+                    const cardNumber = (cardNumberField.value + char).replace(/\D/g, '');
+                    if (!luhnCheck(cardNumber)) {
+                        cardNumberField.setCustomValidity("Por favor, introduce un número de tarjeta válido.");
+                    } else {
+                        cardNumberField.setCustomValidity("");
+                    }
+                }
+            });
+
+            expiryDateField.addEventListener("input", function () { // Agrega el evento de entrada al campo de fecha de vencimiento
+                validateExpiryDate(expiryDateField);
+            });
+
+            cvvField.addEventListener("input", function () { // Agrega el evento de entrada al campo CVV
+                const cvv = cvvField.value;
+                if (!cvv.match(/^\d{3,4}$/)) {
+                    cvvField.setCustomValidity("Por favor, introduce un CVV válido de 3 a 4 dígitos.");
+                } else {
+                    cvvField.setCustomValidity("");
+                }
+            });
+
+            cvvField.addEventListener("keypress", function (event) {
+                if (!/\d/.test(String.fromCharCode(event.which))) {
+                    event.preventDefault();
+                }
+            });
+
+            form.addEventListener("submit", function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                showNotification('Compra realizada', '¡Gracias por tu compra!', 'success');
+                form.classList.add('was-validated');
+            });
+        }
     }
-
-    function showNotification() {
-        notification.show();
-        setTimeout(hideNotification, 5000); // Oculta la notificación después de 5 segundos
-    }
-
-    const form = document.querySelector(".small-form");
-    const cardNumberField = document.querySelector("#cardNumber");
-    const expiryDateField = document.querySelector("#expiryDate"); // Asegúrate de seleccionar el campo correcto
-    const cvvField = document.querySelector("#cvv"); // Asegúrate de seleccionar el campo correcto
-
-    if (form && cardNumberField && expiryDateField && cvvField) { // Asegúrate de que los campos necesarios existan
-        cardNumberField.addEventListener("input", function () {
-            const cardNumber = cardNumberField.value.replace(/\D/g, '');
-            if (!luhnCheck(cardNumber)) {
-                cardNumberField.setCustomValidity("Por favor, introduce un número de tarjeta válido.");
-            } else {
-                cardNumberField.setCustomValidity("");
-            }
-        });
-
-        expiryDateField.addEventListener("input", function () { // Agrega el evento de entrada al campo de fecha de vencimiento
-            validateExpiryDate(expiryDateField);
-        });
-
-        cvvField.addEventListener("input", function () { // Agrega el evento de entrada al campo CVV
-            const cvv = cvvField.value;
-            if (!cvv.match(/^\d{3,4}$/)) {
-                cvvField.setCustomValidity("Por favor, introduce un CVV válido de 3 a 4 dígitos.");
-            } else {
-                cvvField.setCustomValidity("");
-            }
-        });
-
-        cvvField.addEventListener("keypress", function (event) {
-            if (!/\d/.test(String.fromCharCode(event.which))) {
-                event.preventDefault();
-            }
-        });
-
-        form.addEventListener("submit", function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            showNotification('Compra realizada', '¡Gracias por tu compra!', 'success');
-            form.classList.add('was-validated');
-        });
-    }
-});
+)
+;
