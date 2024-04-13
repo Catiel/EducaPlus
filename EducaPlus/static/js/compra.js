@@ -55,13 +55,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 const char = String.fromCharCode(event.which);
                 if (!/\d/.test(char) || char.toLowerCase() === 'e') {
                     event.preventDefault();
+                }
+            });
+
+            cardNumberField.addEventListener("input", function () {
+                const cardNumber = cardNumberField.value.replace(/\D/g, '');
+                if (!luhnCheck(cardNumber)) {
+                    cardNumberField.setCustomValidity("Por favor, introduce un número de tarjeta válido.");
                 } else {
-                    const cardNumber = (cardNumberField.value + char).replace(/\D/g, '');
-                    if (!luhnCheck(cardNumber)) {
-                        cardNumberField.setCustomValidity("Por favor, introduce un número de tarjeta válido.");
-                    } else {
-                        cardNumberField.setCustomValidity("");
-                    }
+                    cardNumberField.setCustomValidity("");
                 }
             });
 
