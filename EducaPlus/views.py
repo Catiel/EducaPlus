@@ -1,4 +1,3 @@
-import firebase_admin
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -191,11 +190,3 @@ def procesar_pago(request):
         return redirect('cursosEstudiante')
     else:
         return JsonResponse({'status': 'failed'})
-
-
-def check_firebase(request):
-    try:
-        firebase_admin.get_app()
-        return HttpResponse("Firebase app initialized successfully")
-    except ValueError as e:
-        return HttpResponse(f"Error initializing Firebase app: {e}")
