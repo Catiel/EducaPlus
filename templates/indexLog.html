@@ -2,6 +2,48 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/tarjetasHome.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            toastr.options = {
+                "positionClass": "toast-bottom-right"  // Cambia esto a la posición que prefieras
+                // Aquí puedes agregar más opciones si lo deseas
+            };
+            var cart_count = localStorage.getItem('cart_count');
+            if (cart_count !== null) {
+                $('#cart-count').text(cart_count);
+            }
+            $('.add-to-cart').click(function () {
+                var cursoId = $(this).data('curso-id');
+
+                $.ajax({
+                    data: {
+                        'curso_id': cursoId
+                    },
+                    url: '/añadir_al_carrito/' + cursoId + '/',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success) {
+                            // Aquí puedes actualizar el número de artículos en el carrito en la interfaz de usuario
+                            // Por ejemplo, si tienes un elemento con id 'cart-count', puedes hacer lo siguiente:
+                            localStorage.setItem('cart_count', data.cart_count);
+                            $('#cart-count').text(data.cart_count);
+                            toastr.success('Curso añadido al carrito');
+                        } else {
+                            if (data.error === 'El curso ya está en el carrito') {
+                                toastr.warning('Este curso ya se agregó al carrito');
+                            } else {
+                                toastr.error('Ocurrió un error inesperado');
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <div class="container">
         <h1 id="tit">Categorías</h1>
         <div class="accordion" id="accordionExample">
@@ -38,6 +80,10 @@
                                                     </p>
                                                     <a href="{% url 'compraCursos' curso.id %}"
                                                        class="btn btn-primary buy-button">Comprar</a>
+                                                    <button type="button" class="btn btn-warning add-to-cart"
+                                                            data-curso-id="{{ curso.id }}">
+                                                        Añadir al Carrito
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
