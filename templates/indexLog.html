@@ -9,13 +9,22 @@
     <script>
         $(document).ready(function () {
             toastr.options = {
-                "positionClass": "toast-bottom-right"  // Cambia esto a la posición que prefieras
-                // Aquí puedes agregar más opciones si lo deseas
+                "positionClass": "toast-bottom-right"
             };
-            var cart_count = localStorage.getItem('cart_count');
-            if (cart_count !== null) {
-                $('#cart-count').text(cart_count);
+
+            // Solicita el contador del carrito del servidor
+            $.ajax({
+                url: '/obtener_contador_carrito/',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success) {
+                        $('#cart-count').text(data.cart_count);
+                    } else {
+                        toastr.error('Ocurrió un error inesperado');
             }
+                }
+            });
+
             $('.add-to-cart').click(function () {
                 var cursoId = $(this).data('curso-id');
 
@@ -23,13 +32,11 @@
                     data: {
                         'curso_id': cursoId
                     },
-                    url: '/añadir_al_carrito/' + cursoId + '/',
+                    url: '/add_cart/' + cursoId + '/',
                     dataType: 'json',
                     success: function (data) {
                         if (data.success) {
                             // Aquí puedes actualizar el número de artículos en el carrito en la interfaz de usuario
-                            // Por ejemplo, si tienes un elemento con id 'cart-count', puedes hacer lo siguiente:
-                            localStorage.setItem('cart_count', data.cart_count);
                             $('#cart-count').text(data.cart_count);
                             toastr.success('Curso añadido al carrito');
                         } else {
