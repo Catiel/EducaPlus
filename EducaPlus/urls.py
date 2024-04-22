@@ -16,4 +16,5 @@ urlpatterns = [
     path('crear_curso/', views.crear_curso, name='crear_curso'),
     path('procesar_pago/', views.procesar_pago, name='procesar_pago'),
     path('api/verificar-correo/', views.verificar_correo, name='verificar_correo'),
+    path('login/', views.login_view, name='login'),
 ]
