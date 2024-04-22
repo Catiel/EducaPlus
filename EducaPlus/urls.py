@@ -17,4 +17,5 @@ urlpatterns = [
     path('api/verificar-correo/', views.verificar_correo, name='verificar_correo'),
     path('add_cart/<int:curso_id>/', views.add_cart, name='add_cart'),
     path('obtener_contador_carrito/', views.obtener_contador_carrito, name='obtener_contador_carrito'),
+    path('login/', views.login_view, name='login'),
 ]
