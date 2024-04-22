@@ -199,7 +199,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/login/" method="post">
+                <form action="(%url 'login' %)" id="loginForm" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="loginEmail" class="form-label required">Correo electrónico</label>
@@ -208,10 +208,17 @@
                     </div>
                     <div class="mb-3">
                         <label for="loginPassword" class="form-label required">Contraseña</label>
+                        <div class="input-group">
                         <input type="password" class="form-control" id="loginPassword" name="password"
                                autocomplete="current-password" required>
+                               <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle"><i class="bi bi-eye-fill"></i></button>
+                            </div>
+                        </div>
+                        <a href="/forgot-password/" class="btn btn-link">¿Olvidaste tu contraseña?</a>
                     </div>
-                    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    <button type="submit" class="btn btn-outline-success custom-button">Iniciar sesión</button>
+                    <div id="loginError" class="text-danger mt-2"></div> <!-- Mostrar errores aquí -->
                 </form>
             </div>
         </div>
@@ -482,6 +489,60 @@
             });
         });
     });
+//Ojo de contrase;a login
+document.getElementById('loginPasswordToggle').addEventListener('click', function () {
+    var passwordInput = document.getElementById('loginPassword');
+    var passwordToggleIcon = this.querySelector('i');
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        passwordToggleIcon.classList.remove('bi-eye-fill');
+        passwordToggleIcon.classList.add('bi-eye-slash-fill');
+    } else {
+        passwordInput.type = "password";
+        passwordToggleIcon.classList.remove('bi-eye-slash-fill');
+        passwordToggleIcon.classList.add('bi-eye-fill');
+    }
+});
+
+//Login
+$(document).ready(function(){
+    $('#loginForm').on('submit', function(e){
+        e.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: '/login/',  // La URL de tu vista de Django para el inicio de sesión
+            data: formData,
+            success: function(data){
+                if (data.success) {
+                    // Redireccionar según el tipo de usuario
+                    if (data.userType === 'Instructor') {
+                        window.location.href = '/crearCursos/';
+                    } else if (data.userType === 'Estudiante') {
+                        window.location.href = '/indexLog/';
+                    }
+                } else {
+                    // Mostrar mensaje de error según la respuesta del servidor
+                    if (data.errorType === 'incorrectCredentials') {
+                        $('#loginError').text('Credenciales incorrectas');
+                    } else if (data.errorType === 'emailNotFound') {
+                        $('#loginError').text('Correo electrónico no encontrado');
+                    } else if (data.errorType === 'incorrectPassword') {
+                        $('#loginError').text('Contraseña incorrecta');
+                    }
+                }
+            },
+            error: function(){
+                // Manejar errores de conexión
+                $('#loginError').text('Error de conexión');
+            }
+        });
+    });
+});
+
+
+
+
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
