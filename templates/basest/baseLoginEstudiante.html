@@ -8,6 +8,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -22,6 +26,13 @@
         </form>
         <div>
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/carrito/">
+                        <img src="{% static 'images/cart.svg' %}" alt="Cart Icon" width="25" height="25"
+                             class="d-inline-block align-text-top">
+                        <span id="cart-count">0</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/cursosEstudiante/">Mis cursos</a>
                 </li>
@@ -44,5 +55,25 @@
     </div>
 </nav>
 {% block content %}{% endblock %}
+<script>
+    $(document).ready(function () {
+        toastr.options = {
+            "positionClass": "toast-bottom-right"
+        };
+
+        // Solicita el contador del carrito del servidor
+        $.ajax({
+            url: '/obtener_contador_carrito/',
+            dataType: 'json',
+            success: function (data) {
+                if (data.success) {
+                    $('#cart-count').text(data.cart_count);
+                } else {
+                    toastr.error('Ocurrió un error inesperado');
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

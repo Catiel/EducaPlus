@@ -2,6 +2,35 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/tarjetasHome.css' %}">
+    <script>
+        $(document).ready(function () {
+
+            $('.add-to-cart').click(function () {
+                var cursoId = $(this).data('curso-id');
+
+                $.ajax({
+                    data: {
+                        'curso_id': cursoId
+                    },
+                    url: '/add_cart/' + cursoId + '/',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success) {
+                            // Aquí puedes actualizar el número de artículos en el carrito en la interfaz de usuario
+                            $('#cart-count').text(data.cart_count);
+                            toastr.success('Curso añadido al carrito');
+                        } else {
+                            if (data.error === 'El curso ya está en el carrito') {
+                                toastr.warning('Este curso ya se agregó al carrito');
+                            } else {
+                                toastr.error('Ocurrió un error inesperado');
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <div class="container">
         <h1 id="tit">Categorías</h1>
         <div class="accordion" id="accordionExample">
@@ -38,6 +67,10 @@
                                                     </p>
                                                     <a href="{% url 'compraCursos' curso.id %}"
                                                        class="btn btn-primary buy-button">Comprar</a>
+                                                    <button type="button" class="btn btn-warning add-to-cart"
+                                                            data-curso-id="{{ curso.id }}">
+                                                        Añadir al Carrito
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
