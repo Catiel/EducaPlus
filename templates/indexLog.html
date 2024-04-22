@@ -2,28 +2,8 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/tarjetasHome.css' %}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).ready(function () {
-            toastr.options = {
-                "positionClass": "toast-bottom-right"
-            };
-
-            // Solicita el contador del carrito del servidor
-            $.ajax({
-                url: '/obtener_contador_carrito/',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.success) {
-                        $('#cart-count').text(data.cart_count);
-                    } else {
-                        toastr.error('Ocurrió un error inesperado');
-            }
-                }
-            });
 
             $('.add-to-cart').click(function () {
                 var cursoId = $(this).data('curso-id');
