@@ -85,7 +85,7 @@ DATABASES = {
         'USER': 'educaplus_user',
         'PASSWORD': 'mG9L9tGqwkJQzOlk9RBKxu0dsm5tbeDe',
         'HOST': 'dpg-co7j8h4f7o1s738hv9tg-a.oregon-postgres.render.com',
-        'PORT': '5432'
+        'PORT': '5432',
     }
 }
 
