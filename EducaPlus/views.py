@@ -272,3 +272,8 @@ def obtener_contador_carrito(request):
 
     # Devuelve el contador del carrito como una respuesta JSON
     return JsonResponse({'success': True, 'cart_count': len(cart)})
+
+
+def forgot_password(request):
+    # Aquí irá la lógica para manejar la solicitud de recuperación de contraseña
+    return render(request, 'forgot_password.html')
