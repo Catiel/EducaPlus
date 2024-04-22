@@ -213,21 +213,21 @@ def procesar_pago(request):
 from django.http import JsonResponse
 
 
-def añadir_al_carrito(request, curso_id):
-    # Aquí va la lógica para añadir el curso al carrito
-    # ...
-
+def add_cart(request, curso_id):
     # Obtiene la lista de cursos en el carrito de la sesión
     cart = request.session.get('cart', [])
 
+    # Convierte el ID del curso a una cadena
+    curso_id_str = str(curso_id)
+
     # Verifica si el curso ya está en el carrito
-    if curso_id in cart:
+    if curso_id_str in cart:
         # Si el curso ya está en el carrito, devuelve un error
         return JsonResponse(
             {'success': False, 'error': 'El curso ya está en el carrito'})
 
     # Si el curso no está en el carrito, lo agrega
-    cart.append(curso_id)
+    cart.append(curso_id_str)
     request.session['cart'] = cart
 
     # Incrementa 'cart_count' en la sesión
@@ -238,75 +238,11 @@ def añadir_al_carrito(request, curso_id):
         {'success': True, 'cart_count': request.session['cart_count']})
 
 
-def compraCarrito(request):
-    # Obtiene la lista de ID de cursos en el carrito de la sesión
+
+@login_required
+def obtener_contador_carrito(request):
+    # Obtiene la lista de cursos en el carrito de la sesión
     cart = request.session.get('cart', [])
 
-    # Obtiene los cursos en el carrito de la base de datos
-    cursos_en_carrito = Curso.objects.filter(id__in=cart)
-    total = sum(curso.precio for curso in cursos_en_carrito)
-
-    # Pasa los cursos en el carrito a la plantilla
-    return render(request, 'compraCursosCarrito.html', {'cursos_en_carrito':
-                                                            cursos_en_carrito,
-                                                        'total': total})
-
-
-@login_required
-@group_required('Estudiantes', redirect_route='crearCursos')
-@csrf_exempt
-def procesar_pago_cursos(request):
-    if request.method == 'POST':
-        curso_ids = request.POST.getlist('curso_id')  # Obtiene una lista de ID de cursos
-        estudiante_id = request.POST.get('estudiante_id')
-
-        # Obtiene la lista de cursos en el carrito de la sesión
-        cart = request.session.get('cart', [])
-
-        for curso_id in curso_ids:
-            if Compra.objects.filter(estudiante_id=estudiante_id, curso_id=curso_id).exists():
-                return JsonResponse({'status': 'failed', 'message': 'Ya has comprado uno o más cursos'})
-
-            # Si el pago es exitoso, crea una nueva instancia de Compra
-            compra = Compra(estudiante_id=estudiante_id, curso_id=curso_id)
-            compra.save()
-
-            # Elimina el curso del carrito en la sesión
-            if curso_id in cart:
-                cart.remove(curso_id)
-
-        # Guarda la lista de cursos actualizada en la sesión
-        request.session['cart'] = cart
-        request.session['cart_count'] = len(cart)
-
-        messages.success(request, 'Pago procesado exitosamente')
-        return redirect('cursosEstudiante')  # Redirige al usuario a la vista
-        # de 'miscursos'
-    else:
-        return JsonResponse({'status': 'failed'})
-
-
-
-@login_required
-@csrf_exempt
-def eliminar_curso_carrito(request):
-    if request.method == 'POST':
-        curso_id = request.POST.get('curso_id')  # Obtiene el ID del curso de los datos POST
-
-        # Obtiene la lista de cursos en el carrito de la sesión
-        cart = request.session.get('cart', [])
-
-        # Verifica si el curso está en el carrito
-        if curso_id in cart:
-            # Si el curso está en el carrito, lo elimina
-            cart.remove(curso_id)
-
-            # Guarda la lista de cursos actualizada en la sesión
-            request.session['cart'] = cart
-            request.session['cart_count'] = len(cart)
-
-            return JsonResponse({'success': True, 'cart_count': request.session['cart_count']})
-        else:
-            return JsonResponse({'success': False, 'error': 'El curso no está en el carrito'})
-    else:
-        return JsonResponse({'success': False, 'error': 'Método no permitido'})
+    # Devuelve el contador del carrito como una respuesta JSON
+    return JsonResponse({'success': True, 'cart_count': len(cart)})
