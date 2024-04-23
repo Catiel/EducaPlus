@@ -8,9 +8,12 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from flask import request
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 ###Login
@@ -275,5 +278,20 @@ def obtener_contador_carrito(request):
 
 
 def forgot_password(request):
-    # Aquí irá la lógica para manejar la solicitud de recuperación de contraseña
-    return render(request, 'forgot_password.html')
+     if request.method == 'POST':
+        email = request.POST.get('email', '')
+        # Aquí puedes agregar la lógica para validar el correo electrónico si es necesario
+        
+        # Envía el correo electrónico
+        send_mail(
+            'Restablecer Contraseña',
+            'Aquí va el mensaje para restablecer la contraseña',
+            settings.EMAIL_HOST_USER,  # Remitente
+            [email],  # Destinatario(s)
+            fail_silently=False,
+        )
+        # Redirige o renderiza una página de éxito
+        # Por ejemplo, puedes redirigir a la página de inicio o mostrar un mensaje de éxito
+     return render(request, 'forgot_password.html')
+
+

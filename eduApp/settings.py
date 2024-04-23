@@ -129,3 +129,12 @@ STATICFILES_DIRS = [BASE_DIR / 'EducaPlus' / 'static']
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.example.com'  # Cambia a tu servidor SMTP
+EMAIL_PORT = 587  # Cambia al puerto SMTP correspondiente
+EMAIL_USE_TLS = True  # Usa TLS para conexión segura (si es necesario)
+EMAIL_HOST_USER = 'paogbb2@gmail.com'  # Cambia a tu dirección de correo electrónico
+EMAIL_HOST_PASSWORD = 'ccyw srml sgte jfhm'  # Cambia a tu contraseña de correo electrónico
+
