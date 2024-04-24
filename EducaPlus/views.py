@@ -278,20 +278,7 @@ def obtener_contador_carrito(request):
 
 
 def forgot_password(request):
-     if request.method == 'POST':
-        email = request.POST.get('email', '')
-        # Aquí puedes agregar la lógica para validar el correo electrónico si es necesario
-        
-        # Envía el correo electrónico
-        send_mail(
-            'Restablecer Contraseña',
-            'Aquí va el mensaje para restablecer la contraseña',
-            settings.EMAIL_HOST_USER,  # Remitente
-            [email],  # Destinatario(s)
-            fail_silently=False,
-        )
-        # Redirige o renderiza una página de éxito
-        # Por ejemplo, puedes redirigir a la página de inicio o mostrar un mensaje de éxito
+         
      return render(request, 'forgot_password.html')
 
 
