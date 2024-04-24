@@ -8,7 +8,6 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from flask import request
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
