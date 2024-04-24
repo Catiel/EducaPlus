@@ -18,5 +18,7 @@ urlpatterns = [
     path('add_cart/<int:curso_id>/', views.add_cart, name='add_cart'),
     path('obtener_contador_carrito/', views.obtener_contador_carrito, name='obtener_contador_carrito'),
     path('login/', views.login_view, name='login'),
-    path('forgot-password/', views.forgot_password, name='forgot_password'),
-]
+    path('recuperarContraseña/', views.olvideContraseña, name='olvide_contraseña'),
+    path('correoEnviar/', views.correoEnviar, name='correoEnviar'),
+    path('password_reset_confirm/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    ]
