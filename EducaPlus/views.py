@@ -300,9 +300,10 @@ def correoEnviar(request):
             })
             send_mail(mail_subject, '', 'eduplus720@gmail.com', [email],
                       html_message=message)
-        return render(request, 'index.html')
-    else:
-        return render(request, 'olvideContraseña.html')
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
+    return JsonResponse({'success': False})
 
 
 def password_reset_confirm(request, uidb64, token):
