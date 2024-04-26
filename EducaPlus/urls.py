@@ -18,4 +18,5 @@ urlpatterns = [
     path('add_cart/<int:curso_id>/', views.add_cart, name='add_cart'),
     path('obtener_contador_carrito/', views.obtener_contador_carrito, name='obtener_contador_carrito'),
     path('login/', views.login_view, name='login'),
+    path('api/verificar-correo-teach/', views.verificar_correo_teach, name='verificar_correo_teach'),
 ]
