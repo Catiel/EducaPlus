@@ -86,7 +86,7 @@ if DEVELOPMENT_MODE is True:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'educapluslocal',
             'USER': 'postgres',
-            'PASSWORD': 'S^ExgeKiqpsa$&iNB9a',
+            'PASSWORD': 'admin',
             'HOST': 'localhost',
             'PORT': '5432',
         }
