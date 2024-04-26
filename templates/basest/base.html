@@ -298,45 +298,43 @@
         }
     });
     document.getElementById('register').addEventListener('submit', function (e) {
-        var passwordR = document.getElementById('registerPassword');
-        var passwordConfirmR = document.getElementById('registerPasswordConfirm');
-        var pattern = new RegExp('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{8,}');
-        var error = false;
+    var passwordR = document.getElementById('registerPassword');
+    var passwordConfirmR = document.getElementById('registerPasswordConfirm');
+    var pattern = new RegExp('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{8,}');
+    var error = false;
 
-        if (!pattern.test(passwordR.value)) {
-            passwordR.classList.add('input-error');
-            var errorElement = document.getElementById('registerPasswordError');
-            errorElement.textContent = 'La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial, minimo 8 caracteres y maximo 15';
-            errorElement.style.color = 'red';
-            error = true;
-        } else {
-            passwordR.classList.remove('input-error');
-            document.getElementById('registerPasswordError').textContent = '';
-        }
+    if (!pattern.test(passwordR.value)) {
+        passwordR.classList.add('input-error');
+        var errorElement = document.getElementById('passwordErrorR');
+        errorElement.textContent = 'La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial, minimo 8 caracteres y maximo 15';
+        error = true;
+    } else {
+        passwordR.classList.remove('input-error');
+        document.getElementById('passwordErrorR').textContent = '';
+    }
 
-        if (!pattern.test(passwordConfirmR.value)) {
-            passwordConfirmR.classList.add('input-error');
-            var errorElement = document.getElementById('registerPasswordConfirmError');
-            //errorElement.textContent = 'La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial, minimo 8 caracteres y maximo 15';
-            errorElement.style.color = 'red';
-            error = true;
-        } else {
-            passwordConfirmR.classList.remove('input-error');
-            document.getElementById('registerPasswordConfirmError').textContent = '';
-        }
+    if (!pattern.test(passwordConfirmR.value)) {
+        passwordConfirmR.classList.add('input-error');
+        var errorElement = document.getElementById('passwordConfirmErrorR');
+        errorElement.textContent = 'La contraseña debe tener una mayuscula, una minuscula, un numero y un caracter especial, minimo 8 caracteres y maximo 15';
+        error = true;
+    } else {
+        passwordConfirmR.classList.remove('input-error');
+        document.getElementById('passwordConfirmErrorR').textContent = '';
+    }
 
-        if (passwordR.value !== passwordConfirmR.value) {
-            passwordConfirmR.classList.add('input-error');
-            var errorElement = document.getElementById('registerPasswordConfirmError');
-            errorElement.textContent = 'Las contraseñas no coinciden';
-            errorElement.style.color = 'red';
-            error = true;
-        }
+    if (passwordR.value !== passwordConfirmR.value) {
+        passwordConfirmR.classList.add('input-error');
+        var errorElement = document.getElementById('passwordConfirmErrorR');
+        errorElement.textContent = 'Las contraseñas no coinciden';
+        error = true;
+    }
 
-        if (error) {
-            e.preventDefault();
-        }
-    });
+    if (error) {
+        e.preventDefault();
+    }
+});
+
 
     document.getElementById('teachForm').addEventListener('submit', function (e) {
         var password = document.getElementById('password');
