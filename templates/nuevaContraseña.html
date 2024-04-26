@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Nueva Página</title>
+    <style>
+        /* Estilos para centrar el contenedor */
+        .container {
+            width: 250px;
+            margin: 0 auto;
+            margin-top: 60px; /* Espacio superior para que no esté justo en la parte superior */
+            padding: 30px;
+            border: 1px solid #000000; /* Borde del contenedor */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+        /* Estilos para el formulario */
+        form {
+            text-align: left; /* Alinea el contenido del formulario al centro */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Cambiar Contraseña</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div>
+                <label for="id_new_password">Contraseña nueva:</label><br>
+                <div class="password-input">
+                    <input type="password" id="id_new_password" name="new_password" required>
+                    <i class="fas fa-eye-slash toggle-password"></i>
+                </div>
+            </div>
+            <div>
+                <label for="id_confirm_password">Confirmar contraseña:</label>
+                <div class="password-input">
+                    <input type="password" id="id_confirm_password" name="confirm_password" required>
+                    <i class="fas fa-eye-slash toggle-password"></i>
+                </div>
+            </div>
+            <button type="submit">Confirmar Cambio</button>
+        </form>
+        <p id="success-message" style="display: none; color: green;">La contraseña se cambió exitosamente.</p>
+    </div>
+
+    <script>
+        function validatePasswords() {
+            var newPassword = document.getElementById('id_new_password').value;
+            var confirmPassword = document.getElementById('id_confirm_password').value;
+            if (newPassword !== confirmPassword) {
+                alert("Las contraseñas no coinciden. Por favor, ingreselas nuevamente.");
+                return false;
+            }
+            return true;
+        }
+        document.querySelectorAll('.toggle-password').forEach(function(button) {
+            button.addEventListener('click', function() {
+                var input = this.previousElementSibling;
+                var type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+
+            <button type="submit">Confirmar Cambio</button>
+        });
+        });
+    </script>
+</body>

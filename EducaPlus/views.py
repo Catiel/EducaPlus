@@ -317,8 +317,15 @@ def password_reset_confirm(request, uidb64, token):
 
     if user is not None and default_token_generator.check_token(user, token):
         # El token es válido, mostrar el formulario de restablecimiento de contraseña
-        return render(request, 'index.html', {'validlink': True, 'uid':
+        return render(request, 'nuevaContraseña.html', {'validlink': True, 'uid':
             uidb64, 'token': token})
     else:
         # El token no es válido, mostrar un mensaje de error
-        return render(request, 'index.html', {'validlink': False})
+        return render(request, 'nuevaContraseña.html', {'validlink': False})
+    
+def nuevaContraseña(request):
+    if request.method == 'POST':
+        # Procesar el formulario enviado aquí
+        pass  # Por ahora, solo renderizamos el formulario
+
+    return render(request, 'nuevaContraseña.html')
