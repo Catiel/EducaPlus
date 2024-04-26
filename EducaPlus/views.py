@@ -13,6 +13,7 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
 
 #Verificar correo instructor
+#
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':
