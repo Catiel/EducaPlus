@@ -1,119 +1,119 @@
-{% extends 'basest/base.html' %}
-{% load static %}
-{% block content %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("form").on('submit', function (event) {
-                event.preventDefault();
-                $.ajax({
-                    url: "{% url 'correoEnviar' %}",
-                    type: 'POST',
-                    data: {
-                        email: $('#email').val(),
-                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            // Oculta el formulario
-                            $('.custom-form').hide();
-                            // Muestra el mensaje de éxito
-                            $('.success-message').show();
-                        } else {
-                            // Aquí puedes manejar la respuesta fallida, por ejemplo, mostrando un mensaje de error
-                            alert('Error al enviar el correo');
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-<style>
-    .center-screen {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 50vh;
-    }
-    .custom-form {
-        background-color: #f7f7f7;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .custom-form h2 {
-        color: #333;
-        margin-bottom: 1rem;
-    }
-    .custom-form input[type="email"] {
-        width: 100%;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .custom-form button {
-        width: 100%;
-        padding: 0.5rem;
-        border: none;
-        border-radius: 4px;
-        background-color: var(--blue-chill-500);
-        color: white;
-        cursor: pointer;
-    }
-    .custom-form button:hover {
-        background-color: var(--blue-chill-950);
-    }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambio de Contraseña</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+            margin: 0;
+        }
 
-    /* Estilos para el mensaje de éxito */
-    /* Estilos para el mensaje de éxito */
-    .success-message {
-    background-color: #f2f9f9; /* Color de fondo azul claro */
-    border: 1px solid #1a2c32; /* Borde sólido con color azul oscuro */
-    border-radius: 4px; /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    color: #1a2c32; /* Color de texto azul oscuro */
-    font-family: 'Arial', sans-serif; /* Tipo de letra */
-    padding: 20px; /* Relleno interno */
-    text-align: left; /* Texto alineado a la izquierda */
-    display: flex; /* Uso de Flexbox */
-    flex-direction: column; /* Cambia la dirección del eje principal a columna */
-    justify-content: center; /* Centrado horizontal del contenido */
-    align-items: center; /* Centrado vertical del contenido */
-    height: 25vh; /* Altura reducida */
-    width: 35%; /* Ancho reducido */
-    margin: 10px auto; /* Centrado horizontal y margen superior e inferior */
-}
-.success-message h2 {
-    color: #1a2c32; /* Color de texto azul oscuro */
-    font-size: 1.2rem; /* Tamaño de fuente grande */
-    margin-bottom: 1rem; /* Margen inferior */
-}
-.success-message p {
-    color: #1a2c32; /* Color de texto azul oscuro */
-    font-size: 1rem; /* Tamaño de fuente normal */
-    margin-bottom: 1rem; /* Margen inferior */
-}
-    
+        .container {
+            border-radius: 18px;
+            background: linear-gradient(145deg, #acbaec, #52489d);
+            box-shadow: 7px 7px 15px #2c45f8,
+            -7px -7px 15px #53648a;
+            width: 30vw;
+            height: 30vh;
+            overflow: auto;
+            padding: 20px;
+        }
 
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            text-align: center;
+        }
 
+        label {
+            display: block;
+            margin-bottom: .5em;
+            color: #333;
+            font-size: 1.2em;
+        }
 
-</style>
-<div class="center-screen">
-    <div class="success-message" style="display: none;">
-        <h2>Correo electrónico de restablecimiento de contraseña enviado</h2>
-        <p>Pronto recibirás un correo electrónico para restablecer tu contraseña. Si no lo encuentras, comprueba la
-            carpeta de correo no deseado y la papelera.</p>
-    </div>
-    <!-- Muestra el formulario si mensaje_enviado es False -->
-    <div class="custom-form">
-        <h2>¿Has olvidado la contraseña?</h2>
-        <form method="post">
-            {% csrf_token %}
-            <input type="email" id="email" name="email" placeholder="Correo electrónico" aria-label="Correo electrónico"
-                   required>
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 10px 50px 10px 10px;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1.2em;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-100%);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Cambiar contraseña</h2>
+    <form>
+        <div class="mb-4">
+            <label for="new-password">Contraseña nueva*</label>
+            <div class="password-container">
+                <input id="new-password" type="password" required>
+                <span onclick="togglePasswordVisibility('new-password')" class="eye-icon">🔑</span>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label for="confirm-password">Confirmar contraseña*</label>
+            <div class="password-container">
+                <input id="confirm-password" type="password" required>
+                <span onclick="togglePasswordVisibility('confirm-password')" class="eye-icon">🔑</span>
+            </div>
+        </div>
+        <button type="submit" class="btn">Confirmar cambio</button>
+    </form>
 </div>
-{% endblock %}
+
+<script>
+    function togglePasswordVisibility(id) {
+        var passwordInput = document.getElementById(id);
+        var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        // Cambia el ícono dependiendo del estado de visibilidad
+        var eyeIcon = passwordInput.nextElementSibling;
+        eyeIcon.textContent = type === 'password' ? '🔑' : '🚫';
+    }
+</script>
+
+</body>
+</html>
