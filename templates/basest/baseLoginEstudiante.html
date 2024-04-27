@@ -58,7 +58,9 @@
 <script>
     $(document).ready(function () {
         toastr.options = {
-            "positionClass": "toast-bottom-right"
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": true,
+            "newestOnTop": false
         };
 
         // Solicita el contador del carrito del servidor
