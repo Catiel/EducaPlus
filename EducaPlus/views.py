@@ -12,7 +12,24 @@ from django.views.decorators.csrf import csrf_exempt
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
 
+#Verificar correo instructor
+#
+@csrf_exempt
+def verificar_correo_teach(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo', None)
+        if correo:
+            try:
+                user_obj = User.objects.get(email=correo)
+                return JsonResponse({'existe': True})
+            except User.DoesNotExist:
+                return JsonResponse({'existe': False})
+        else:
+            return JsonResponse(
+                {'error': 'Correo no proporcionado en la solicitud'},
+                status=400)
 
+    return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 ###Login
 ##@csrf_exempt
 def login_view(request):
@@ -37,7 +54,7 @@ def login_view(request):
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
 ###################
-
+#verificar correo estudiante
 @csrf_exempt
 def verificar_correo(request):
     if request.method == 'POST':
