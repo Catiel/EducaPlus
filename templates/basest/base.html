@@ -107,6 +107,7 @@
                     <div class="text-center">
                         <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
                     </div>
+                    <div id="successMessage" class="text-success text-center"></div>
                 </form>
             </div>
         </div>
@@ -186,6 +187,7 @@
                     <div class="text-center">
                         <button type="submit" class="btn btn-outline-success custom-button">Registrase</button>
                     </div>
+                    <div id="successMessageTeach" class="text-success text-center"></div>
                 </form>
             </div>
         </div>
@@ -392,9 +394,6 @@
         return true;
     }
 }
-
-
-
     function validatePassword(passwordElement, confirmPasswordElement) {
         var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,15}$/;
         var password = passwordElement.val();
@@ -482,15 +481,15 @@
         });
     });
     //verificar correo existente instructor
-$(document).ready(function () {
+    $(document).ready(function () {
     $('#teachForm').on('submit', function (e) {
         e.preventDefault(); // Evitar el envío del formulario por defecto
         var correo = $('#teachEmail').val();
         var allValidationsPassed = true; // Flag para verificar si todas las validaciones son exitosas
 
-        // Validación del correo electrónic
+        // Validación del correo electrónico
         $.ajax({
-            url: '/api/verificar-correo-teach/',  // Endpoint para verificar correo de instructor
+            url: '/api/verificar-correo-teach/',  // URL de la vista de Django para verificar correo
             method: 'POST',
             data: {correo: correo},
             success: function (response) {
@@ -523,84 +522,70 @@ $(document).ready(function () {
             }
         });
     });
-});
-document.addEventListener('DOMContentLoaded', function () {
-    var nameInput = document.getElementById('name');
-    var surnameInput = document.getElementById('surname');
-    var form = document.getElementById('teachForm');
-
-    form.addEventListener('submit', function (e) {
-        var nameValid = validateInput(nameInput, 'El nombre debe tener entre 2 y 20 caracteres y solo letras.');
-        var surnameValid = validateInput(surnameInput, 'El apellido debe tener entre 2 y 20 caracteres y solo letras.');
-
-        if (!nameValid || !surnameValid) {
-            e.preventDefault();
-        }
-    });
 
     function validateInput(inputElement, errorMessage) {
-        var errorElement = document.getElementById(inputElement.id + 'Error');
-        if (!errorElement) {
-            errorElement = document.createElement('div');
-            errorElement.style.color = 'red';
-            errorElement.id = inputElement.id + 'Error';
-            inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
-        }
+    var errorElement = $('#' + inputElement.attr('id') + 'Error');
+    var pattern = /^[a-zA-ZñÑ\s]{2,20}$/;
+    var trimmedValue = inputElement.val().trim(); //
 
-        var trimmedValue = inputElement.value.trim(); 
-        if (!trimmedValue) {
-            errorMessage = 'Este campo es obligatorio.';
-        } else {
-            var pattern = /^[a-zA-ZñÑ\s]{2,20}$/;
-            if (!pattern.test(trimmedValue)) {
-                errorMessage = 'El nombre debe tener entre 2 y 20 caracteres y solo letras.';
-            } else {
-                errorMessage = ''; 
-            }
-        }
-
-        errorElement.textContent = errorMessage; 
-        if (errorMessage) {
-            inputElement.dataset.valid = 'false';
-            return false;
-        } else {
-            inputElement.dataset.valid = 'true';
-            return true;
-        }
-    }
-});
-document.getElementById('teachForm').addEventListener('submit', function (e) {
-    var password = document.getElementById('password');
-    var passwordConfirm = document.getElementById('passwordConfirm');
-    var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,15}$/;
-    var error = false;
-
-    if (!pattern.test(password.value)) {
-        password.classList.add('input-error');
-        document.getElementById('passwordError').textContent = 'La contraseña debe tener una mayúscula, una minúscula, un número y un carácter especial, mínimo 8 caracteres y máximo 15';
-        error = true;
+    if (!trimmedValue) {
+        errorMessage = 'Este campo es obligatorio.';
+    } else if (!pattern.test(trimmedValue)) {
+        errorMessage = 'Debe tener entre 2 y 20 caracteres y solo letras.';
     } else {
-        password.classList.remove('input-error');
-        document.getElementById('passwordError').textContent = '';
+        errorMessage = ''; 
     }
 
-    if (!pattern.test(passwordConfirm.value)) {
-        passwordConfirm.classList.add('input-error');
-        document.getElementById('passwordConfirmError').textContent = 'La contraseña debe tener una mayúscula, una minúscula, un número y un carácter especial, mínimo 8 caracteres y máximo 15';
-        error = true;
+    // Buscar el elemento error por su ID
+    if (!errorElement.length) {
+        errorElement = $('<div class="error-message"></div>'); // Crear el elemento si no existe
+        errorElement.attr('id', inputElement.attr('id') + 'Error');
+        inputElement.after(errorElement); // Insertar después del input
+    }
+
+    errorElement.text(errorMessage); // Actualizar el mensaje de error
+
+    if (errorMessage) {
+        inputElement.addClass('input-error');
+        errorElement.css('color', 'red'); 
+        return false;
     } else {
-        passwordConfirm.classList.remove('input-error');
-        document.getElementById('passwordConfirmError').textContent = '';
+        inputElement.removeClass('input-error');
+        errorElement.css('color', '');
+        return true;
     }
+}
+    function validatePassword(passwordElement, confirmPasswordElement) {
+        var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,15}$/;
+        var password = passwordElement.val();
+        var confirmPassword = confirmPasswordElement.val();
+        var error = false;
 
-    if (password.value !== passwordConfirm.value) {
-        passwordConfirm.classList.add('input-error');
-        document.getElementById('passwordConfirmError').textContent = 'Las contraseñas no coinciden';
-        error = true;
-    }
+        if (!pattern.test(password)) {
+            passwordElement.addClass('input-error');
+            $('#passwordError').text('Debe tener una mayúscula, una minúscula, un número y un carácter especial, mínimo 8 caracteres y máximo 15.').css('color', 'red');
+            error = true;
+        } else {
+            passwordElement.removeClass('input-error');
+            $('#passwordError').text('').css('color', 'red');
+        }
 
-    if (error) {
-        e.preventDefault();
+        if (!pattern.test(confirmPassword)) {
+            confirmPasswordElement.addClass('input-error');
+            $('#passwordConfirmError').text('Debe tener una mayúscula, una minúscula, un número y un carácter especial, mínimo 8 caracteres y máximo 15.').css('color', 'red');
+            error = true;
+        } else {
+            confirmPasswordElement.removeClass('input-error');
+            $('#passwordConfirmError').text('').css('color', 'red');
+        }
+
+        if (password !== confirmPassword) {
+            confirmPasswordElement.addClass('input-error');
+            $('#passwordConfirmError').text('Las contraseñas no coinciden').css('color', 'red');
+            error = true;
+        }
+
+        return !error; 
     }
 });
 ////mensaje de registro exitoso
