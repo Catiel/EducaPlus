@@ -10,7 +10,8 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from .decorators import group_required
-from .models import Student, Instructor, Curso, Compra
+from .models import Student, Instructor, Curso, Compra, Cart
+
 
 #Verificar correo instructor
 #
@@ -30,6 +31,8 @@ def verificar_correo_teach(request):
                 status=400)
 
     return JsonResponse({'error': 'Solicitud inválida'}, status=400)
+
+
 ###Login
 ##@csrf_exempt
 def login_view(request):
@@ -53,6 +56,8 @@ def login_view(request):
             except User.DoesNotExist:
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
+
+
 ###################
 #verificar correo estudiante
 @csrf_exempt
@@ -256,36 +261,32 @@ def procesar_pago(request):
 from django.http import JsonResponse
 
 
+@login_required
 def add_cart(request, curso_id):
-    # Obtiene la lista de cursos en el carrito de la sesión
-    cart = request.session.get('cart', [])
+    # Obtiene el carrito de compras del usuario actual
+    cart, created = Cart.objects.get_or_create(student=request.user.student)
 
-    # Convierte el ID del curso a una cadena
-    curso_id_str = str(curso_id)
+    # Obtiene el curso que se va a agregar al carrito
+    curso = get_object_or_404(Curso, id=curso_id)
 
     # Verifica si el curso ya está en el carrito
-    if curso_id_str in cart:
+    if cart.courses.filter(id=curso_id).exists():
         # Si el curso ya está en el carrito, devuelve un error
         return JsonResponse(
             {'success': False, 'error': 'El curso ya está en el carrito'})
 
     # Si el curso no está en el carrito, lo agrega
-    cart.append(curso_id_str)
-    request.session['cart'] = cart
+    cart.add_course(curso)
 
-    # Incrementa 'cart_count' en la sesión
-    request.session['cart_count'] = len(cart)
-
-    # Y luego devuelves una respuesta JSON
+    # Devuelve una respuesta JSON con el número de cursos en el carrito
     return JsonResponse(
-        {'success': True, 'cart_count': request.session['cart_count']})
-
+        {'success': True, 'cart_count': cart.courses.count()})
 
 
 @login_required
 def obtener_contador_carrito(request):
-    # Obtiene la lista de cursos en el carrito de la sesión
-    cart = request.session.get('cart', [])
+    # Obtiene el carrito de compras del usuario actual
+    cart, created = Cart.objects.get_or_create(student=request.user.student)
 
     # Devuelve el contador del carrito como una respuesta JSON
-    return JsonResponse({'success': True, 'cart_count': len(cart)})
+    return JsonResponse({'success': True, 'cart_count': cart.courses.count()})
