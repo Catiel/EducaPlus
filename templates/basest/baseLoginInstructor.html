@@ -8,39 +8,112 @@
     <link rel="icon" href="{% static 'images/icon.jpg' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
+    <!-- Enlace al archivo de iconos de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
-    <div class="container-fluid d-flex justify-content-between">
-        <form class="d-flex" action="/search" method="get">
-            <input class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..."
-                   aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
-        </form>
-        <div>
-            <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
-                <li class="nav-item">
-                    <a href="{% url 'crearDatosCursos' %}" class="btn btn-outline-success custom-button">Nuevo curso</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{% static 'images/person-circle.svg' %}" alt="User Icon" width="25" height="25"
-                             class="d-inline-block align-text-top">
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><button class="dropdown-item text-dark" >Perfil</button></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item text-dark" href="/logout">Cerrar sesión</a></li>
-                    </ul>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
+        <div class="container-fluid d-flex justify-content-between">
+            <form class="d-flex" action="/search" method="get">
+                <input class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..."
+                    aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+            <div>
+                <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item">
+                        <a href="{% url 'crearDatosCursos' %}" class="btn btn-outline-success custom-button">Nuevo curso</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% static 'images/person-circle.svg' %}" alt="User Icon" width="25" height="25"
+                                class="d-inline-block align-text-top">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#dialogo2">Ver perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-dark" href="/logout">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+    <!-- Editar datos personales del instructor-->
+    <div class="modal fade" id="dialogo2">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="exModalLabel">Editar perfil</h5>
+                    <button type="button" class="btn-close" name="button" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form>
+                            <div class="row mb-3">
+                                <label class="col-md-3 col-form-label visually-hidden">
+                                    DATOS PERSONALES
+                                </label>
+                                <div class="col-9 col-md-7 offset-md-0 d-flex align-items-center justify-content-end">
+                                    <div class="profile-icon-container position-relative">
+                                        <i class="bi bi-person-circle bi-lg icono-perfil" style="font-size: 100px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="firstName" class="form-label">Nombre*:</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" value="{{ instructor.first_name }}" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="lastName" class="form-label">Apellidos*:</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" value="{{ instructor.last_name }}" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="dob" class="form-label">Fecha de nacimiento*:</label>
+                                    <input type="date" class="form-control" id="dob" name="dob" value="{{ instructor.date_of_birth|date:'Y-m-d' }}" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="specialization" class="form-label">Área de especialización*:</label>
+                                    <select id="specialization" name="specialization" class="form-select" required>
+                                        <option value="Economia" selected>Economía</option>
+                                        <option value="Tecnologia">Tecnología</option>
+                                        <option value="Humanidades">Humanidades</option>
+                                        <option value="Medicina">Medicina</option>
+                                        <option value="Ciencias Juridicas">Ciencias Jurídicas</option>
+                                        <option value="Arquitectura">Arquitectura</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md text-center">
+                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</nav>
-{% block content %}{% endblock %}
+
 </body>
+
 </html>

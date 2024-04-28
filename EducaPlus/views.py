@@ -1,3 +1,4 @@
+from multiprocessing import context
 import firebase_admin
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -199,3 +200,37 @@ def check_firebase(request):
         return HttpResponse("Firebase app initialized successfully")
     except ValueError as e:
         return HttpResponse(f"Error initializing Firebase app: {e}")
+
+#captura de datos
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Student
+
+@login_required
+def editar_perfil(request):
+    if request.method == 'POST':
+        # Obtener el estudiante actual
+        estudiante = request.user.student
+
+        # Actualizar los datos del usuario
+        estudiante.nombre = request.POST['nombre']
+        estudiante.apellido = request.POST['apellido']
+        estudiante.fecha_nacimiento = request.POST['fecha_nacimiento']
+        estudiante.save()
+
+        # Agregar mensaje de éxito
+        messages.success(request, '¡Los cambios se guardaron correctamente!')
+
+        # Redirigir al usuario a la página de inicio
+        return redirect('/indexLog/')
+
+    else:
+        # Obtener el estudiante actual
+        estudiante = request.user.student
+
+        # Renderizar el formulario de edición de perfil con los datos actuales del estudiante
+        return render(request, 'basePerfilEstudiante.html', {'estudiante': estudiante})
+    
+    
+ # Captura sw satos del instructor
