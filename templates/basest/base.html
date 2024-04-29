@@ -206,17 +206,19 @@
                     <div class="mb-3">
                         <label for="loginEmail" class="form-label required">Correo electrónico</label>
                         <input type="email" class="form-control" id="loginEmail" name="email" autocomplete="email"
-                               required>
+                               >
+                        <span id="emailErrorL" class="error-message"></span>
                     </div>
                     <div class="mb-3">
                         <label for="loginPassword" class="form-label required">Contraseña</label>
                         <div class="input-group">
                         <input type="password" class="form-control" id="loginPassword" name="password"
-                               autocomplete="current-password" required>
+                               autocomplete="current-password" >
                                <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle"><i class="bi bi-eye-fill"></i></button>
                             </div>
                         </div>
+                        <span id="passwordErrorL" class="error-message"></span><br>
                         <a href="/forgot-password/" class="btn btn-link">¿Olvidaste tu contraseña?</a>
                     </div>
                     <button type="submit" class="btn btn-outline-success custom-button">Iniciar sesión</button>
@@ -447,39 +449,64 @@
     
     //Login
     $(document).ready(function(){
-        $('#loginForm').on('submit', function(e){
-            e.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                type: 'POST',
-                url: '/login/',  // La URL de tu vista de Django para el inicio de sesión
-                data: formData,
-                success: function(data){
-                    if (data.success) {
-                        // Redireccionar según el tipo de usuario
-                        if (data.userType === 'Instructor') {
-                            window.location.href = '/crearCursos/';
-                        } else if (data.userType === 'Estudiante') {
-                            window.location.href = '/indexLog/';
-                        }
-                    } else {
-                        // Mostrar mensaje de error según la respuesta del servidor
-                        if (data.errorType === 'incorrectCredentials') {
-                            $('#loginError').text('Credenciales incorrectas');
-                        } else if (data.errorType === 'emailNotFound') {
-                            $('#loginError').text('Correo electrónico no encontrado');
-                        } else if (data.errorType === 'incorrectPassword') {
-                            $('#loginError').text('Contraseña incorrecta');
-                        }
+    $('#loginForm').on('submit', function(e){
+        e.preventDefault();
+
+        // Validación de campos
+        var emailInput = $('#loginEmail').val();
+        var passwordInput = $('#loginPassword').val();
+        var errorText = '';
+
+        if (emailInput.trim() === '') {
+            $('#emailErrorL').text('Este campo es obligatorio').css('color', 'red');
+            errorText += 'Este campo es obligatorio\n';
+        } else {
+            $('#emailErrorL').text(''); // Limpiar mensaje de error
+        }
+        if (passwordInput.trim() === '') {
+            $('#passwordErrorL').text('Este campo es obligatorio').css('color', 'red');
+            errorText += 'Este campo es obligatorio\n';
+        } else {
+            $('#passwordErrorL').text(''); // Limpiar mensaje de error
+        }
+
+        // Si hay errores, detener el envío del formulario
+        if (errorText !== '') {
+            return;
+        }
+
+        // Si la validación pasa, continuar con la solicitud AJAX
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: '/login/',
+            data: formData,
+            success: function(data){
+                if (data.success) {
+                    // Redireccionar según el tipo de usuario
+                    if (data.userType === 'Instructor') {
+                        window.location.href = '/crearCursos/';
+                    } else if (data.userType === 'Estudiante') {
+                        window.location.href = '/indexLog/';
                     }
-                },
-                error: function(){
-                    // Manejar errores de conexión
-                    $('#loginError').text('Error de conexión');
+                } else {
+                    // Mostrar mensaje de error según la respuesta del servidor
+                    if (data.errorType === 'incorrectCredentials') {
+                        $('#loginError').text('Credenciales incorrectas');
+                    } else if (data.errorType === 'emailNotFound') {
+                        $('#loginError').text('Correo electrónico no encontrado');
+                    } else if (data.errorType === 'incorrectPassword') {
+                        $('#loginError').text('Contraseña incorrecta');
+                    }
                 }
-            });
+            },
+            error: function(){
+                // Manejar errores de conexión
+                $('#loginError').text('Error de conexión');
+            }
         });
     });
+});
     //verificar correo existente instructor
     $(document).ready(function () {
     $('#teachForm').on('submit', function (e) {
