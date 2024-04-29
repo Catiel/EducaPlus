@@ -207,6 +207,7 @@
                         <label for="loginEmail" class="form-label required">Correo electrónico</label>
                         <input type="email" class="form-control" id="loginEmail" name="email" autocomplete="email"
                                required>
+                        <div id="emailError" class="text-danger mt-1"></div> <!-- Mensaje de error para el correo -->
                     </div>
                     <div class="mb-3">
                         <label for="loginPassword" class="form-label required">Contraseña</label>
@@ -217,6 +218,7 @@
                                 <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle"><i class="bi bi-eye-fill"></i></button>
                             </div>
                         </div>
+                        <div id="passwordError" class="text-danger mt-1"></div> <!-- Mensaje de error para la contraseña -->
                         <a href="/forgot-password/" class="btn btn-link">¿Olvidaste tu contraseña?</a>
                     </div>
                     <button type="submit" class="btn btn-outline-success custom-button">Iniciar sesión</button>
@@ -447,39 +449,46 @@
     
     //Login
     $(document).ready(function(){
-        $('#loginForm').on('submit', function(e){
-            e.preventDefault();
+    $('#loginForm').on('submit', function(e){
+        e.preventDefault();
+        var emailValue = $('#loginEmail').val().trim(); // Obtener el valor del correo sin espacios al inicio y final
+        var passwordValue = $('#loginPassword').val().trim(); // Obtener el valor de la contraseña sin espacios al inicio y final
+        var formValid = true; // Variable para verificar si el formulario es válido
+
+        // Validar correo electrónico
+        if(emailValue === '') {
+            $('#emailError').text('Este campo es obligatorio').show();
+            formValid = false; // Marcar el formulario como inválido
+        } else {
+            $('#emailError').text('').hide(); // Limpiar y ocultar el mensaje de error si el campo es válido
+        }
+
+        // Validar contraseña
+        if(passwordValue === '') {
+            $('#passwordError').text('Este campo es obligatorio').show();
+            formValid = false; // Marcar el formulario como inválido
+        } else {
+            $('#passwordError').text('').hide(); // Limpiar y ocultar el mensaje de error si el campo es válido
+        }
+
+        // Si el formulario es válido, continuar con la solicitud AJAX
+        if(formValid) {
             var formData = $(this).serialize();
             $.ajax({
                 type: 'POST',
-                url: '/login/',  // La URL de tu vista de Django para el inicio de sesión
+                url: '/login/',
                 data: formData,
                 success: function(data){
-                    if (data.success) {
-                        // Redireccionar según el tipo de usuario
-                        if (data.userType === 'Instructor') {
-                            window.location.href = '/crearCursos/';
-                        } else if (data.userType === 'Estudiante') {
-                            window.location.href = '/indexLog/';
-                        }
-                    } else {
-                        // Mostrar mensaje de error según la respuesta del servidor
-                        if (data.errorType === 'incorrectCredentials') {
-                            $('#loginError').text('Credenciales incorrectas');
-                        } else if (data.errorType === 'emailNotFound') {
-                            $('#loginError').text('Correo electrónico no encontrado');
-                        } else if (data.errorType === 'incorrectPassword') {
-                            $('#loginError').text('Contraseña incorrecta');
-                        }
-                    }
+                    // Manejar la respuesta del servidor según sea necesario
                 },
                 error: function(){
-                    // Manejar errores de conexión
                     $('#loginError').text('Error de conexión');
                 }
             });
-        });
+        }
     });
+});
+
     //verificar correo existente instructor
     $(document).ready(function () {
     $('#teachForm').on('submit', function (e) {
