@@ -2,6 +2,8 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/tarjetasHome.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/egg.js/1.0/egg.min.js"></script>
     <div class="container">
         <h1 id="tit">Categorías</h1>
         <div class="accordion" id="accordionExample">
@@ -67,4 +69,27 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <!-- Giphy Container -->
+    <div id="giphy-container" style="display: none;">
+        <iframe id="giphy-iframe" width="100%" height="100%" src="https://giphy.com/embed/Ju7l5y9osyymQ"
+                frameborder="0" class="giphy-embed" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var egg = new Egg();
+            egg
+                .addCode("up,up,down,down,left,right,left,right,b,a", function () {
+                    // Mostrar el contenedor del GIF
+                    document.getElementById('giphy-container').style.display = 'flex';
+                })
+                .listen();
+
+            // Ocultar el contenedor del GIF cuando se hace clic en él
+            document.getElementById('giphy-container').addEventListener('click', function () {
+                this.style.display = 'none';
+            });
+        });
+    </script>
 {% endblock %}
