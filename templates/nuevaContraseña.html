@@ -172,7 +172,6 @@
         var passwordInput = document.getElementById(id);
         var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
-        // Cambia el ícono dependiendo del estado de visibilidad
         var eyeIcon = passwordInput.nextElementSibling;
         eyeIcon.className = 'eye-icon ' + (type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash');
     }
@@ -180,47 +179,40 @@
     function validatePassword() {
         var passwordInput = document.getElementById('new-password');
         var password = passwordInput.value;
-
-        // Obtener todos los mensajes de validación
         var validationMessages = document.querySelectorAll('.validation-message');
 
-        // Ocultar todos los mensajes de validación
         validationMessages.forEach(function (message) {
             message.classList.remove('active');
         });
 
-
-        // Verificar que la contraseña contenga al menos una letra mayúscula
         if (!/[A-Z]/.test(password)) {
+
             document.getElementById('uppercase-validation').classList.add('active');
             return;
         }
-
-        // Verificar que la contraseña contenga al menos una letra minúscula
         if (!/[a-z]/.test(password)) {
+
             document.getElementById('lowercase-validation').classList.add('active');
             return;
         }
-
-        // Verificar que la contraseña contenga al menos un número
         if (!/[0-9]/.test(password)) {
+
             document.getElementById('number-validation').classList.add('active');
             return;
         }
-
-        // Verificar que la contraseña contenga al menos un carácter especial
         if (!/[!@#$%^&*]/.test(password)) {
+
             document.getElementById('special-character-validation').classList.add('active');
             return;
         }
-
-        // Verificar la longitud de la contraseña
         if (password.length < 8 || password.length > 128) {
             document.getElementById('length-validation').classList.add('active');
             return;
         }
-        // Llamar a la función de validación de confirmación de contraseña
+
         validateConfirmPassword();
+        validatePasswordSim();
+        updateSubmitButtonState();
     }
 
     function validateConfirmPassword() {
@@ -229,27 +221,27 @@
         var password = passwordInput.value;
         var confirmPassword = confirmPasswordInput.value;
 
-        // Verificar que las contraseñas coincidan
         if (password && confirmPassword && password !== confirmPassword) {
             document.getElementById('match-validation').classList.add('active');
         } else {
             document.getElementById('match-validation').classList.remove('active');
         }
+        updateSubmitButtonState();
     }
 
     function validatePasswordSim() {
         var passwordInput = document.getElementById('new-password');
         var password = passwordInput.value;
-
-        // Obtener todos los mensajes de validación
         var validationMessages = document.querySelectorAll('.validation-message');
 
-        // Ocultar todos los mensajes de validación
-        validationMessages.forEach(function (message) {
-            message.classList.remove('active');
+        var isValid = Array.from(validationMessages).every(function (message) {
+            return !message.classList.contains('active');
         });
 
-        // Verificar que la nueva contraseña no sea la misma que la antigua
+        if (!isValid) {
+            return;
+        }
+
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/check_same_password/', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -258,30 +250,47 @@
                 var response = JSON.parse(this.responseText);
                 if (response.same_password) {
                     document.getElementById('same-password-validation').classList.add('active');
+                } else {
+                    document.getElementById('same-password-validation').classList.remove('active');
                 }
+                updateSubmitButtonState(); // Llamar a updateSubmitButtonState() aquí
             }
         }
-        var uidb64 = "{{ uid }}"; // Reemplaza 'tu-uidb64' con el valor real de uidb64
+        var uidb64 = "{{ uid }}";
         xhr.send('new_password=' + encodeURIComponent(password) + '&uidb64=' + encodeURIComponent(uidb64));
-
-        // ... Resto de tu código de validación ...
     }
 
-    document.getElementById('new-password').addEventListener('keyup', function () {
-        // Primero, valida los patrones de la contraseña
-        validatePassword();
-
-        // Luego, si la contraseña cumple con todos los patrones, verifica si es la misma que la antigua
+    function updateSubmitButtonState() {
         var validationMessages = document.querySelectorAll('.validation-message');
-        var isValid = true;
-        validationMessages.forEach(function (message) {
-            if (message.classList.contains('active')) {
-                isValid = false;
-            }
+        var isValid = Array.from(validationMessages).every(function (message) {
+            return !message.classList.contains('active');
+        });
+        document.querySelector('.btn').disabled = !isValid;
+    }
+
+    document.getElementById('new-password').addEventListener('input', function () {
+        validatePassword();
+        validatePasswordSim()
+    });
+
+    document.getElementById('confirm-password').addEventListener('input', function () {
+        validateConfirmPassword();
+        validatePasswordSim();
+    });
+
+    document.getElementById('new-password').addEventListener('keyup', function () {
+        validatePassword();
+        var validationMessages = document.querySelectorAll('.validation-message');
+        var isValid = Array.from(validationMessages).every(function (message) {
+            return !message.classList.contains('active');
         });
         if (isValid) {
             validatePasswordSim();
         }
+    });
+
+    document.getElementById('confirm-password').addEventListener('keyup', function () {
+        validateConfirmPassword();
     });
 </script>
 
