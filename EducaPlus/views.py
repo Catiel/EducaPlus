@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import (authenticate, get_user_model, login, logout)
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
@@ -323,7 +323,6 @@ def password_reset_confirm(request, uidb64, token):
     else:
         # El token no es válido, mostrar un mensaje de error
         return render(request, 'nuevaContraseña.html', {'validlink': False})
-    
 
 
 def change_password(request, uidb64):
@@ -336,9 +335,31 @@ def change_password(request, uidb64):
 
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = get_user_model().objects.get(pk=uid)
+
+        # Verifica que la nueva contraseña no sea la misma que la antigua
+        if check_password(new_password, user.password):
+            return HttpResponse('La nueva contraseña no puede ser la misma que la antigua', status=400)
+
         user.password = make_password(new_password)
         user.save()
 
         return HttpResponse('Contraseña actualizada con éxito')
 
     return HttpResponse('Método no permitido', status=405)
+
+
+@csrf_exempt
+def check_same_password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        uidb64 = request.POST.get('uidb64')
+
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+
+        if check_password(new_password, user.password):
+            return JsonResponse({'same_password': True})
+        else:
+            return JsonResponse({'same_password': False})
+
+    return JsonResponse({'error': 'Invalid method'}, status=405)

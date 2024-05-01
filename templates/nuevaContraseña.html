@@ -148,6 +148,9 @@
                 <li id="special-character-validation" class="validation-message">La contraseña debe contener al menos un
                     carácter especial
                 </li>
+                <li id="same-password-validation" class="validation-message">La nueva contraseña no puede ser la misma
+                    que la antigua
+                </li>
             </ul>
         </div>
         <div class="mb-4">
@@ -234,8 +237,52 @@
         }
     }
 
-    document.getElementById('new-password').addEventListener('keyup', validatePassword);
-    document.getElementById('confirm-password').addEventListener('keyup', validateConfirmPassword);
+    function validatePasswordSim() {
+        var passwordInput = document.getElementById('new-password');
+        var password = passwordInput.value;
+
+        // Obtener todos los mensajes de validación
+        var validationMessages = document.querySelectorAll('.validation-message');
+
+        // Ocultar todos los mensajes de validación
+        validationMessages.forEach(function (message) {
+            message.classList.remove('active');
+        });
+
+        // Verificar que la nueva contraseña no sea la misma que la antigua
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/check_same_password/', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                var response = JSON.parse(this.responseText);
+                if (response.same_password) {
+                    document.getElementById('same-password-validation').classList.add('active');
+                }
+            }
+        }
+        var uidb64 = "{{ uid }}"; // Reemplaza 'tu-uidb64' con el valor real de uidb64
+        xhr.send('new_password=' + encodeURIComponent(password) + '&uidb64=' + encodeURIComponent(uidb64));
+
+        // ... Resto de tu código de validación ...
+    }
+
+    document.getElementById('new-password').addEventListener('keyup', function () {
+        // Primero, valida los patrones de la contraseña
+        validatePassword();
+
+        // Luego, si la contraseña cumple con todos los patrones, verifica si es la misma que la antigua
+        var validationMessages = document.querySelectorAll('.validation-message');
+        var isValid = true;
+        validationMessages.forEach(function (message) {
+            if (message.classList.contains('active')) {
+                isValid = false;
+            }
+        });
+        if (isValid) {
+            validatePasswordSim();
+        }
+    });
 </script>
 
 </body>
