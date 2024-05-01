@@ -15,7 +15,27 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import time
 
 from .decorators import group_required
-from .models import Compra, Curso, Instructor, Student
+from .models import Student, Instructor, Curso, Compra, Cart
+
+
+#Verificar correo instructor
+#
+@csrf_exempt
+def verificar_correo_teach(request):
+    if request.method == 'POST':
+        correo = request.POST.get('correo', None)
+        if correo:
+            try:
+                user_obj = User.objects.get(email=correo)
+                return JsonResponse({'existe': True})
+            except User.DoesNotExist:
+                return JsonResponse({'existe': False})
+        else:
+            return JsonResponse(
+                {'error': 'Correo no proporcionado en la solicitud'},
+                status=400)
+
+    return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 
 
 def login_view(request):
@@ -40,14 +60,12 @@ def login_view(request):
                     return JsonResponse(
                         {'success': False, 'errorType': 'incorrectPassword'})
             except User.DoesNotExist:
-                return JsonResponse(
-                    {'success': False, 'errorType': 'emailNotFound'})
-    return JsonResponse(
-        {'success': False, 'errorType': 'incorrectCredentials'})
+                return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
+    return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
 
 
 ###################
-
+#verificar correo estudiante
 @csrf_exempt
 def verificar_correo(request):
     if request.method == 'POST':
@@ -247,38 +265,35 @@ def procesar_pago(request):
         return JsonResponse({'status': 'failed'})
 
 
-def add_cart(request, curso_id):
-    # Obtiene la lista de cursos en el carrito de la sesión
-    cart = request.session.get('cart', [])
 
-    # Convierte el ID del curso a una cadena
-    curso_id_str = str(curso_id)
+@login_required
+def add_cart(request, curso_id):
+    # Obtiene el carrito de compras del usuario actual
+    cart, created = Cart.objects.get_or_create(student=request.user.student)
+
+    # Obtiene el curso que se va a agregar al carrito
+    curso = get_object_or_404(Curso, id=curso_id)
 
     # Verifica si el curso ya está en el carrito
-    if curso_id_str in cart:
+    if cart.courses.filter(id=curso_id).exists():
         # Si el curso ya está en el carrito, devuelve un error
         return JsonResponse(
             {'success': False, 'error': 'El curso ya está en el carrito'})
 
     # Si el curso no está en el carrito, lo agrega
-    cart.append(curso_id_str)
-    request.session['cart'] = cart
+    cart.add_course(curso)
 
-    # Incrementa 'cart_count' en la sesión
-    request.session['cart_count'] = len(cart)
-
-    # Y luego devuelves una respuesta JSON
+    # Devuelve una respuesta JSON con el número de cursos en el carrito
     return JsonResponse(
-        {'success': True, 'cart_count': request.session['cart_count']})
-
+        {'success': True, 'cart_count': cart.courses.count()})
 
 @login_required
 def obtener_contador_carrito(request):
-    # Obtiene la lista de cursos en el carrito de la sesión
-    cart = request.session.get('cart', [])
+    # Obtiene el carrito de compras del usuario actual
+    cart, created = Cart.objects.get_or_create(student=request.user.student)
 
     # Devuelve el contador del carrito como una respuesta JSON
-    return JsonResponse({'success': True, 'cart_count': len(cart)})
+    return JsonResponse({'success': True, 'cart_count': cart.courses.count()})
 
 
 def olvideContraseña(request):

@@ -36,3 +36,14 @@ class Compra(models.Model):
     estudiante = models.ForeignKey(Student, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     fecha_transaccion = models.DateTimeField(auto_now_add=True)
+
+
+class Cart(models.Model):
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+    courses = models.ManyToManyField(Curso)
+
+    def add_course(self, course):
+        self.courses.add(course)
+
+    def remove_course(self, course):
+        self.courses.remove(course)

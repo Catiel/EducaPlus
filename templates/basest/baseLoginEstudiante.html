@@ -30,7 +30,7 @@
                     <a class="nav-link" href="/carrito/">
                         <img src="{% static 'images/cart.svg' %}" alt="Cart Icon" width="25" height="25"
                              class="d-inline-block align-text-top">
-                        <span id="cart-count">0</span>
+                        <span id="cart-count" class="cart-count">0</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -58,7 +58,10 @@
 <script>
     $(document).ready(function () {
         toastr.options = {
-            "positionClass": "toast-bottom-right"
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": true,
+            "newestOnTop": false,
+            "timeOut": "500"
         };
 
         // Solicita el contador del carrito del servidor
