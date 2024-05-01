@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-#
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('compraCursos/<int:curso_id>/', views.compraCursos, name='compraCursos'),
@@ -18,5 +18,10 @@ urlpatterns = [
     path('add_cart/<int:curso_id>/', views.add_cart, name='add_cart'),
     path('obtener_contador_carrito/', views.obtener_contador_carrito, name='obtener_contador_carrito'),
     path('login/', views.login_view, name='login'),
+    path('recuperarContraseña/', views.olvideContraseña, name='olvide_contraseña'),
+    path('correoEnviar/', views.correoEnviar, name='correoEnviar'),
+    path('password_reset_confirm/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('change_password/<str:uidb64>/', views.change_password, name='change_password'),
+    path('check_same_password/', views.check_same_password, name='check_same_password'),
     path('api/verificar-correo-teach/', views.verificar_correo_teach, name='verificar_correo_teach'),
 ]

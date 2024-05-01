@@ -1,13 +1,18 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import (authenticate, get_user_model, login, logout)
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, redirect
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import Group, User
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode, base36_to_int
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+import time
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
@@ -33,8 +38,6 @@ def verificar_correo_teach(request):
     return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 
 
-###Login
-##@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -43,16 +46,19 @@ def login_view(request):
         if user is not None:
             if user.groups.filter(name='Instructores').exists():
                 login(request, user)
-                return JsonResponse({'success': True, 'userType': 'Instructor'})
+                return JsonResponse(
+                    {'success': True, 'userType': 'Instructor'})
             elif user.groups.filter(name='Estudiantes').exists():
                 login(request, user)
-                return JsonResponse({'success': True, 'userType': 'Estudiante'})
+                return JsonResponse(
+                    {'success': True, 'userType': 'Estudiante'})
         else:
             # Verificar el tipo de error
             try:
                 existing_user = User.objects.get(email=email)
                 if existing_user:
-                    return JsonResponse({'success': False, 'errorType': 'incorrectPassword'})
+                    return JsonResponse(
+                        {'success': False, 'errorType': 'incorrectPassword'})
             except User.DoesNotExist:
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
@@ -136,7 +142,8 @@ def teach(request):
                 user.groups.add(group)
                 login(request, user)
                 messages.success(request,
-                                 'Te has registrado exitosamente como instructor')
+                                 'Te has registrado exitosamente como '
+                                 'instructor')
                 return redirect('crearCursos')
         else:
             messages.error(request, 'Las contraseñas no coinciden')
@@ -258,8 +265,6 @@ def procesar_pago(request):
         return JsonResponse({'status': 'failed'})
 
 
-from django.http import JsonResponse
-
 
 @login_required
 def add_cart(request, curso_id):
@@ -282,7 +287,6 @@ def add_cart(request, curso_id):
     return JsonResponse(
         {'success': True, 'cart_count': cart.courses.count()})
 
-
 @login_required
 def obtener_contador_carrito(request):
     # Obtiene el carrito de compras del usuario actual
@@ -290,3 +294,90 @@ def obtener_contador_carrito(request):
 
     # Devuelve el contador del carrito como una respuesta JSON
     return JsonResponse({'success': True, 'cart_count': cart.courses.count()})
+
+
+def olvideContraseña(request):
+    return render(request, 'olvideContraseña.html')
+
+
+def correoEnviar(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        user = get_user_model().objects.filter(email=email).first()
+        token_generator = PasswordResetTokenGenerator()
+        if user:
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            current_site = get_current_site(request)
+            mail_subject = 'Restablecer contraseña'
+            message = render_to_string('restablecerContraseña.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': uid,
+                'token': token,
+            })
+            send_mail(mail_subject, '', 'eduplus720@gmail.com', [email],
+                      html_message=message)
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
+    return JsonResponse({'success': False})
+
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+    except (
+            TypeError, ValueError, OverflowError,
+            get_user_model().DoesNotExist):
+        user = None
+
+    token_generator = PasswordResetTokenGenerator()
+    if user is not None and token_generator.check_token(user, token):
+        # El token es válido, mostrar el formulario de restablecimiento de contraseña
+        return render(request, 'nuevaContraseña.html', {'validlink': True, 'uid':
+            uidb64, 'token': token})
+    else:
+        # El token no es válido, mostrar un mensaje de error
+        return render(request, 'nuevaContraseña.html', {'validlink': False})
+
+
+def change_password(request, uidb64):
+    if request.method == 'POST':
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        if new_password != confirm_password:
+            return HttpResponse('Las contraseñas no coinciden', status=400)
+
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+
+        # Verifica que la nueva contraseña no sea la misma que la antigua
+        if check_password(new_password, user.password):
+            return HttpResponse('La nueva contraseña no puede ser la misma que la antigua', status=400)
+
+        user.password = make_password(new_password)
+        user.save()
+
+        return redirect('index')
+
+    return HttpResponse('Método no permitido', status=405)
+
+
+@csrf_exempt
+def check_same_password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        uidb64 = request.POST.get('uidb64')
+
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+
+        if check_password(new_password, user.password):
+            return JsonResponse({'same_password': True})
+        else:
+            return JsonResponse({'same_password': False})
+
+    return JsonResponse({'error': 'Invalid method'}, status=405)
