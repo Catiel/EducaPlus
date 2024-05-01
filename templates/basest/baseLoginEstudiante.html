@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -94,5 +95,29 @@
 </div>
         
 {% block content %}{% endblock %}
+<!-- Agrega este script al final de tu HTML -->
+<script>
+    $(document).ready(function () {
+        $('#dialogo1').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            $.ajax({
+                type: 'GET',
+                url: '/obtener-datos-usuario/',  // Verifica que esta URL sea correcta
+                success: function (data) {
+                    console.log(data);  // Debugging para verificar la estructura de los datos
+                    modal.find('#nombre').val(data.nombre);
+                    modal.find('#apellido').val(data.apellido);
+                    modal.find('#fecha_nacimiento').val(data.fecha_nacimiento);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);  // Manejo de errores
+                }
+            });
+        });
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
 </body>
 </html> 

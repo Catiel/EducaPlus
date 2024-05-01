@@ -205,32 +205,35 @@ def check_firebase(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Student
+from .models import Student, Instructor
 
 @login_required
-def editar_perfil(request):
-    if request.method == 'POST':
-        # Obtener el estudiante actual
-        estudiante = request.user.student
-
-        # Actualizar los datos del usuario
-        estudiante.nombre = request.POST['nombre']
-        estudiante.apellido = request.POST['apellido']
-        estudiante.fecha_nacimiento = request.POST['fecha_nacimiento']
-        estudiante.save()
-
-        # Agregar mensaje de éxito
-        messages.success(request, '¡Los cambios se guardaron correctamente!')
-
-        # Redirigir al usuario a la página de inicio
-        return redirect('/indexLog/')
-
+def obtener_datos_usuario(request):
+    # Obtener el estudiante actual
+    estudiante = request.user.student
+    
+    # Verificar si el estudiante existe
+    if estudiante:
+        data = {
+            'nombre': request.user.first_name,
+            'apellido': request.user.last_name,
+            'fecha_nacimiento': estudiante.birthdate.strftime('%Y-%m-%d')
+        }
+        print(data)  # Debugging para verificar los datos antes de enviar la respuesta
+        return JsonResponse(data)
     else:
-        # Obtener el estudiante actual
-        estudiante = request.user.student
+        return JsonResponse({'error': 'No se pudo obtener los datos del estudiante'}, status=400)
+@login_required
+def obtener_datos_instructor(request):
+    instructor = request.user.instructor
 
-        # Renderizar el formulario de edición de perfil con los datos actuales del estudiante
-        return render(request, 'basePerfilEstudiante.html', {'estudiante': estudiante})
-    
-    
- # Captura sw satos del instructor
+    if instructor:
+        data = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'date_of_birth': instructor.birthdate.strftime('%Y-%m-%d'),
+            'specialization': instructor.specialization  # Ajusta este campo según tu modelo de usuario
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'No se pudo obtener los datos del instructor'}, status=400)
