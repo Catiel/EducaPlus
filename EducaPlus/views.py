@@ -343,7 +343,7 @@ def change_password(request, uidb64):
         user.password = make_password(new_password)
         user.save()
 
-        return HttpResponse('Contraseña actualizada con éxito')
+        return redirect ('index')
 
     return HttpResponse('Método no permitido', status=405)
 
