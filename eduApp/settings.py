@@ -137,4 +137,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'eduplus720@gmail.com'
 EMAIL_HOST_PASSWORD = 'jjbm pqfp nsfy ieks'
 
+PASSWORD_RESET_TIMEOUT_DAYS = 1
+
 

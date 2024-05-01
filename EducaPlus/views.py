@@ -3,15 +3,16 @@ from django.contrib.auth import (authenticate, get_user_model, login, logout)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Group, User
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode, base36_to_int
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+import time
 
 from .decorators import group_required
 from .models import Compra, Curso, Instructor, Student
@@ -288,8 +289,9 @@ def correoEnviar(request):
     if request.method == 'POST':
         email = request.POST['email']
         user = get_user_model().objects.filter(email=email).first()
+        token_generator = PasswordResetTokenGenerator()
         if user:
-            token = default_token_generator.make_token(user)
+            token = token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             current_site = get_current_site(request)
             mail_subject = 'Restablecer contraseña'
@@ -316,7 +318,8 @@ def password_reset_confirm(request, uidb64, token):
             get_user_model().DoesNotExist):
         user = None
 
-    if user is not None and default_token_generator.check_token(user, token):
+    token_generator = PasswordResetTokenGenerator()
+    if user is not None and token_generator.check_token(user, token):
         # El token es válido, mostrar el formulario de restablecimiento de contraseña
         return render(request, 'nuevaContraseña.html', {'validlink': True, 'uid':
             uidb64, 'token': token})
@@ -343,7 +346,7 @@ def change_password(request, uidb64):
         user.password = make_password(new_password)
         user.save()
 
-        return redirect ('index')
+        return redirect('index')
 
     return HttpResponse('Método no permitido', status=405)
 

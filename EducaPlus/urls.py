@@ -21,6 +21,6 @@ urlpatterns = [
     path('recuperarContraseña/', views.olvideContraseña, name='olvide_contraseña'),
     path('correoEnviar/', views.correoEnviar, name='correoEnviar'),
     path('password_reset_confirm/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
-    path('change_password/<uidb64>/', views.change_password, name='change_password'),
+    path('change_password/<str:uidb64>/', views.change_password, name='change_password'),
     path('check_same_password/', views.check_same_password, name='check_same_password'),
     ]
