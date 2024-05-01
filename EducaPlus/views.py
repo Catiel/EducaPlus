@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import (authenticate, get_user_model, login, logout)
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
@@ -323,9 +324,21 @@ def password_reset_confirm(request, uidb64, token):
         # El token no es válido, mostrar un mensaje de error
         return render(request, 'nuevaContraseña.html', {'validlink': False})
     
-def nuevaContraseña(request):
-    if request.method == 'POST':
-        # Procesar el formulario enviado aquí
-        pass  # Por ahora, solo renderizamos el formulario
 
-    return render(request, 'nuevaContraseña.html')
+
+def change_password(request, uidb64):
+    if request.method == 'POST':
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        if new_password != confirm_password:
+            return HttpResponse('Las contraseñas no coinciden', status=400)
+
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+        user.password = make_password(new_password)
+        user.save()
+
+        return HttpResponse('Contraseña actualizada con éxito')
+
+    return HttpResponse('Método no permitido', status=405)
