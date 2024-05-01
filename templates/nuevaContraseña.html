@@ -36,7 +36,7 @@
             -7px -7px 15px #438e96;
             width: 30vw;
             height: 30vh;
-            overflow: auto;
+            overflow: visible;
             padding: 20px;
         }
 
@@ -97,6 +97,24 @@
             margin-right: auto; /* Alinea el botón a la izquierda */
         }
 
+        #password-validation-messages li, #confirm-password-validation-messages li {
+            margin: 0; /* Elimina el margen */
+        }
+
+        #password-validation-messages, #confirm-password-validation-messages {
+            text-align: left; /* Alinea los mensajes a la izquierda */
+            margin: 0;
+            padding: 0;
+        }
+
+        .validation-message {
+            display: none;
+            color: red;
+        }
+
+        .validation-message.active {
+            display: block;
+        }
         .btn:hover {
             background-color: #3b757f;
         }
@@ -114,6 +132,22 @@
                 <input id="new-password" name="new_password" type="password" required>
                 <i onclick="togglePasswordVisibility('new-password')" class="eye-icon fas fa-eye"></i>
             </div>
+            <ul id="password-validation-messages">
+                <li id="length-validation" class="validation-message">La contraseña debe tener entre 8 y 128
+                    caracteres
+                </li>
+                <li id="uppercase-validation" class="validation-message">La contraseña debe contener al menos una letra
+                    mayúscula
+                </li>
+                <li id="lowercase-validation" class="validation-message">La contraseña debe contener al menos una letra
+                    minúscula
+                </li>
+                <li id="number-validation" class="validation-message">La contraseña debe contener al menos un número
+                </li>
+                <li id="special-character-validation" class="validation-message">La contraseña debe contener al menos un
+                    carácter especial
+                </li>
+            </ul>
         </div>
         <div class="mb-4">
             <label for="confirm-password">Confirmar contraseña*</label>
@@ -121,6 +155,9 @@
                 <input id="confirm-password" name="confirm_password" type="password" required>
                 <i onclick="togglePasswordVisibility('confirm-password')" class="eye-icon fas fa-eye"></i>
             </div>
+            <ul id="confirm-password-validation-messages">
+                <li id="match-validation" class="validation-message">Las contraseñas deben coincidir</li>
+            </ul>
         </div>
         <button type="submit" class="btn">Confirmar cambio</button>
     </form>
@@ -135,6 +172,69 @@
         var eyeIcon = passwordInput.nextElementSibling;
         eyeIcon.className = 'eye-icon ' + (type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash');
     }
+
+    function validatePassword() {
+        var passwordInput = document.getElementById('new-password');
+        var password = passwordInput.value;
+
+        // Obtener todos los mensajes de validación
+        var validationMessages = document.querySelectorAll('.validation-message');
+
+        // Ocultar todos los mensajes de validación
+        validationMessages.forEach(function (message) {
+            message.classList.remove('active');
+        });
+
+        // Verificar la longitud de la contraseña
+        if (password.length < 8 || password.length > 128) {
+            document.getElementById('length-validation').classList.add('active');
+            return;
+        }
+
+        // Verificar que la contraseña contenga al menos una letra mayúscula
+        if (!/[A-Z]/.test(password)) {
+            document.getElementById('uppercase-validation').classList.add('active');
+            return;
+        }
+
+        // Verificar que la contraseña contenga al menos una letra minúscula
+        if (!/[a-z]/.test(password)) {
+            document.getElementById('lowercase-validation').classList.add('active');
+            return;
+        }
+
+        // Verificar que la contraseña contenga al menos un número
+        if (!/[0-9]/.test(password)) {
+            document.getElementById('number-validation').classList.add('active');
+            return;
+        }
+
+        // Verificar que la contraseña contenga al menos un carácter especial
+        if (!/[!@#$%^&*]/.test(password)) {
+            document.getElementById('special-character-validation').classList.add('active');
+            return;
+        }
+
+        // Llamar a la función de validación de confirmación de contraseña
+        validateConfirmPassword();
+    }
+
+    function validateConfirmPassword() {
+        var passwordInput = document.getElementById('new-password');
+        var confirmPasswordInput = document.getElementById('confirm-password');
+        var password = passwordInput.value;
+        var confirmPassword = confirmPasswordInput.value;
+
+        // Verificar que las contraseñas coincidan
+        if (password && confirmPassword && password !== confirmPassword) {
+            document.getElementById('match-validation').classList.add('active');
+        } else {
+            document.getElementById('match-validation').classList.remove('active');
+        }
+    }
+
+    document.getElementById('new-password').addEventListener('keyup', validatePassword);
+    document.getElementById('confirm-password').addEventListener('keyup', validateConfirmPassword);
 </script>
 
 </body>
