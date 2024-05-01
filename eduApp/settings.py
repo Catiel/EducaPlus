@@ -86,7 +86,7 @@ if DEVELOPMENT_MODE is True:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'educapluslocal',
             'USER': 'postgres',
-            'PASSWORD': 'admin',
+            'PASSWORD': 'S^ExgeKiqpsa$&iNB9a',
             'HOST': 'localhost',
             'PORT': '5432',
         }
@@ -139,13 +139,10 @@ STATICFILES_DIRS = [BASE_DIR / 'EducaPlus' / 'static']
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' 
-EMAIL_PORT = 587  
-EMAIL_USE_TLS = True 
-EMAIL_HOST_USER = 'eduplus720@gmail.com'
-EMAIL_HOST_PASSWORD = 'jjbm pqfp nsfy ieks'
-
-PASSWORD_RESET_TIMEOUT_DAYS = 1
-
-
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Default to 587 if not set
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'  # Convert string to boolean
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+PASSWORD_RESET_TIMEOUT_DAYS = int(os.getenv('PASSWORD_RESET_TIMEOUT_DAYS', 1))  # Default to 1 if not set

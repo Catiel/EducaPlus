@@ -3,23 +3,20 @@ from django.contrib.auth import (authenticate, get_user_model, login, logout)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Group, User
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode, base36_to_int
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-import time
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
 
 
-#Verificar correo instructor
-#
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':
@@ -64,8 +61,6 @@ def login_view(request):
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
 
 
-###################
-#verificar correo estudiante
 @csrf_exempt
 def verificar_correo(request):
     if request.method == 'POST':
@@ -265,7 +260,6 @@ def procesar_pago(request):
         return JsonResponse({'status': 'failed'})
 
 
-
 @login_required
 def add_cart(request, curso_id):
     # Obtiene el carrito de compras del usuario actual
@@ -286,6 +280,7 @@ def add_cart(request, curso_id):
     # Devuelve una respuesta JSON con el número de cursos en el carrito
     return JsonResponse(
         {'success': True, 'cart_count': cart.courses.count()})
+
 
 @login_required
 def obtener_contador_carrito(request):
