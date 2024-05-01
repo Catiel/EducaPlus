@@ -35,7 +35,7 @@
             box-shadow: 7px 7px 15px #1a2c32,
             -7px -7px 15px #438e96;
             width: 30vw;
-            height: 30vh;
+            {#height: 30vh;#}
             overflow: visible;
             padding: 20px;
         }
@@ -57,7 +57,7 @@
         input[type="password"], input[type="text"] {
             width: 100%;
             padding: 10px 50px 10px 10px;
-            margin-bottom: 1em;
+            margin-bottom: 0.5em;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
@@ -95,6 +95,7 @@
             cursor: pointer;
             font-size: 1.2em;
             margin-right: auto; /* Alinea el botón a la izquierda */
+            margin-top: 20px;
         }
 
         #password-validation-messages li, #confirm-password-validation-messages li {
@@ -185,11 +186,6 @@
             message.classList.remove('active');
         });
 
-        // Verificar la longitud de la contraseña
-        if (password.length < 8 || password.length > 128) {
-            document.getElementById('length-validation').classList.add('active');
-            return;
-        }
 
         // Verificar que la contraseña contenga al menos una letra mayúscula
         if (!/[A-Z]/.test(password)) {
@@ -215,6 +211,11 @@
             return;
         }
 
+        // Verificar la longitud de la contraseña
+        if (password.length < 8 || password.length > 128) {
+            document.getElementById('length-validation').classList.add('active');
+            return;
+        }
         // Llamar a la función de validación de confirmación de contraseña
         validateConfirmPassword();
     }
