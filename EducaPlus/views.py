@@ -254,3 +254,42 @@ def guardar_datos_usuario(request):
             return JsonResponse({'error': 'No se encontró el estudiante asociado'}, status=400)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+#Guardar datos del instructor
+from datetime import datetime
+from django.shortcuts import redirect, render
+from django.http import HttpResponseNotAllowed
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def updateInstructor(request):
+    if request.method == 'POST':
+        # Obtener el usuario y el instructor actual asociado a ese usuario
+        user = request.user
+        instructor = user.instructor
+
+        # Actualizar los datos del usuario e instructor con los datos del formulario
+        user.first_name = request.POST.get('firstName', '')
+        user.last_name = request.POST.get('lastName', '')
+        user.save()
+
+        # Convertir la fecha de nacimiento a formato de fecha
+        fecha_nacimiento_str = request.POST.get('dob', '')
+        try:
+            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
+            instructor.date_of_birth = fecha_nacimiento
+        except ValueError:
+            # Manejar errores al analizar la fecha
+            messages.error(request, f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'.")
+            return render(request, 'error.html') 
+        # Actualizar la especialización del instructor
+        instructor.specialization = request.POST.get('specialization', '')
+        instructor.save()
+        # Agregar mensaje de éxito utilizando el framework de mensajes de Django
+        messages.success(request, '¡Los cambios se guardaron correctamente!')
+
+        # Redirigir al usuario a la página deseada
+        return redirect('indexLog') 
+    else:
+        return HttpResponseNotAllowed(['POST'])
