@@ -1,14 +1,14 @@
 from multiprocessing import context
-import firebase_admin
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
@@ -194,24 +194,12 @@ def procesar_pago(request):
         return JsonResponse({'status': 'failed'})
 
 
-def check_firebase(request):
-    try:
-        firebase_admin.get_app()
-        return HttpResponse("Firebase app initialized successfully")
-    except ValueError as e:
-        return HttpResponse(f"Error initializing Firebase app: {e}")
-
-#captura de datos
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Student, Instructor
-
+@csrf_exempt
 @login_required
 def obtener_datos_usuario(request):
     # Obtener el estudiante actual
     estudiante = request.user.student
-    
+
     # Verificar si el estudiante existe
     if estudiante:
         data = {
@@ -223,6 +211,8 @@ def obtener_datos_usuario(request):
         return JsonResponse(data)
     else:
         return JsonResponse({'error': 'No se pudo obtener los datos del estudiante'}, status=400)
+
+
 @login_required
 def obtener_datos_instructor(request):
     instructor = request.user.instructor
@@ -237,3 +227,33 @@ def obtener_datos_instructor(request):
         return JsonResponse(data)
     else:
         return JsonResponse({'error': 'No se pudo obtener los datos del instructor'}, status=400)
+
+
+@login_required
+def updateEstudiante(request):
+    if request.method == 'POST':
+        # Obtener el usuario y estudiante actual
+        user = request.user
+        estudiante = user.student
+
+        # Actualizar los datos del usuario y estudiante
+        user.first_name = request.POST['nombre']
+        user.last_name = request.POST['apellido']
+        user.save()
+        fecha_nacimiento_str = request.POST['fecha_nacimiento']
+
+        try:
+            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
+            estudiante.birthdate = fecha_nacimiento
+            estudiante.save()
+        except ValueError:
+            print(f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'")
+
+        # Agregar mensaje de éxito
+        messages.success(request, '¡Los cambios se guardaron correctamente!')
+
+        # Redirigir al usuario a la página que desees
+        return redirect('indexLog')
+    else:
+        # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
+        return HttpResponseNotAllowed(['POST'])

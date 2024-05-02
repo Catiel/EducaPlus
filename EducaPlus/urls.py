@@ -16,8 +16,8 @@ urlpatterns = [
     path('crear_curso/', views.crear_curso, name='crear_curso'),
     path('procesar_pago/', views.procesar_pago, name='procesar_pago'),
     path('api/verificar-correo/', views.verificar_correo, name='verificar_correo'),
-    #######Mirza
     path('obtener-datos-usuario/', views.obtener_datos_usuario, name='obtener_datos_usuario'),
     path('obtener-datos-instructor/', views.obtener_datos_instructor, name='obtener_datos_instructor'),
+    path('updateEstudiante/', views.updateEstudiante, name='updateEstudiante'),
 ]
 

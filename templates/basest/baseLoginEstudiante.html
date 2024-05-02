@@ -55,7 +55,8 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <form>
+                    <form method="POST" action="{% url 'updateEstudiante' %}">
+                        {% csrf_token %}
                         <div class="row mb-3">
                             <label class="col-3 col-form-label visually-hidden">
                                 DATOS PERSONALES
@@ -101,7 +102,7 @@
         $('#dialogo1').on('show.bs.modal', function (event) {
             var modal = $(this);
             $.ajax({
-                type: 'GET',
+                type: 'POST',  // Cambia a GET
                 url: '/obtener-datos-usuario/',  // Verifica que esta URL sea correcta
                 success: function (data) {
                     console.log(data);  // Debugging para verificar la estructura de los datos
