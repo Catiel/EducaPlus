@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,8 +9,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -45,76 +44,82 @@
     </div>
 </nav>
 
-<!-- Editar datos personales del estudiante-->
+<!-- Editar datos personales del estudiante -->
 <div class="modal fade" id="dialogo1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100" id="exModalLabel">Ver perfil</h5>
+                <h5 class="modal-title w-100" id="exModalLabel">Editar Perfil</h5>
                 <button type="button" class="btn-close" name="button" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <form>
-                        <div class="row mb-3">
-                            <label class="col-3 col-form-label visually-hidden">
-                                DATOS PERSONALES
-                            </label>
-                            <div class="col-9 col-md-7 offset-md-0 d-flex align-items-center justify-content-end">    <!-- Ajusta el tamaño de la columna y añade justify-content-end -->
-                                <div class="profile-icon-container position-relative">
-                                    <i class="bi bi-person-circle bi-lg icono-perfil" style="font-size: 100px;"></i>
-                                </div>
-                            </div>
-                        </div>
-
+                    <form id="editProfileForm">
+                        {% csrf_token %}
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ estudiante.nombre }}" required>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
                         </div>
                         <div class="mb-3">
                             <label for="apellido" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="apellido" name="apellido" value="{{ estudiante.apellido }}" required>
+                            <input type="text" class="form-control" id="apellido" name="apellido" required>
                         </div>
                         <div class="mb-3">
-                            <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
-                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ estudiante.fecha_nacimiento }}" required>
-                        </div>      
-
-                        <div class="row">
-                            <div class="col text-center">
-                                <button type="submit" class="btn btn-primary">
-                                     Guardar cambios
-                                </button>
-                            </div>
+                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
                         </div>
+                        <button type="submit" class="btn btn-primary" title="Guardar cambios">Guardar cambios</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-        
+
 {% block content %}{% endblock %}
-<!-- Agrega este script al final de tu HTML -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#dialogo1').on('show.bs.modal', function (event) {
-            var modal = $(this);
+    $(document).ready(function() {
+        // Cargar datos del usuario al abrir el modal
+        $('#dialogo1').on('show.bs.modal', function(event) {
             $.ajax({
                 type: 'GET',
-                url: '/obtener-datos-usuario/',  // Verifica que esta URL sea correcta
-                success: function (data) {
-                    console.log(data);  // Debugging para verificar la estructura de los datos
-                    modal.find('#nombre').val(data.nombre);
-                    modal.find('#apellido').val(data.apellido);
-                    modal.find('#fecha_nacimiento').val(data.fecha_nacimiento);
+                url: '/get_user_data/',
+                success: function(data) {
+                    $('#nombre').val(data.nombre);
+                    $('#apellido').val(data.apellido);
+                    $('#fecha_nacimiento').val(data.fecha_nacimiento);
                 },
-                error: function (xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);  // Manejo de errores
+                error: function(xhr, errmsg, err) {
+                    console.error(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+
+        // Guardar cambios al enviar el formulario
+        $('#editProfileForm').submit(function(event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                url: '/save_user_data/',
+                data: formData,
+                success: function(data) {
+                    alert('¡Datos actualizados correctamente!');
+                    $('#dialogo1').modal('hide');  // Cerrar el modal después de guardar los cambios
+                },
+                error: function(xhr, errmsg, err) {
+                    console.error(xhr.status + ": " + xhr.responseText);
                 }
             });
         });
     });
+</script>
+
+</body>
+</html>
+    
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 

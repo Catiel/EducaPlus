@@ -71,14 +71,16 @@
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <label for="firstName" class="form-label">Nombre*:</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="{{ instructor.first_name }}" required>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                    <div id="firstNameError" style="color: red;"></div> <!-- Elemento para mostrar mensaje de error -->
                                 </div>
                             </div>
-
+                            
                             <div class="row mb-3">
                                 <div class="col-md-12">
                                     <label for="lastName" class="form-label">Apellidos*:</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="{{ instructor.last_name }}" required>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                    <div id="lastNameError" style="color: red;"></div> <!-- Elemento para mostrar mensaje de error -->
                                 </div>
                             </div>
 
@@ -133,6 +135,64 @@ $(document).ready(function () {
             }
         });
     });
+});
+$(document).ready(function() {
+    $('#editarPerfilForm').submit(function(event) {
+        event.preventDefault(); // Evitar el envío predeterminado del formulario
+
+        // Obtener los valores de los campos
+        var firstName = $('#firstName');
+        var lastName = $('#lastName');
+        var dob = $('#dob').val(); // Obtener la fecha de nacimiento del formulario
+
+        // Validar el nombre
+        var firstNameValid = validateInput(firstName, 'El nombre debe tener entre 2 y 20 caracteres y solo letras.', $('#firstNameError'));
+        
+        // Validar el apellido
+        var lastNameValid = validateInput(lastName, 'Los apellidos deben tener entre 2 y 20 caracteres y solo letras.', $('#lastNameError'));
+        
+        // Validar la fecha de nacimiento
+        var dobValid = validateDateOfBirth(dob);
+
+        if (firstNameValid && lastNameValid && dobValid) {
+            // Si todas las validaciones son exitosas, enviar el formulario
+            console.log('Formulario válido, enviar datos...');
+            // $('#editarPerfilForm').submit(); // Enviar el formulario de manera normal
+        } else {
+            console.log('Formulario inválido, corregir campos...');
+            // Aquí puedes mostrar mensajes de error adicionales si lo deseas
+        }
+    });
+
+    // Función para validar un campo de entrada
+    function validateInput(inputElement, errorMessage, errorElement) {
+        var pattern = /^[a-zA-ZñÑ\s]{2,20}$/; // Expresión regular para validar letras y espacios
+        if (!pattern.test(inputElement.val())) {
+            if (errorElement) {
+                errorElement.text(errorMessage); // Mostrar mensaje de error
+            }
+            inputElement.addClass('is-invalid'); // Agregar clase de estilo para indicar error
+            return false;
+        } else {
+            if (errorElement) {
+                errorElement.text(''); // Borrar mensaje de error si es válido
+            }
+            inputElement.removeClass('is-invalid'); // Remover clase de estilo de error
+            return true;
+        }
+    }
+
+    // Función para validar la fecha de nacimiento
+    function validateDateOfBirth(dob) {
+        var currentDate = new Date();
+        var selectedDate = new Date(dob);
+
+        if (selectedDate > currentDate) {
+            alert('La fecha de nacimiento no puede ser posterior a la fecha actual.');
+            return false;
+        }
+        return true;
+    }
 });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

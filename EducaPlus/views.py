@@ -237,3 +237,20 @@ def obtener_datos_instructor(request):
         return JsonResponse(data)
     else:
         return JsonResponse({'error': 'No se pudo obtener los datos del instructor'}, status=400)
+    
+from django.http import JsonResponse
+
+@login_required
+def guardar_datos_usuario(request):
+    if request.method == 'POST':
+        estudiante = request.user.student
+        if estudiante:
+            estudiante.nombre = request.POST.get('nombre')
+            estudiante.apellido = request.POST.get('apellido')
+            estudiante.fecha_nacimiento = request.POST.get('fecha_nacimiento')
+            estudiante.save()
+            return JsonResponse({'message': '¡Datos actualizados correctamente!'})
+        else:
+            return JsonResponse({'error': 'No se encontró el estudiante asociado'}, status=400)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
