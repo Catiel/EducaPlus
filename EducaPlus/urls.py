@@ -19,12 +19,5 @@ urlpatterns = [
     #######Mirza
     path('obtener-datos-usuario/', views.obtener_datos_usuario, name='obtener_datos_usuario'),
     path('obtener-datos-instructor/', views.obtener_datos_instructor, name='obtener_datos_instructor'),
-     # Ruta para la vista de edición de perfil
-    path('editar-perfil/', views.edit_profile, name='editar_perfil'),
-
-    # Ruta para obtener los datos del usuario (usada en AJAX)
-    path('obtener-datos-usuario/', views.get_user_data, name='obtener_datos_usuario'),
-
-    # Ruta para guardar los datos actualizados del usuario (usada en AJAX)
-    path('guardar-datos-usuario/', views.save_user_data, name='guardar_datos_usuario'),
+    path('update-instructor/', views.updateInstructor, name='updateInstructor'),
 ]
