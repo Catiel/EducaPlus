@@ -1,11 +1,11 @@
-from multiprocessing import context
-import firebase_admin
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -194,19 +194,6 @@ def procesar_pago(request):
         return JsonResponse({'status': 'failed'})
 
 
-def check_firebase(request):
-    try:
-        firebase_admin.get_app()
-        return HttpResponse("Firebase app initialized successfully")
-    except ValueError as e:
-        return HttpResponse(f"Error initializing Firebase app: {e}")
-
-#captura de datos
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Student, Instructor
-
 @login_required
 def obtener_datos_usuario(request):
     # Obtener el estudiante actual
@@ -237,8 +224,7 @@ def obtener_datos_instructor(request):
         return JsonResponse(data)
     else:
         return JsonResponse({'error': 'No se pudo obtener los datos del instructor'}, status=400)
-    
-from django.http import JsonResponse
+
 
 @login_required
 def guardar_datos_usuario(request):
@@ -255,12 +241,6 @@ def guardar_datos_usuario(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
-#Guardar datos del instructor
-from datetime import datetime
-from django.shortcuts import redirect, render
-from django.http import HttpResponseNotAllowed
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def updateInstructor(request):
@@ -281,7 +261,8 @@ def updateInstructor(request):
             instructor.date_of_birth = fecha_nacimiento
         except ValueError:
             # Manejar errores al analizar la fecha
-            messages.error(request, f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'.")
+            messages.error(request, f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto "
+                                    f"'YYYY-MM-DD'.")
             return render(request, 'error.html') 
         # Actualizar la especialización del instructor
         instructor.specialization = request.POST.get('specialization', '')
