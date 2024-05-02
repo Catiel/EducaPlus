@@ -257,6 +257,7 @@ def updateEstudiante(request):
         return redirect('indexLog')
     else:
         # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
+        return HttpResponseNotAllowed(['POST'])
 
 
 @login_required
@@ -290,3 +291,5 @@ def updateInstructor(request):
         # Redirigir al usuario a la página deseada
         return redirect('indexLog') 
     else:
+        # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
+        return HttpResponseNotAllowed(['POST'])
