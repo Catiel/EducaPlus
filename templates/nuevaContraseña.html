@@ -133,7 +133,7 @@
         <div class="mb-4">
             <label for="new-password">Contraseña nueva*</label>
             <div class="password-container">
-                <input id="new-password" name="new_password" type="password" required>
+                <input id="new-password" name="new_password" type="password" required maxlength="128">
                 <i onclick="togglePasswordVisibility('new-password')" class="eye-icon fas fa-eye"></i>
             </div>
             <ul id="password-validation-messages">
@@ -159,7 +159,7 @@
         <div class="mb-4">
             <label for="confirm-password">Confirmar contraseña*</label>
             <div class="password-container">
-                <input id="confirm-password" name="confirm_password" type="password" required>
+                <input id="confirm-password" name="confirm_password" type="password" required maxlength="128">
                 <i onclick="togglePasswordVisibility('confirm-password')" class="eye-icon fas fa-eye"></i>
             </div>
             <ul id="confirm-password-validation-messages">
