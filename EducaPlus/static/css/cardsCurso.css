@@ -17,7 +17,8 @@
 
 .card-title {
     color: #000;
-    max-width: 50ch; /* set the maximum width to 50 characters */
+    max-width: 50ch; /* Limita el ancho a 50 caracteres */
+    margin-right: 10px; /* Agrega margen a la derecha para evitar superposición con el menú */
 }
 
 .card-subtitle {
@@ -57,4 +58,28 @@ h1 {
 
 .limited-text::-webkit-scrollbar {
     display: none;
+}
+
+.curso-dropdown .dropdown-toggle::after {
+    display: none;
+}
+
+.curso-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.curso-dropdown .dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.curso-dropdown .icon-tabler-dots-vertical {
+    margin: 0;
+    align-self: center;
 }

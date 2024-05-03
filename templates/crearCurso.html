@@ -10,9 +10,30 @@
                     <div class="col-md-3">
                         <a href="#" class="card-link">
                             <div class="card">
-                                <div class="card-body">
+                                <div class="card-body position-relative">
                                     <h5 class="card-title">{{ curso.nombre }}</h5>
                                     <p class="card-text limited-text">{{ curso.descripcion }}</p>
+                                </div>
+                                <div class="dropdown position-absolute top-0 end-0 mt-3 curso-dropdown">
+                                    <a class="dropdown-toggle" href="#" role="button"
+                                       id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round"
+                                             class="icon icon-tabler icons-tabler-outline icon-tabler-dots-vertical">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                        </svg>
+                                    </a>
+
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <li><a class="dropdown-item" href="#">Editar datos</a></li>
+                                        <li><a class="dropdown-item" href="#">Agregar contenido</a></li>
+                                        <li><a class="dropdown-item" href="#">Editar contenido</a></li>
+                                        <li><a class="dropdown-item" href="#">Eliminar curso</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </a>
