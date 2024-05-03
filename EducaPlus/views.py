@@ -1,15 +1,14 @@
-from multiprocessing import context
 from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra
@@ -276,12 +275,11 @@ def updateInstructor(request):
         fecha_nacimiento_str = request.POST.get('dob', '')
         try:
             fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
-            instructor.date_of_birth = fecha_nacimiento
+            instructor.birthdate = fecha_nacimiento
+            instructor.save()  # Guardar el objeto instructor después de cambiar la fecha de nacimiento
         except ValueError:
-            # Manejar errores al analizar la fecha
-            messages.error(request, f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto "
-                                    f"'YYYY-MM-DD'.")
-            return render(request, 'error.html') 
+            print(f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'")
+
         # Actualizar la especialización del instructor
         instructor.specialization = request.POST.get('specialization', '')
         instructor.save()
@@ -289,7 +287,7 @@ def updateInstructor(request):
         messages.success(request, '¡Los cambios se guardaron correctamente!')
 
         # Redirigir al usuario a la página deseada
-        return redirect('indexLog') 
+        return redirect('indexLog')
     else:
         # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
         return HttpResponseNotAllowed(['POST'])
