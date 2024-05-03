@@ -27,5 +27,5 @@ urlpatterns = [
     path('obtener-datos-usuario/', views.obtener_datos_usuario, name='obtener_datos_usuario'),
     path('obtener-datos-instructor/', views.obtener_datos_instructor, name='obtener_datos_instructor'),
     path('updateEstudiante/', views.updateEstudiante, name='updateEstudiante'),
-    path('update-instructor/', views.updateInstructor, name='updateInstructor'),
+    path('updateInstructor/', views.updateInstructor, name='updateInstructor'),
 ]
