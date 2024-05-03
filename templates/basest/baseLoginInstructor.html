@@ -52,7 +52,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100" id="exModalLabel">Editar perfil</h5>
+                <h5 class="modal-title w-100" id="exModalLabel">DATOS PERSONALES</h5>
                 <button type="button" class="btn-close" name="button" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -62,6 +62,11 @@
                         {% csrf_token %} <!-- Agregar el token CSRF -->
 
                         <!-- Contenido del formulario -->
+                        <div class="col-9 col-md-7 offset-md-0 d-flex align-items-center justify-content-end">    <!-- Ajusta el tamaño de la columna y añade justify-content-end -->
+                            <div class="profile-icon-container position-relative">
+                                <i class="bi bi-person-circle bi-lg icono-perfil" style="font-size: 100px;"></i>
+                            </div>
+                        </div>
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label for="firstName" class="form-label">Nombre*:</label>
