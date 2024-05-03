@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -44,10 +45,8 @@
                              class="d-inline-block align-text-top">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item text-dark" href="/profile">Perfil</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
+                        <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#dialogo1">Ver perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-dark" href="/logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -55,7 +54,75 @@
         </div>
     </div>
 </nav>
+<div class="modal fade" id="dialogo1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100" id="exModalLabel">DATOS PERSONALES</h5>
+                <button type="button" class="btn-close" name="button" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form method="POST" action="{% url 'updateEstudiante' %}">
+                        {% csrf_token %}
+                        <div class="row mb-3">
+                            <label class="col-3 col-form-label visually-hidden">
+                                DATOS PERSONALES
+                            </label>
+                            <div class="col-9 col-md-7 offset-md-0 d-flex align-items-center justify-content-end">    <!-- Ajusta el tamaño de la columna y añade justify-content-end -->
+                                <div class="profile-icon-container position-relative">
+                                    <i class="bi bi-person-circle bi-lg icono-perfil" style="font-size: 100px;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">
+                                Nombre <span class="campo-requerido">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   value="{{ estudiante.nombre }}" required
+                                   pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$"
+                                   title="El nombre debe contener solo letras y tener entre 2 y 50 caracteres.">
+                            <div id="nombreError" class="invalid-feedback"></div> <!-- Mensaje de error -->
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="apellido" class="form-label">
+                                Apellido <span class="campo-requerido">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="apellido" name="apellido" 
+                                   value="{{ estudiante.apellido }}" required
+                                   pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}"
+                                   title="Por favor ingrese un apellido válido (solo letras, mínimo 2 caracteres y máximo 50 caracteres)">
+                            <div id="apellidoError" class="invalid-feedback"></div> <!-- Mensaje de error -->
+                        </div>
+                        
+                        
+                        <div class="mb-3">
+                            <label for="fecha_nacimiento" class="form-label">
+                                Fecha de nacimiento <span class="campo-requerido">*</span>
+                            </label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                                   value="{{ estudiante.fecha_nacimiento }}" required>
+                            <div id="fechaNacimientoError" class="invalid-feedback"></div> <!-- Elemento para mostrar mensajes de error -->
+                        </div>
+
+                        <div class="row">
+                            <div class="col text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    Guardar cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% block content %}{% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         toastr.options = {
@@ -75,6 +142,62 @@
                 } else {
                     toastr.error('Ocurrió un error inesperado');
                 }
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('#dialogo1').on('show.bs.modal', function (event) {
+            var modal = $(this);
+            $.ajax({
+                type: 'POST',  // Cambia a GET
+                url: '/obtener-datos-usuario/',  // Verifica que esta URL sea correcta
+                success: function (data) {
+                    console.log(data);  // Debugging para verificar la estructura de los datos
+                    modal.find('#nombre').val(data.nombre);
+                    modal.find('#apellido').val(data.apellido);
+                    modal.find('#fecha_nacimiento').val(data.fecha_nacimiento);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);  // Manejo de errores
+                }
+            });
+        });
+    });
+    $(document).ready(function() {
+        $('form').submit(function(e) {
+            var nombreInput = $('#nombre').val();
+            var nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
+            
+            if (!nombrePattern.test(nombreInput)) {
+                alert('El nombre debe contener solo letras y tener entre 2 y 50 caracteres.');
+                e.preventDefault(); // Evitar que se envíe el formulario si la validación falla
+            }
+        });
+    });
+    $(document).ready(function() {
+        $('form').submit(function(event) {
+            var apellidoValue = $('#apellido').val();
+            var soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+            if (!soloLetras.test(apellidoValue) || apellidoValue.length < 2 || apellidoValue.length > 50) {
+                event.preventDefault();
+                alert('Por favor ingrese un apellido válido (solo letras, mínimo 2 caracteres y máximo 50 caracteres).');
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#perfilForm').submit(function(event) {
+            var fechaNacimiento = new Date($('#fecha_nacimiento').val());
+            var fechaActual = new Date();
+
+            // Verificar si la fecha de nacimiento es válida y no es futura ni la fecha actual
+            if (isNaN(fechaNacimiento) || fechaNacimiento > fechaActual) {
+                // Mostrar mensaje de error
+                $('#fechaNacimientoError').text('La fecha de nacimiento no puede ser una fecha futura ni la fecha actual.');
+                event.preventDefault(); // Evitar que se envíe el formulario si la fecha es futura o actual
+            } else {
+                // Limpiar mensaje de error si la fecha es válida
+                $('#fechaNacimientoError').text('');
             }
         });
     });
