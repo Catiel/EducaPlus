@@ -376,3 +376,102 @@ def check_same_password(request):
             return JsonResponse({'same_password': False})
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+
+@csrf_exempt
+@login_required
+def obtener_datos_usuario(request):
+    # Obtener el estudiante actual
+    estudiante = request.user.student
+
+    # Verificar si el estudiante existe
+    if estudiante:
+        data = {
+            'nombre': request.user.first_name,
+            'apellido': request.user.last_name,
+            'fecha_nacimiento': estudiante.birthdate.strftime('%Y-%m-%d')
+        }
+        print(data)  # Debugging para verificar los datos antes de enviar la respuesta
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'No se pudo obtener los datos del estudiante'}, status=400)
+
+
+@login_required
+def obtener_datos_instructor(request):
+    instructor = request.user.instructor
+
+    if instructor:
+        data = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'date_of_birth': instructor.birthdate.strftime('%Y-%m-%d'),
+            'specialization': instructor.specialization  # Ajusta este campo según tu modelo de usuario
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'No se pudo obtener los datos del instructor'}, status=400)
+
+
+@login_required
+def updateEstudiante(request):
+    if request.method == 'POST':
+        # Obtener el usuario y estudiante actual
+        user = request.user
+        estudiante = user.student
+
+        # Actualizar los datos del usuario y estudiante
+        user.first_name = request.POST['nombre']
+        user.last_name = request.POST['apellido']
+        user.save()
+        fecha_nacimiento_str = request.POST['fecha_nacimiento']
+
+        try:
+            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
+            estudiante.birthdate = fecha_nacimiento
+            estudiante.save()
+        except ValueError:
+            print(f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'")
+
+        # Agregar mensaje de éxito
+        messages.success(request, '¡Los cambios se guardaron correctamente!')
+
+        # Redirigir al usuario a la página que desees
+        return redirect('indexLog')
+    else:
+        # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
+        return HttpResponseNotAllowed(['POST'])
+
+
+@login_required
+def updateInstructor(request):
+    if request.method == 'POST':
+        # Obtener el usuario y el instructor actual asociado a ese usuario
+        user = request.user
+        instructor = user.instructor
+
+        # Actualizar los datos del usuario e instructor con los datos del formulario
+        user.first_name = request.POST.get('firstName', '')
+        user.last_name = request.POST.get('lastName', '')
+        user.save()
+
+        # Convertir la fecha de nacimiento a formato de fecha
+        fecha_nacimiento_str = request.POST.get('dob', '')
+        try:
+            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
+            instructor.birthdate = fecha_nacimiento
+            instructor.save()  # Guardar el objeto instructor después de cambiar la fecha de nacimiento
+        except ValueError:
+            print(f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'")
+
+        # Actualizar la especialización del instructor
+        instructor.specialization = request.POST.get('specialization', '')
+        instructor.save()
+        # Agregar mensaje de éxito utilizando el framework de mensajes de Django
+        messages.success(request, '¡Los cambios se guardaron correctamente!')
+
+        # Redirigir al usuario a la página deseada
+        return redirect('indexLog')
+    else:
+        # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
+        return HttpResponseNotAllowed(['POST'])
