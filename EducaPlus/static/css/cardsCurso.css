@@ -11,10 +11,6 @@
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
-.card-body {
-    padding: 2px 16px;
-}
-
 .card-title {
     color: #000;
     max-width: 50ch; /* Limita el ancho a 50 caracteres */
@@ -26,9 +22,17 @@
     font-size: 18px;
 }
 
+.card-body {
+    padding: 2px 16px;
+    max-height: 200px; /* Ajusta este valor según tus necesidades */
+    overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
+}
+
 .card-text {
     color: #333;
     font-size: 16px;
+    overflow: hidden; /* Oculta el contenido que excede los límites del elemento */
+    text-overflow: ellipsis; /* Agrega puntos suspensivos al final si el contenido es demasiado largo */
 }
 
 .card-link {
