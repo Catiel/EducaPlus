@@ -24,15 +24,13 @@
 
 .card-body {
     padding: 2px 16px;
-    max-height: 200px; /* Ajusta este valor según tus necesidades */
-    overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
 }
 
 .card-text {
     color: #333;
     font-size: 16px;
-    overflow: hidden; /* Oculta el contenido que excede los límites del elemento */
-    text-overflow: ellipsis; /* Agrega puntos suspensivos al final si el contenido es demasiado largo */
+    max-height: 80%; /* Ajusta este valor según tus necesidades */
+    overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
 }
 
 .card-link {
