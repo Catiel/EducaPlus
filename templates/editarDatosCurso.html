@@ -84,6 +84,21 @@
         <div class="col-3 border m-5"></div>
     </div>
     <script>
+        window.onload = function () {
+            // Obtén los elementos de entrada de texto
+            let textInputs = document.querySelectorAll('input[type="text"], textarea');
+
+            // Agrega un controlador de eventos 'keypress' a cada entrada de texto
+            textInputs.forEach(function (input) {
+                input.addEventListener('keypress', function (event) {
+                    // Si la tecla presionada es un espacio y el campo de texto está vacío, evita que se ingrese
+                    if (event.key === ' ' && input.value.length === 0) {
+                        event.preventDefault();
+                    }
+                });
+            });
+        }
+    
         function checkPayment(select) {
             let costDiv = document.getElementById('courseCostDiv');
             if (select.value === 'pago') {

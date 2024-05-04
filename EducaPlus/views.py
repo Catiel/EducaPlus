@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
-from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
@@ -492,8 +492,16 @@ def updateInstructor(request):
         return HttpResponseNotAllowed(['POST'])
 
 
+@login_required
+@group_required('Instructores', redirect_route='indexLog')
 def obtenerDatosCurso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
+
+    # Verificar si el usuario actual es el instructor del curso
+    if request.user.instructor != curso.instructor:
+        # Si no es el instructor, devolver una respuesta HTTP 403 (Prohibido)
+        return HttpResponseForbidden()
+
     return render(request, 'editarDatosCurso.html', {'curso': curso})
 
 
@@ -501,6 +509,12 @@ def obtenerDatosCurso(request, curso_id):
 @group_required('Instructores', redirect_route='indexLog')
 def editarCurso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
+
+    # Verificar si el usuario actual es el instructor del curso
+    if request.user.instructor != curso.instructor:
+        # Si no es el instructor, devolver una respuesta HTTP 403 (Prohibido)
+        return HttpResponseForbidden()
+
     if request.method == 'POST':
         curso.nombre = request.POST['courseName']
         curso.descripcion = request.POST['courseDescription']
