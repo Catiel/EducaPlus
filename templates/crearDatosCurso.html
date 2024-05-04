@@ -39,7 +39,8 @@
                 <div class="mb-3">
                     <label for="courseDuration" class="form-label required">Duración del curso</label>
                     <input type="number" class="form-control" id="courseDuration" name="courseDuration" required
-                           oninput="validateInput(this)" placeholder="Ejemplo: 2 (significa 2 horas)">
+                           oninput="validateInput(this)" placeholder="Ejemplo: 2 (significa 2 horas)"
+                           max="99999">
                 </div>
                 <div class="mb-3">
                     <label for="courseDifficulty" class="form-label required">Dificultad del curso</label>
@@ -61,7 +62,8 @@
                 <div class="mb-3" id="courseCostDiv" style="display: none;">
                     <label for="courseCost" class="form-label required">Costo del curso (en dólares)</label>
                     <input type="number" class="form-control" id="courseCost" name="courseCost" required
-                           oninput="validateInput(this)" placeholder="Ejemplo: 50 (significa 50 dólares)">
+                           oninput="validateInput(this)" placeholder="Ejemplo: 50 (significa 50 dólares)"
+                           max="1000000000">
                 </div>
             </form>
         </div>
