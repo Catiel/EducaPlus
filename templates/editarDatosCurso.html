@@ -54,14 +54,12 @@
                     <label for="courseDifficulty" class="form-label required">Dificultad del curso</label>
                     <select class="form-select" id="courseDifficulty" name="courseDifficulty" required>
                         <option selected disabled>Elige la dificultad</option>
-                        <option value="Principiante" {% if curso.nivel == "Principiante" %}selected{% endif %}>
+                        <option value="Principiante" {% if curso.nivel == 'Principiante' %}selected{% endif %}>
                             Principiante
                         </option>
-                        <option value="Intermedio" {% if curso.nivel == "Intermedio" %}selected{% endif %}>
-                            Intermedio
+                        <option value="Intermedio" {% if curso.nivel == 'Intermedio' %}selected{% endif %}>Intermedio
                         </option>
-                        <option value="Avanzado" {% if curso.nivel == "Avanzado" %}selected{% endif %}>Avanzado
-                        </option>
+                        <option value="Avanzado" {% if curso.nivel == 'Avanzado' %}selected{% endif %}>Avanzado</option>
                     </select>
                 </div>
                 <div class="mb-3">
