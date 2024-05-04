@@ -1,8 +1,8 @@
+import re
 from datetime import datetime
-from typing import re
 
 from django.contrib import messages
-from django.contrib.auth import (authenticate, get_user_model, login, logout)
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Group, User
@@ -356,7 +356,7 @@ def change_password(request, uidb64):
             return HttpResponse('La contraseña debe contener al menos una letra minúscula', status=400)
         if not re.search(r'[0-9]', new_password):
             return HttpResponse('La contraseña debe contener al menos un número', status=400)
-        if not re.search(r'[ `!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?~]', new_password):
+        if not re.search(r'[ `!@#$%^&*()_+\-=\[\]{};:"\\|,.<>/?~]', new_password):
             return HttpResponse('La contraseña debe contener al menos un carácter especial', status=400)
         if len(new_password) < 8 or len(new_password) > 128:
             return HttpResponse('La longitud de la contraseña debe estar entre 8 y 128 caracteres', status=400)
@@ -513,4 +513,4 @@ def editarCurso(request, curso_id):
         messages.success(request, 'Curso actualizado exitosamente')
         return redirect('crearCursos')
     else:
-        return render(request, 'editarCurso.html', {'curso': curso})
+        return render(request, 'editarDatosCurso.html', {'curso': curso})
