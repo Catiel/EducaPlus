@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
     overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
-    height: 200px; /* Establece un alto específico para .card-body */
+    height: 230px; /* Establece un alto específico para .card-body */
 }
 
 .card-text {
@@ -35,7 +35,7 @@
     font-size: 16px;
     overflow: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
     flex-grow: 1; /* Permite que el elemento crezca para ocupar cualquier espacio extra */
-    max-height: 80px; /* Limita la altura a 80px. Ajusta este valor según tus necesidades */
+    max-height: 100px; /* Limita la altura a 80px. Ajusta este valor según tus necesidades */
 }
 
 .card-link {
