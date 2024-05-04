@@ -9,6 +9,8 @@
 
         /* Agrega más estilos aquí */
     </style>
+    <div class="container">
+    <h1 class="text-center mt-2">Crear datos curso</h1>
     <div class="row">
         <div class="col-7 border m-5">
             <form id="courseForm" method="POST" action="{% url 'crear_curso' %}">
@@ -68,6 +70,7 @@
             </form>
         </div>
         <div class="col-3 border m-5"></div>
+    </div>
     </div>
     <script>
         window.onload = function () {
