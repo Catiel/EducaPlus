@@ -28,4 +28,6 @@ urlpatterns = [
     path('obtener-datos-instructor/', views.obtener_datos_instructor, name='obtener_datos_instructor'),
     path('updateEstudiante/', views.updateEstudiante, name='updateEstudiante'),
     path('updateInstructor/', views.updateInstructor, name='updateInstructor'),
+    path('curso/editar/<int:curso_id>/', views.editarCurso, name='editar_curso'),
+    path('curso/<int:curso_id>/obtenerDatosCurso/', views.obtenerDatosCurso, name='obtenerDatosCurso'),
 ]

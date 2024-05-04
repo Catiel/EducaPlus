@@ -477,3 +477,27 @@ def updateInstructor(request):
     else:
         # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
         return HttpResponseNotAllowed(['POST'])
+
+
+def obtenerDatosCurso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    return render(request, 'editarDatosCurso.html', {'curso': curso})
+
+
+@login_required
+@group_required('Instructores', redirect_route='indexLog')
+def editarCurso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    if request.method == 'POST':
+        curso.nombre = request.POST['courseName']
+        curso.descripcion = request.POST['courseDescription']
+        curso.categoria = request.POST['courseCategory']
+        curso.duracion = request.POST['courseDuration']
+        curso.nivel = request.POST['courseDifficulty']
+        curso.precio = request.POST['courseCost'] if request.POST['coursePayment'] == 'pago' else 0.0
+        curso.save()
+
+        messages.success(request, 'Curso actualizado exitosamente')
+        return redirect('crearCursos')
+    else:
+        return render(request, 'editarCurso.html', {'curso': curso})
