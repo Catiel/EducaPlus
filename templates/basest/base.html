@@ -206,21 +206,23 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="loginEmail" class="form-label required">Correo electrónico</label>
-                        <input type="email" class="form-control" id="loginEmail" name="email" autocomplete="email"
-                               >
+                        <input type="email" class="form-control" id="loginEmail" name="email" autocomplete="email">
                         <span id="emailErrorL" class="error-message"></span>
                     </div>
                     <div class="mb-3">
                         <label for="loginPassword" class="form-label required">Contraseña</label>
                         <div class="input-group">
-                        <input type="password" class="form-control" id="loginPassword" name="password"
-                               autocomplete="current-password" >
-                               <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle"><i class="bi bi-eye-fill"></i></button>
+                            <input type="password" class="form-control" id="loginPassword" name="password"
+                                   autocomplete="current-password">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle"><i
+                                        class="bi bi-eye-fill"></i></button>
                             </div>
                         </div>
-                        <span id="passwordErrorL" class="error-message"></span><br>
-                        <a href="/recuperarContraseña/" class="btn btn-link">¿Olvidaste tu contraseña?</a>                      
+                        <span id="passwordErrorL" class="error-message"></span>
+                    </div>
+                    <div class="mb-3">
+                        <a href="/recuperarContraseña/" class="btn-link">¿Olvidaste tu contraseña?</a>
                     </div>
                     <button type="submit" class="btn btn-outline-success custom-button">Iniciar sesión</button>
                     <div id="loginError" class="text-danger mt-2"></div> <!-- Mostrar errores aquí -->
