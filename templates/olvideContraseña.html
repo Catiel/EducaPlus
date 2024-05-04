@@ -31,7 +31,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 50vh;
+        height: 85vh;
     }
     .custom-form {
         background-color: #f7f7f7;
@@ -131,7 +131,7 @@
     </div>
     <!-- Muestra el formulario si mensaje_enviado es False -->
     <div class="custom-form">
-        <h2>¿Has olvidado la contraseña?</h2>
+        <h2>¿Has olvidado tu contraseña?</h2>
         <form method="post">
             {% csrf_token %}
             <label for="email">Email *</label><input type="email" id="email" name="email" required>
