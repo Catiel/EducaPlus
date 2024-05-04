@@ -203,8 +203,7 @@
             document.getElementById('number-validation').classList.add('active');
             return;
         }
-        if (!/[!@#$%^&*]/.test(password)) {
-
+        if (!/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(password)) {
             document.getElementById('special-character-validation').classList.add('active');
             return;
         }
