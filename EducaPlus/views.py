@@ -371,7 +371,7 @@ def change_password(request, uidb64):
         user.password = make_password(new_password)
         user.save()
 
-        messages.success(request, 'Contraseña actualizada exitosamente')
+        messages.success(request, 'Contraseña actualizada exitosamente', extra_tags='password_changed')
 
         return redirect('index')
 

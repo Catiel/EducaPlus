@@ -103,7 +103,9 @@
     {% if messages %}
         <script>
             {% for message in messages %}
+                {% if 'password_changed' in message.tags %}
                 toastr.success("{{ message }}");
+                {% endif %}
             {% endfor %}
         </script>
     {% endif %}
