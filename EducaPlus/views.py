@@ -356,7 +356,7 @@ def change_password(request, uidb64):
             return HttpResponse('La contraseña debe contener al menos una letra minúscula', status=400)
         if not re.search(r'[0-9]', new_password):
             return HttpResponse('La contraseña debe contener al menos un número', status=400)
-        if not re.search(r'[ `!@#$%^&*()_+\-=\[\]{};:"\\|,.<>/?~¡¿ñü]', new_password):
+        if not re.search(r'[ `!@#$%^&*()_+\-=\[\]{};:"\\|,.<>/?~¡¿ü]', new_password):
             return HttpResponse('La contraseña debe contener al menos un carácter especial', status=400)
         if len(new_password) < 8 or len(new_password) > 128:
             return HttpResponse('La longitud de la contraseña debe estar entre 8 y 128 caracteres', status=400)
