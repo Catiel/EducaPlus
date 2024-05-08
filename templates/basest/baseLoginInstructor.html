@@ -99,11 +99,11 @@
                             <div class="col-md-12">
                                 <label for="specialization" class="form-label">Área de especialización*:</label>
                                 <select id="specialization" name="specialization" class="form-select" required>
-                                    <option value="Economia" selected>Economía</option>
-                                    <option value="Tecnologia">Tecnología</option>
+                                    <option value="Tecnología">Tecnología</option>
+                                    <option value="Economía">Economía</option>
                                     <option value="Humanidades">Humanidades</option>
                                     <option value="Medicina">Medicina</option>
-                                    <option value="Ciencias Juridicas">Ciencias Jurídicas</option>
+                                    <option value="Ciencias jurídicas">Ciencias jurídicas</option>
                                     <option value="Arquitectura">Arquitectura</option>
                                 </select>
                             </div>
@@ -161,7 +161,8 @@
     }
     
     // Asignar la función validateFirstName al evento submit del formulario
-    document.getElementById('perfilForm').onsubmit = function() {
+    // Asignar la función validateFirstName al evento submit del formulario
+    document.getElementById('editarPerfilForm').onsubmit = function () {
         return validateFirstName();
     };
     
@@ -186,7 +187,7 @@
     }
 
     // Asignar la función validateLastName al evento submit del formulario
-    document.getElementById('perfilForm').onsubmit = function() {
+    document.getElementById('editarPerfilForm').onsubmit = function () {
         return validateLastName();
     };
     
