@@ -10,7 +10,7 @@
     <div class="container">
     <h1 class="text-center mt-2">Editar datos curso</h1>
     <div class="row">
-        <div class="col-7 border m-5">
+        <div class="col-7 m-md-4 border">
             <form id="courseForm" method="POST" action="{% url 'editar_curso' curso.id %}">
                 {% csrf_token %}
                 <div class="mb-3">
@@ -81,7 +81,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-3 border m-5"></div>
+        <div class="col-3 m-md-4 border"></div>
     </div>
     </div>
     <script>
