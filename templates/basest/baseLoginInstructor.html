@@ -186,6 +186,16 @@
         return true;
     }
 
+    window.onload = function () {
+        var dob = document.getElementById('dob');
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //Enero es 0
+        var yyyy = today.getFullYear();
+        today = yyyy + '-' + mm + '-' + dd;
+        dob.setAttribute("max", today);
+    };
+
     // Asignar la función validateLastName al evento submit del formulario
     document.getElementById('editarPerfilForm').onsubmit = function () {
         return validateLastName();
