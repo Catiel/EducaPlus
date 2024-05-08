@@ -2,6 +2,14 @@
 {% load static %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/cardsCurso.css' %}">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+        }
+    </script>
     <div class="cursos">
         <h1>Cursos</h1>
         <div class="cursos-container">
@@ -43,4 +51,13 @@
             </div>
         </div>
     </div>
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                {% if 'curso_actualizado' in message.tags %}
+                toastr.success("{{ message }}");
+                {% endif %}
+            {% endfor %}
+        </script>
+    {% endif %}
 {% endblock %}

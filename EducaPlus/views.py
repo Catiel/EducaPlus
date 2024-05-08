@@ -518,15 +518,42 @@ def editarCurso(request, curso_id):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
-        curso.nombre = request.POST['courseName']
-        curso.descripcion = request.POST['courseDescription']
-        curso.categoria = request.POST['courseCategory']
-        curso.duracion = request.POST['courseDuration']
-        curso.nivel = request.POST['courseDifficulty']
-        curso.precio = request.POST['courseCost'] if request.POST['coursePayment'] == 'pago' else 0.0
-        curso.save()
+        # Obtener los valores del POST request
+        nombre = request.POST['courseName']
+        descripcion = request.POST['courseDescription']
+        categoria = request.POST['courseCategory']
+        duracion = float(request.POST['courseDuration'])
+        nivel = request.POST['courseDifficulty']
+        precio = float(request.POST['courseCost']) if request.POST['coursePayment'] == 'pago' else 0.0
 
-        messages.success(request, 'Curso actualizado exitosamente')
+        # Verificar si se hicieron cambios
+        cambios_realizados = False
+        if curso.nombre != nombre:
+            curso.nombre = nombre
+            cambios_realizados = True
+        if curso.descripcion != descripcion:
+            curso.descripcion = descripcion
+            cambios_realizados = True
+        if curso.categoria != categoria:
+            curso.categoria = categoria
+            cambios_realizados = True
+        if curso.duracion != duracion:
+            curso.duracion = duracion
+            cambios_realizados = True
+        if curso.nivel != nivel:
+            curso.nivel = nivel
+            cambios_realizados = True
+        if curso.precio is None:
+            curso.precio = 0.0
+        if curso.precio != precio:
+            curso.precio = precio
+            cambios_realizados = True
+
+        if cambios_realizados:
+            # Si se hicieron cambios, guardar el objeto y mostrar el mensaje
+            curso.save()
+            messages.success(request, 'Curso actualizado exitosamente', extra_tags='curso_actualizado')
+
         return redirect('crearCursos')
     else:
         return render(request, 'editarDatosCurso.html', {'curso': curso})
