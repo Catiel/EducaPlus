@@ -19,8 +19,6 @@ conda activate myenv
 ```
 2. Instala las dependencias de Python:
 ```bash
-python -m pip install --upgrade pip
-pip install django==4.2
-pip install firebase_admin
+pip install -r .\requirements.txt
 python manage.py runserver
 ```
