@@ -1,0 +1,123 @@
+{% extends 'basest/baseLoginInstructor.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tarjetasContenido.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+    <div class="container">
+        <h1 id="tit">Contenido curso</h1>
+        <div class="accordion" id="accordionExample">
+            {% for seccion in secciones %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                        <button class="accordion-button accordion-button-custom collapsed" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}"
+                                aria-expanded="true"
+                                aria-controls="collapse{{ forloop.counter }}">
+                            {{ seccion.nombre }}
+                        </button>
+                    </h2>
+                    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
+                         aria-labelledby="heading{{ forloop.counter }}">
+                        <div class="accordion-body">
+                            {% for archivo in seccion.archivo_set.all %}
+                                <div class="card mb-3">
+                                    <div class="row g-0 d-flex justify-content-center">
+                                        <div class="col-md-8 d-flex justify-content-center">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ archivo.nombre }}</h5>
+                                                <p class="card-text">
+                                                    {% if archivo.tipo == 'video' %}
+                                                        <video width="640" height="480" controls>
+                                                            <source src="{{ archivo.url }}" type="video/mp4">
+                                                            Tu navegador no soporta el elemento de video.
+                                                        </video>
+                                                    {% elif archivo.tipo == 'imagen' %}
+                                                        <a href="{{ archivo.url }}" data-lightbox="image-1">
+                                                            <img src="{{ archivo.url }}" alt="{{ archivo.nombre }}"
+                                                                 width=100% height=100%>
+                                                        </a>
+                                                    {% elif archivo.tipo == 'audio' %}
+                                                        <audio controls>
+                                                            <source src="{{ archivo.url }}" type="audio/mpeg">
+                                                            Tu navegador no soporta el elemento de audio.
+                                                        </audio>
+                                                    {% elif archivo.tipo == 'ppt' %}
+                                                        <iframe src="https://docs.google.com/gview?url={{ archivo.url }}&embedded=true"
+                                                                style="width:700px; height:500px;"
+                                                                frameborder="0"></iframe>
+                                                    {% elif archivo.tipo == 'pdf' %}
+                                                        <iframe src="https://docs.google.com/gview?url={{ archivo.url }}&embedded=true"
+                                                                style="width:700px; height:500px;"
+                                                                frameborder="0"></iframe>
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <button id= "add-content-button" class="btn btn-primary add-content-button"
+                                    data-section="{{ seccion.id }}">Agregar contenido
+                            </button>
+                            <!-- Formulario oculto para cargar archivos a la sección -->
+                            <form class="upload-form" data-section="{{ seccion.id }}" style="display: none;"
+                                  method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="section_id" value="{{ seccion.id }}">
+                                <label for="file">Selecciona un archivo:</label>
+                                <input type="file" name="file"
+                                       accept=".jpg,.jpeg,.png,.mp4,.mp3,.ppt,.pdf" multiple>
+                                <input type="submit" value="Subir">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <button id="add-section-modal-button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#addSectionModal">Agregar sección
+            </button>
+        </div>
+    </div>
+    <!-- Modal para agregar una nueva sección -->
+    <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSectionModalLabel">Agregar sección</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario para agregar una nueva sección -->
+                    <form method="post" action="{% url 'add_section' curso.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="sectionName" class="form-label">Nombre de la sección</label>
+                            <input type="text" class="form-control" id="sectionName" name="section_name" required>
+                        </div>
+                        <button type="submit" id= "agregar-cont" class="btn btn-primary">Agregar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Obtener todos los botones de agregar contenido
+        var addContentButtons = document.getElementsByClassName('add-content-button');
+
+        // Agregar un evento de clic a cada botón de agregar contenido
+        for (var i = 0; i < addContentButtons.length; i++) {
+            addContentButtons[i].addEventListener('click', function () {
+                // Obtener el ID de la sección del atributo 'data-section' del botón
+                var sectionId = this.getAttribute('data-section');
+
+                // Obtener el formulario de carga de archivos correspondiente
+                var uploadForm = document.querySelector('.upload-form[data-section="' + sectionId + '"]');
+
+                // Mostrar el formulario de carga de archivos
+                uploadForm.style.display = 'block';
+            });
+        }
+    </script>
+{% endblock %}

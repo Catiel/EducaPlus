@@ -1,3 +1,4 @@
+import os
 import re
 from datetime import datetime
 
@@ -15,9 +16,12 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from botocore.exceptions import BotoCoreError, ClientError
 
+from spaces import client, space_name
 from .decorators import group_required
-from .models import Student, Instructor, Curso, Compra, Cart
+from .models import Student, Instructor, Curso, Compra, Cart, Seccion, Archivo
 
 
 @csrf_exempt
@@ -557,3 +561,95 @@ def editarCurso(request, curso_id):
         return redirect('crearCursos')
     else:
         return render(request, 'editarDatosCurso.html', {'curso': curso})
+
+
+@login_required
+def agregarContenido(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    secciones = Seccion.objects.filter(curso_id=curso_id)
+    if request.method == 'POST':
+        section_id = request.POST['section_id']
+        try:
+            seccion = Seccion.objects.get(id=section_id)
+        except Seccion.MultipleObjectsReturned:
+            # Handle the exception here, e.g. log an error message and redirect the user
+            print(f"Error: Multiple Seccion objects with id {section_id} found.")
+            return redirect('agregar_contenido', curso_id=curso_id)
+        for uploaded_file in request.FILES.getlist('file'):
+            file_name = uploaded_file.name
+            upload_to_course_bucket(uploaded_file, curso_id, section_id, seccion.nombre, file_name)
+        # Redirige al usuario a la misma página
+        return redirect('agregar_contenido', curso_id=curso_id)
+    return render(request, 'agregarContenido.html', {'secciones': secciones, 'curso': curso})
+
+
+def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, file_name):
+    bucket_name = space_name
+
+    # The file name includes the course ID, section name and section ID as "folders"
+    key = f'{curso_id}/{section_name}/{section_id}/{file_name}'
+
+    # Read the file into memory
+    uploaded_file.seek(0)
+    file_bytes = uploaded_file.read()
+
+    # Determine the file type from the file extension
+    file_extension = os.path.splitext(file_name)[1]
+    if file_extension in ['.jpg', '.jpeg', '.png']:
+        file_type = 'imagen'
+    elif file_extension in ['.mp4']:
+        file_type = 'video'
+    elif file_extension in ['.mp3']:
+        file_type = 'audio'
+    elif file_extension in ['.ppt']:
+        file_type = 'ppt'
+    elif file_extension in ['.pdf']:
+        file_type = 'pdf'
+    else:
+        file_type = 'imagen'  # Default to 'imagen' if the file extension is not recognized
+
+    try:
+        # Try to upload the file to the course bucket
+        client.put_object(Body=file_bytes, Bucket=bucket_name, Key=key, ACL='public-read')
+        print(f"File {file_name} successfully uploaded to bucket {bucket_name} in the folder {curso_id}/{section_name}/{section_id}.")
+
+        # Construct the URL of the uploaded file
+        url = f"https://{bucket_name}.nyc3.cdn.digitaloceanspaces.com/{key}"
+
+        # Get the section by ID
+        seccion = Seccion.objects.get(id=section_id)
+
+        # Create a new Archivo object with the URL and save it to the database
+        Archivo.objects.create(nombre=file_name, url=url, tipo=file_type, seccion=seccion)
+
+        return url
+    except (BotoCoreError, ClientError) as error:
+        # If the error is different, raise the exception
+        raise error
+
+
+@login_required
+@group_required('Instructores', redirect_route='indexLog')
+def agregarSeccion(request, curso_id):
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        section_name = request.POST.get('section_name')
+
+        # Check if section_name is None or empty
+        if not section_name:
+            return HttpResponse('section_name not provided', status=400)
+
+        # Obtener el curso
+        curso = get_object_or_404(Curso, id=curso_id)
+
+        # Crear una nueva sección
+        seccion = Seccion(nombre=section_name, curso=curso)
+
+        # Guardar la sección en la base de datos
+        seccion.save()
+
+        # Redirigir al usuario a la página de agregar contenido
+        return redirect('agregar_contenido', curso_id=curso_id)
+    else:
+        # Si el método no es POST, devolver una respuesta HTTP 405 (Método no permitido)
+        return HttpResponseNotAllowed(['POST'])
