@@ -37,31 +37,66 @@ def verificar_correo_teach(request):
 
     return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 
-
+#Correccion intentos fallidos inicio de sesion
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+
+        # Obtener o inicializar el contador de intentos fallidos
+        failed_attempts = request.session.get('failed_attempts', 0)
+
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            request.session['failed_attempts'] = 0  # Reiniciar el contador en caso de éxito
             if user.groups.filter(name='Instructores').exists():
                 login(request, user)
-                return JsonResponse(
-                    {'success': True, 'userType': 'Instructor'})
+                return JsonResponse({'success': True, 'userType': 'Instructor'})
             elif user.groups.filter(name='Estudiantes').exists():
                 login(request, user)
-                return JsonResponse(
-                    {'success': True, 'userType': 'Estudiante'})
+                return JsonResponse({'success': True, 'userType': 'Estudiante'})
         else:
+            # Incrementar el contador de intentos fallidos
+            failed_attempts += 1
+            request.session['failed_attempts'] = failed_attempts
+
             # Verificar el tipo de error
             try:
                 existing_user = User.objects.get(email=email)
                 if existing_user:
-                    return JsonResponse(
-                        {'success': False, 'errorType': 'incorrectPassword'})
+                    if failed_attempts >= 5:
+                        return JsonResponse({'success': False, 'errorType': 'tooManyAttempts'})
+                    return JsonResponse({'success': False, 'errorType': 'incorrectPassword'})
             except User.DoesNotExist:
+                if failed_attempts >= 5:
+                    return JsonResponse({'success': False, 'errorType': 'tooManyAttempts'})
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
+
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
+#def login_view(request):
+#    if request.method == 'POST':
+#        email = request.POST.get('email')
+#        password = request.POST.get('password')
+#        user = authenticate(request, username=email, password=password)
+#        if user is not None:
+#            if user.groups.filter(name='Instructores').exists():
+#                login(request, user)
+#                return JsonResponse(
+#                    {'success': True, 'userType': 'Instructor'})
+#            elif user.groups.filter(name='Estudiantes').exists():
+#                login(request, user)
+#                return JsonResponse(
+#                    {'success': True, 'userType': 'Estudiante'})
+#        else:
+#            # Verificar el tipo de error
+#            try:
+#                existing_user = User.objects.get(email=email)
+#                if existing_user:
+#                    return JsonResponse(
+#                        {'success': False, 'errorType': 'incorrectPassword'})
+#            except User.DoesNotExist:
+#                return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
+#   return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
 
 
 @csrf_exempt
