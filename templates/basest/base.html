@@ -514,65 +514,6 @@
     });
 });
 
-   /* $(document).ready(function(){
-    $('#loginForm').on('submit', function(e){
-        e.preventDefault();
-
-        // Validación de campos
-        var emailInput = $('#loginEmail').val();
-        var passwordInput = $('#loginPassword').val();
-        var errorText = '';
-
-        if (emailInput.trim() === '') {
-            $('#emailErrorL').text('Este campo es obligatorio').css('color', 'red');
-            errorText += 'Este campo es obligatorio\n';
-        } else {
-            $('#emailErrorL').text(''); // Limpiar mensaje de error
-        }
-        if (passwordInput.trim() === '') {
-            $('#passwordErrorL').text('Este campo es obligatorio').css('color', 'red');
-            errorText += 'Este campo es obligatorio\n';
-        } else {
-            $('#passwordErrorL').text(''); // Limpiar mensaje de error
-        }
-
-        // Si hay errores, detener el envío del formulario
-        if (errorText !== '') {
-            return;
-        }
-
-        // Si la validación pasa, continuar con la solicitud AJAX
-        var formData = $(this).serialize();
-        $.ajax({
-            type: 'POST',
-            url: '/login/',
-            data: formData,
-            success: function(data){
-                if (data.success) {
-                    // Redireccionar según el tipo de usuario
-                    if (data.userType === 'Instructor') {
-                        window.location.href = '/crearCursos/';
-                    } else if (data.userType === 'Estudiante') {
-                        window.location.href = '/indexLog/';
-                    }
-                } else {
-                    // Mostrar mensaje de error según la respuesta del servidor
-                    if (data.errorType === 'incorrectCredentials') {
-                        $('#loginError').text('Credenciales incorrectas');
-                    } else if (data.errorType === 'emailNotFound') {
-                        $('#loginError').text('Correo electrónico no encontrado');
-                    } else if (data.errorType === 'incorrectPassword') {
-                        $('#loginError').text('Contraseña incorrecta');
-                    }
-                }
-            },
-            error: function(){
-                // Manejar errores de conexión
-                $('#loginError').text('Error de conexión');
-            }
-        });
-    });
-});*/
     //verificar correo existente instructor
     $(document).ready(function () {
     $('#teachForm').on('submit', function (e) {

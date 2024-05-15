@@ -73,30 +73,7 @@ def login_view(request):
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
 
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
-#def login_view(request):
-#    if request.method == 'POST':
-#        email = request.POST.get('email')
-#        password = request.POST.get('password')
-#        user = authenticate(request, username=email, password=password)
-#        if user is not None:
-#            if user.groups.filter(name='Instructores').exists():
-#                login(request, user)
-#                return JsonResponse(
-#                    {'success': True, 'userType': 'Instructor'})
-#            elif user.groups.filter(name='Estudiantes').exists():
-#                login(request, user)
-#                return JsonResponse(
-#                    {'success': True, 'userType': 'Estudiante'})
-#        else:
-#            # Verificar el tipo de error
-#            try:
-#                existing_user = User.objects.get(email=email)
-#                if existing_user:
-#                    return JsonResponse(
-#                        {'success': False, 'errorType': 'incorrectPassword'})
-#            except User.DoesNotExist:
-#                return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
-#   return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
+
 
 
 @csrf_exempt
