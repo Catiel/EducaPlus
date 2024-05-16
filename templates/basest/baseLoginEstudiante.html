@@ -10,8 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -48,6 +47,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#dialogo1">Ver perfil</a></li>
+                        <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#verFotoPerfil">Ver foto de perfil</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-dark" href="/logout">Cerrar sesión</a></li>
                     </ul>
@@ -119,6 +119,24 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="verFotoPerfil">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Foto de perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí puedes mostrar la foto de perfil del usuario -->
+                <!-- Puedes usar una etiqueta <img> para mostrar la imagen -->
+                <!-- Asegúrate de que la imagen esté disponible a través de una URL -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
