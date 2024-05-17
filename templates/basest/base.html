@@ -499,6 +499,9 @@
                         $('#loginError').text('Correo electrónico no encontrado');
                     } else if (data.errorType === 'incorrectPassword') {
                         $('#loginError').text('Contraseña incorrecta');
+                    } else if (data.errorType === 'tooManyAttempts') {
+                        alert('Demasiados intentos fallidos, Se recargara la pagina');
+                        location.reload();
                     }
                 }
             },
@@ -509,6 +512,7 @@
         });
     });
 });
+
     //verificar correo existente instructor
     $(document).ready(function () {
     $('#teachForm').on('submit', function (e) {
