@@ -14,6 +14,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    
+    
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -47,7 +49,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#dialogo1">Ver perfil</a></li>
-                        <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#verFotoPerfil">Ver foto de perfil</a></li>
+                        <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#verFotoPerfil">foto de perfil</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-dark" href="/logout">Cerrar sesión</a></li>
                     </ul>
@@ -123,24 +125,35 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="verFotoPerfil">
+<!-- Modal para ver y cambiar la foto de perfil -->
+<div class="modal fade" id="verFotoPerfil" tabindex="-1" aria-labelledby="verFotoPerfilLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Foto de perfil</h5>
+                <h5 class="modal-title text-center w-100" id="verFotoPerfilLabel">Foto de perfil</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <!-- Aquí puedes mostrar la foto de perfil del usuario -->
-                <!-- Puedes usar una etiqueta <img> para mostrar la imagen -->
-                <!-- Asegúrate de que la imagen esté disponible a través de una URL -->
+            <div class="modal-body text-center">
+                <!-- Contenedor de la imagen de perfil -->
+                <div class="profile-image-container">
+                    <img src="{% static 'images/estetica-avatar.jpg' %}" class="rounded-circle img-thumbnail profile-image" alt="" id="profileImage">
+                    <!-- Botón de cambio de imagen -->
+                    <label for="inputProfileImage" class="btn btn-primary btn-label">
+                        <i class="bi bi-pencil"></i>
+                        <input type="file" id="inputProfileImage" class="d-none">
+                    </label>
+                </div>
+                                            
+                <!-- Texto para indicar el formato permitido -->
+                <p class="text-center mt-3">Formato permitido: JPG, PNG</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <div class="modal-footer justify-content-center"> <!-- Centrar el botón de guardar -->
+                <button type="button" class="btn btn-primary" id="saveProfileImage" disabled>Guardar</button>
             </div>
         </div>
     </div>
 </div>
+
 {% block content %}{% endblock %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
@@ -165,6 +178,7 @@
             }
         });
     });
+
     $(document).ready(function () {
         $('#dialogo1').on('show.bs.modal', function (event) {
             var modal = $(this);
@@ -183,17 +197,19 @@
             });
         });
     });
+
     $(document).ready(function() {
         $('form').submit(function(e) {
             var nombreInput = $('#nombre').val();
             var nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
-            
+
             if (!nombrePattern.test(nombreInput)) {
                 alert('El nombre debe contener solo letras y tener entre 2 y 50 caracteres.');
                 e.preventDefault(); // Evitar que se envíe el formulario si la validación falla
             }
         });
     });
+
     $(document).ready(function() {
         $('form').submit(function(event) {
             var apellidoValue = $('#apellido').val();
@@ -221,6 +237,7 @@
             }
         });
     });
+
     window.onload = function () {
         var dob = document.getElementById('fecha_nacimiento');
         var today = new Date();
@@ -230,6 +247,7 @@
         today = yyyy + '-' + mm + '-' + dd;
         dob.setAttribute("max", today);
     };
+    
 </script>
 </body>
 </html>
