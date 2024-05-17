@@ -278,6 +278,37 @@
         today = yyyy + '-' + mm + '-' + dd;
         dob.setAttribute("max", today);
     };
+    // Script para cambiar la imagen de perfil
+    $(document).ready(function() {
+        $('#inputProfileImage').change(function(event) {
+            var file = this.files[0];
+            var fileName = file ? file.name : null; // Verifica si se ha seleccionado un archivo
+            var fileExtension = fileName ? fileName.split('.').pop().toLowerCase() : null;
+    
+            if (fileName && (fileExtension === 'png' || fileExtension === 'jpg')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profileImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+                // Habilita el botón "Guardar" cuando se selecciona un archivo válido
+                $('#saveProfileImage').prop('disabled', false);
+            } else {
+                // Mostrar mensaje de error si el formato no es válido o no se ha seleccionado un archivo
+                toastr.error('Por favor selecciona un archivo en formato PNG o JPG');
+                // Limpiar el input file
+                $('#inputProfileImage').val('');
+                // Deshabilita el botón "Guardar" si no se ha seleccionado un archivo válido
+                $('#saveProfileImage').prop('disabled', true);
+            }
+        });
+    
+        $('#saveProfileImage').click(function() {
+            // Aquí debes agregar el código para enviar la nueva imagen al servidor
+            toastr.success('Imagen de perfil actualizada con éxito');
+            $('#verFotoPerfil').modal('hide'); // Cierra el modal al guardar la imagen
+        });
+    });
     
 </script>
 </body>
