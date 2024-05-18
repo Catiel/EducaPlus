@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
+from .models import Curso
 
 
 @csrf_exempt
@@ -557,3 +558,16 @@ def editarCurso(request, curso_id):
         return redirect('crearCursos')
     else:
         return render(request, 'editarDatosCurso.html', {'curso': curso})
+
+        
+def eliminarCurso(request, course_id):
+        # Obtén el curso por su ID
+        course = get_object_or_404(Curso, id=course_id)
+        # Verifica si el usuario actual es el propietario del curso
+        if request.user == course.owner:
+            course.delete()
+            # Redirige al usuario a la página de inicio después de eliminar el curso
+            return redirect('home')
+        else:
+            # Si el usuario no es el propietario del curso, muestra un mensaje de error
+            return HttpResponseForbidden("No tienes permiso para eliminar este curso")
