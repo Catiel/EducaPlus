@@ -13,6 +13,39 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
+
+    <style>
+        .profile-image-container {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .btn-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
+        }
+        /* Estilos para el modal #verFotoPerfilInstructor */
+        #verFotoPerfilInstructor .modal-content {
+            background-color: var(--blue-chill-700); /* Color de fondo del modal */
+        }
+        /* Estilos para el botón "Guardar" dentro del modal #verFotoPerfilInstructor */
+        #verFotoPerfilInstructor .btn-primary {
+            background-color: var(--blue-chill-300); /* Color de fondo del botón */
+            border-color: var(--blue-chill-500); /* Color del borde del botón */
+            color: var(--blue-chill-50); /* Color del texto del botón */
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -36,9 +69,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#dialogo2">Ver perfil</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
+                        <li><a class="dropdown-item text-dark" href="#" data-bs-toggle="modal" data-bs-target="#verFotoPerfilInstructor">foto de perfil</a></li>
                         <li><a class="dropdown-item text-dark" href="/logout">Cerrar sesión</a></li>
                     </ul>
                 </li>
@@ -117,6 +148,34 @@
                     </form>
                     <!-- Fin del formulario -->
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para ver y cambiar la foto de perfil -->
+<div class="modal fade" id="verFotoPerfilInstructor" tabindex="-1" aria-labelledby="verFotoPerfilLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center w-100" id="verFotoPerfilLabel">Foto de perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- Contenedor de la imagen de perfil -->
+                <div class="profile-image-container">
+                    <img src="{% static 'images/estetica-avatar.jpg' %}" class="rounded-circle img-thumbnail profile-image" alt="" id="profileImage">
+                    <!-- Botón de cambio de imagen -->
+                    <label for="inputProfileImage" class="btn btn-primary btn-label">
+                        <i class="bi bi-pencil"></i>
+                        <input type="file" id="inputProfileImage" class="d-none">
+                    </label>
+                </div>
+                                            
+                <!-- Texto para indicar el formato permitido -->
+                <p class="text-center mt-3">Formato permitido: JPG, PNG</p>
+            </div>
+            <div class="modal-footer justify-content-center"> <!-- Centrar el botón de guardar -->
+                <button type="button" class="btn btn-primary" id="saveProfileImage" disabled>Guardar</button>
             </div>
         </div>
     </div>
@@ -200,6 +259,39 @@
     document.getElementById('editarPerfilForm').onsubmit = function () {
         return validateLastName();
     };
+
+      // Script para cambiar la imagen de perfil
+      $(document).ready(function() {
+        $('#inputProfileImage').change(function(event) {
+            var file = this.files[0];
+            var fileName = file ? file.name : null; // Verifica si se ha seleccionado un archivo
+            var fileExtension = fileName ? fileName.split('.').pop().toLowerCase() : null;
+    
+            if (fileName && (fileExtension === 'png' || fileExtension === 'jpg')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profileImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(file);
+                // Habilita el botón "Guardar" cuando se selecciona un archivo válido
+                $('#saveProfileImage').prop('disabled', false);
+            } else {
+                // Mostrar mensaje de error si el formato no es válido o no se ha seleccionado un archivo
+                toastr.error('Por favor selecciona un archivo en formato PNG o JPG');
+                // Limpiar el input file
+                $('#inputProfileImage').val('');
+                // Deshabilita el botón "Guardar" si no se ha seleccionado un archivo válido
+                $('#saveProfileImage').prop('disabled', true);
+            }
+        });
+    
+        $('#saveProfileImage').click(function() {
+            // Aquí debes agregar el código para enviar la nueva imagen al servidor
+            toastr.success('Imagen de perfil actualizada con éxito');
+            $('#verFotoPerfilInstructor').modal('hide'); // Cierra el modal al guardar la imagen
+        });
+    });
+    
     
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
