@@ -19,8 +19,17 @@ from django.views.decorators.csrf import csrf_exempt
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
 from .models import Curso
+from django.shortcuts import get_object_or_404, redirect
 
 
+#Eliminar curso
+def eliminar_curso(request, curso_id):
+    if request.method == "POST":
+        curso = get_object_or_404(Curso, id=curso_id)
+        curso.delete()
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=400)
+#
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':

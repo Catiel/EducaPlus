@@ -64,4 +64,28 @@
             {% endfor %}
         </script>
     {% endif %}
+        <script>
+        function eliminarCurso(cursoId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
+                $.ajax({
+                    url: "{% url 'eliminar_curso' 0 %}".replace("0", cursoId),
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success('Curso eliminado exitosamente.');
+                            location.reload();  // Recargar la página para reflejar los cambios
+                        } else {
+                            toastr.error('Hubo un problema al eliminar el curso.');
+                        }
+                    },
+                    error: function() {
+                        toastr.error('Hubo un problema al eliminar el curso.');
+                    }
+                });
+            }
+        }
+    </script>
 {% endblock %}
