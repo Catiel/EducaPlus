@@ -62,3 +62,12 @@ h1 {
     display: block;
     width: 100%;
 }
+
+.fixed-bottom-button {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 9999;
+    width: 200px; /* Ajusta este valor según sea necesario */
+    height: 50px; /* Ajusta este valor según sea necesario */
+}
