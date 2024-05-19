@@ -17,10 +17,8 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
     <div class="container-fluid d-flex justify-content-between">
-        <form class="d-flex" action="/search" method="get">
-            <input class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..."
-                   aria-label="Search">
-
+        <form class="d-flex">
+            <input id="search-bar" class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..." aria-label="Search">
         </form>
         <div>
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
@@ -28,10 +26,8 @@
                     <a href="{% url 'crearDatosCursos' %}" class="btn btn-outline-success custom-button">Nuevo curso</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{% static 'images/person-circle.svg' %}" alt="User Icon" width="25" height="25"
-                             class="d-inline-block align-text-top">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static 'images/person-circle.svg' %}" alt="User Icon" width="25" height="25" class="d-inline-block align-text-top">
                         {{ request.user.first_name.split|first }} {{ request.user.last_name.split|first }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -200,7 +196,58 @@
     document.getElementById('editarPerfilForm').onsubmit = function () {
         return validateLastName();
     };
-    
+    //buscar cursos
+       $(document).ready(function() {
+        $('#search-bar').on('input', function() {
+            var searchTerm = $(this).val().toLowerCase();
+            $.ajax({
+                url: "{% url 'search_courses' %}",
+                data: {
+                    'q': searchTerm
+                },
+                success: function(data) {
+                    $('.cursos-container .row').empty();
+                    if (data.cursos.length > 0) {
+                        $.each(data.cursos, function(index, curso) {
+                            var cursoHtml = `<div class="col-md-3 course">
+                                <a href="#" class="card-link">
+                                    <div class="card">
+                                        <div class="card-body position-relative">
+                                            <h5 class="card-title">${curso.nombre}</h5>
+                                            <p class="card-text limited-text">${curso.descripcion}</p>
+                                        </div>
+                                        <div class="dropdown position-absolute top-0 end-0 mt-3 curso-dropdown">
+                                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#438e96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-dots-vertical">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                    <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                    <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                </svg>
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                <li><a class="dropdown-item" href="{% url 'obtenerDatosCurso' 0 %}".replace('0', curso.id)>Editar datos</a></li>
+                                                <li><a class="dropdown-item" href="#">Agregar contenido</a></li>
+                                                <li><a class="dropdown-item" href="#">Editar contenido</a></li>
+                                                <li><a class="dropdown-item" href="#">Eliminar curso</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>`;
+                            $('.cursos-container .row').append(cursoHtml);
+                        });
+                    } else {
+                        $('.cursos-container .row').append('<div class="col-12 text-center mt-5"><p>No se encontraron cursos.</p></div>');
+                    }
+                },
+                error: function() {
+                    console.log("Error en la búsqueda");
+                }
+            });
+        });
+    });
+//
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
