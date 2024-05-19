@@ -1,9 +1,12 @@
-{% extends 'basest/baseLoginInstructor.html' %}
+{% extends 'basest/baseAgregarContenido.html' %}
 {% load static %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/tarjetasContenido.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <div class="container">
         <h1 id="tit">Contenido curso</h1>
         <div class="accordion" id="accordionExample">
@@ -44,12 +47,10 @@
                                                         </audio>
                                                     {% elif archivo.tipo == 'ppt' %}
                                                         <iframe src="https://docs.google.com/gview?url={{ archivo.url }}&embedded=true"
-                                                                style="width:700px; height:500px;"
-                                                                frameborder="0"></iframe>
+                                                                style="width:700px; height:500px; border: none;"></iframe>
                                                     {% elif archivo.tipo == 'pdf' %}
                                                         <iframe src="https://docs.google.com/gview?url={{ archivo.url }}&embedded=true"
-                                                                style="width:700px; height:500px;"
-                                                                frameborder="0"></iframe>
+                                                                style="width:700px; height:500px; border: none;"></iframe>
                                                     {% endif %}
                                                 </p>
                                             </div>
@@ -119,5 +120,19 @@
                 uploadForm.style.display = 'block';
             });
         }
+        toastr.options = {
+            "positionClass": "toast-bottom-left",
+            "closeButton": true,
+            newestOnTop: true,
+        }
     </script>
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                {% if 'seccion_agregada' in message.tags %}
+                    toastr.success("{{ message }}");
+                {% endif %}
+            {% endfor %}
+        </script>
+    {% endif %}
 {% endblock %}

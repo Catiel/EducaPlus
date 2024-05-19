@@ -1,5 +1,4 @@
 body {
-    font-family: 'Roboto', sans-serif;
     color: #333;
     background-color: #ffffff;
 }
@@ -18,14 +17,14 @@ h1 {
 }
 
 .accordion-item {
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 5px;
     margin-bottom: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .accordion-header {
-    background-color: #f8f8f8;
+    background-color: #ffffff;
     padding: 10px 15px;
     cursor: pointer;
 }
@@ -53,9 +52,6 @@ h1 {
     color: #f2f9f9;
 }
 
-/*.btn:hover {*/
-/*    background-color: #0056b3;*/
-/*}*/
 
 .btn-primary {
     margin-top: 20px;
