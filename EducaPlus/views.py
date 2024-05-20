@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime
 
+from botocore.exceptions import BotoCoreError, ClientError
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
@@ -11,13 +12,14 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from botocore.exceptions import BotoCoreError, ClientError
+from moviepy.editor import VideoFileClip
+from PIL import Image
 
 from spaces import client, space_name
 from .decorators import group_required
@@ -570,35 +572,37 @@ def agregarContenido(request, curso_id):
     if request.method == 'POST':
         section_id = request.POST['section_id']
         try:
-            seccion = Seccion.objects.get(id=section_id)
+            section = Seccion.objects.get(id=section_id)
         except Seccion.MultipleObjectsReturned:
-            # Handle the exception here, e.g. log an error message and redirect the user
-            print(f"Error: Multiple Seccion objects with id {section_id} found.")
-            return redirect('agregar_contenido', curso_id=curso_id)
+            section = Seccion.objects.filter(id=section_id).first()
         for uploaded_file in request.FILES.getlist('file'):
             file_name = uploaded_file.name
-            upload_to_course_bucket(uploaded_file, curso_id, section_id, seccion.nombre, file_name)
-        # Redirige al usuario a la misma página
+            response = upload_to_course_bucket(uploaded_file, curso_id, section_id, section.nombre, file_name)
+            if 'error' in response:
+                messages.error(request, response['error'])
+                return redirect('agregar_contenido', curso_id=curso_id)
+        messages.success(request, 'Archivo subido exitosamente', extra_tags='archivo_subido')
         return redirect('agregar_contenido', curso_id=curso_id)
     return render(request, 'agregarContenido.html', {'secciones': secciones, 'curso': curso})
 
 
 def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, file_name):
     bucket_name = space_name
-
-    # The file name includes the course ID, section name and section ID as "folders"
     key = f'{curso_id}/{section_name}/{section_id}/{file_name}'
-
-    # Read the file into memory
     uploaded_file.seek(0)
     file_bytes = uploaded_file.read()
-
-    # Determine the file type from the file extension
     file_extension = os.path.splitext(file_name)[1]
     if file_extension in ['.jpg', '.jpeg', '.png']:
         file_type = 'imagen'
+        image = Image.open(uploaded_file)
+        width, height = image.size
+        if width < 1024 or height < 768:
+            return {'error': "La resolución de la imagen debe ser al menos 1024x768"}
     elif file_extension in ['.mp4']:
         file_type = 'video'
+        clip = VideoFileClip(uploaded_file.temporary_file_path())
+        if clip.size[1] < 480:
+            return {'error': "La resolución del video debe ser al menos 480p"}
     elif file_extension in ['.mp3']:
         file_type = 'audio'
     elif file_extension in ['.ppt']:
@@ -606,26 +610,15 @@ def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, f
     elif file_extension in ['.pdf']:
         file_type = 'pdf'
     else:
-        file_type = 'imagen'  # Default to 'imagen' if the file extension is not recognized
-
+        file_type = 'imagen'
     try:
-        # Try to upload the file to the course bucket
         client.put_object(Body=file_bytes, Bucket=bucket_name, Key=key, ACL='public-read')
-        print(f"File {file_name} successfully uploaded to bucket {bucket_name} in the folder {curso_id}/{section_name}/{section_id}.")
-
-        # Construct the URL of the uploaded file
         url = f"https://{bucket_name}.nyc3.cdn.digitaloceanspaces.com/{key}"
-
-        # Get the section by ID
         seccion = Seccion.objects.get(id=section_id)
-
-        # Create a new Archivo object with the URL and save it to the database
         Archivo.objects.create(nombre=file_name, url=url, tipo=file_type, seccion=seccion)
-
-        return url
+        return {'success': url}
     except (BotoCoreError, ClientError) as error:
-        # If the error is different, raise the exception
-        raise error
+        return {'error': str(error)}
 
 
 @login_required

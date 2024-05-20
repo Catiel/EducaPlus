@@ -19,7 +19,9 @@
                                 aria-controls="collapse{{ forloop.counter }}">
                             Sección {{ forloop.counter }}: {{ seccion.nombre }}
                         </button>
-                        <button class="btn btn-primary add-content-button" data-section="{{ seccion.id }}">Agregar
+                        <button class="btn btn-primary add-content-button" data-section="{{ seccion.id }}"
+                                title="Nota: Solo se pueden subir archivos de tipo .jpg, .jpeg, .png, .mp4, .mp3, .ppt, .pdf. El tamaño minimo de imágenes es de 1024x768 y de videos es 480p">
+                            Agregar
                             contenido
                         </button>
                     </h2>
@@ -39,11 +41,12 @@
                                                         </video>
                                                     {% elif archivo.tipo == 'imagen' %}
                                                         <a href="{{ archivo.url }}" data-lightbox="image-1">
-                                                            <div style="width:700px; height:500px; border: none; display: flex; align-items: center; justify-content: center;">
+                                                            <div style="width:700px; height:500px; border: none; ">
                                                                 <img src="{{ archivo.url }}" alt="{{ archivo.nombre }}"
-                                                                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                                                     style="width: 100%; height: 100%; object-fit: contain;">
                                                             </div>
                                                         </a>
+
                                                     {% elif archivo.tipo == 'audio' %}
                                                         <audio controls>
                                                             <source src="{{ archivo.url }}" type="audio/mpeg">
@@ -95,7 +98,8 @@
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="sectionName" class="form-label">Nombre de la sección</label>
-                            <input type="text" class="form-control" id="sectionName" name="section_name" required>
+                            <input type="text" class="form-control" id="sectionName" name="section_name" maxlength="80"
+                                   required oninput="removeLeadingSpaces(this)">
                         </div>
                         <button type="submit" id= "agregar-cont" class="btn btn-primary">Agregar</button>
                     </form>
@@ -143,12 +147,22 @@
             "closeButton": true,
             newestOnTop: true,
         }
+
+        function removeLeadingSpaces(input) {
+            if (input.value.charAt(0) === ' ') {
+                input.value = input.value.slice(1);
+            }
+        }
     </script>
     {% if messages %}
         <script>
             {% for message in messages %}
                 {% if 'seccion_agregada' in message.tags %}
                     toastr.success("{{ message }}");
+                {% elif 'archivo_subido' in message.tags %}
+                    toastr.success("{{ message }}");
+                {% elif 'error' in message.tags %}
+                    toastr.error("{{ message }}");
                 {% endif %}
             {% endfor %}
         </script>
