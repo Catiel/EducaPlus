@@ -20,6 +20,15 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
 
 
+#Eliminar curso
+def eliminar_curso(request, curso_id):
+    if request.method == "POST":
+        curso = get_object_or_404(Curso, id=curso_id)
+        curso.delete()
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=400)
+
+
 #Buscar cursos estudiante
 def buscar_cursos(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -28,7 +37,7 @@ def buscar_cursos(request):
         resultados = [{'id': curso.id, 'nombre': curso.nombre} for curso in cursos]
         return JsonResponse(resultados, safe=False)
     return JsonResponse({'error': 'Invalid request'}, status=400)
-#
+  
 
 #buscar cursos instructor
 def search_courses(request):
@@ -45,7 +54,8 @@ def search_courses(request):
             cursos_list = list(todos_cursos.values('nombre', 'descripcion', 'id'))
             return JsonResponse({'cursos': cursos_list})
     return JsonResponse({'error': 'Invalid request'}, status=400)
-#
+
+  
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':
@@ -595,3 +605,12 @@ def editarCurso(request, curso_id):
         return redirect('crearCursos')
     else:
         return render(request, 'editarDatosCurso.html', {'curso': curso})
+
+        
+def eliminar_curso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    try:
+        curso.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

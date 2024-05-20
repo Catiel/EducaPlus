@@ -41,7 +41,7 @@
                                             datos</a></li>
                                         <li><a class="dropdown-item" href="#">Agregar contenido</a></li>
                                         <li><a class="dropdown-item" href="#">Editar contenido</a></li>
-                                        <li><a class="dropdown-item" href="#">Eliminar curso</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="eliminarCurso('{{ curso.id }}')">Eliminar curso</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -49,12 +49,32 @@
                     </div>
                 {% empty %}
                     <div class="col-12 text-center mt-5">
-                        <p>Aún no has creado ningún curso.</p>
-                    </div>
+                        <p>No tiene cursos creados</p>
+                   </div>
                 {% endfor %}
             </div>
         </div>
     </div>
+
+    <!-- Modal HTML -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center" id="confirmModalLabel">¿Deseas eliminar este curso?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Eliminarás definitivamente el curso y todo el contenido que tenga. No podrás recuperar ningún dato que este guardado en el curso.
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" >Eliminar</button>
+                    <button type="button" class="btn btn-outline-success" id="cancelBtn" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% if messages %}
         <script>
             {% for message in messages %}
@@ -64,4 +84,44 @@
             {% endfor %}
         </script>
     {% endif %}
+
+    <script>
+        var cursoIdToDelete = null;
+
+        function eliminarCurso(cursoId) {
+            cursoIdToDelete = cursoId;
+            $('#confirmModal').modal('show');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (cursoIdToDelete !== null) {
+                $.ajax({
+                    url: "{% url 'eliminar_curso' 0 %}".replace("0", cursoIdToDelete),
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        $('#confirmModal').modal('hide');
+                        if (response.success) {
+                            toastr.success('Curso eliminado exitosamente.');
+                            location.reload();  // Recargar la página para reflejar los cambios
+                        } else {
+                            toastr.error('Hubo un problema al eliminar el curso.');
+                        }
+                    },
+                    error: function() {
+                        $('#confirmModal').modal('hide');
+                        toastr.error('Hubo un problema al eliminar el curso.');
+                    }
+                });
+            }
+        });
+        function mostrarMensajeEliminado() {
+            toastr.success('Curso eliminado correctamente');
+            setTimeout(function() {
+                toastr.clear();  // Ocultar el mensaje después de 2 segundos
+            }, 2000);
+        }
+    </script>
 {% endblock %}
