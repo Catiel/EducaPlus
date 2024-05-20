@@ -4,10 +4,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/cardsCurso.css' %}">
     <div class="cursos">
         <h1>Mis cursos</h1>
-        <div class="cursos-container">
+        <div id="student-courses-container">
+            <div class="cursos-container">
             <div class="row">
                 {% for curso in cursos %}
-                    <div class="col-md-3">
+                    <div class="col-md-3 student-course-card" data-course-name="{{ curso.nombre }}">
                         <a href="#" class="card-link">
                             <div class="card">
                                 <div class="card-body">
@@ -27,4 +28,42 @@
             </div>
         </div>
     </div>
+    </div>
+    <script>
+    /*$(document).ready(function () {
+        $('#search-input2').on('input', function () {
+            var searchTerm = $(this).val().toLowerCase();
+            $('.student-course-card').each(function () {
+                var courseName = $(this).data('course-name').toLowerCase();
+                if (courseName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });*/
+    $(document).ready(function () {
+    $('#search-input2').on('input', function () {
+        var searchTerm = $(this).val().toLowerCase();
+        var hasResults = false;
+
+        $('.student-course-card').each(function () {
+            var courseName = $(this).data('course-name').toLowerCase();
+            if (courseName.includes(searchTerm)) {
+                $(this).show();
+                hasResults = true;
+            } else {
+                $(this).hide();
+            }
+        });
+
+        $('.no-results-message').remove(); // Remove any existing no-results message
+
+        if (!hasResults) {
+            $('.cursos-container .row').append('<div class="col-12 text-center mt-5 no-results-message"><p>No se encontraron cursos.</p></div>');
+        }
+    });
+});
+    </script>
 {% endblock %}

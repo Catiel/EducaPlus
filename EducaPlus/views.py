@@ -19,6 +19,17 @@ from django.views.decorators.csrf import csrf_exempt
 from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
 
+
+#Buscar cursos estudiante
+def buscar_cursos(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        q = request.GET.get('q', '')
+        cursos = Curso.objects.filter(nombre__icontains=q)
+        resultados = [{'id': curso.id, 'nombre': curso.nombre} for curso in cursos]
+        return JsonResponse(resultados, safe=False)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+#
+
 #buscar cursos instructor
 def search_courses(request):
     if request.method == "GET":
