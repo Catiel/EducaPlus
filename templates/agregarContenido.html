@@ -98,7 +98,7 @@
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="sectionName" class="form-label">Nombre de la sección</label>
-                            <input type="text" class="form-control" id="sectionName" name="section_name" maxlength="80"
+                            <input type="text" class="form-control" id="sectionName" name="section_name" minlength="3" maxlength="80"
                                    required oninput="removeLeadingSpaces(this)">
                         </div>
                         <button type="submit" id= "agregar-cont" class="btn btn-primary">Agregar</button>
