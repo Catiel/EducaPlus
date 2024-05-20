@@ -20,6 +20,32 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart
 
 
+#Buscar cursos estudiante
+def buscar_cursos(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        q = request.GET.get('q', '')
+        cursos = Curso.objects.filter(nombre__icontains=q)
+        resultados = [{'id': curso.id, 'nombre': curso.nombre} for curso in cursos]
+        return JsonResponse(resultados, safe=False)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+#
+
+#buscar cursos instructor
+def search_courses(request):
+    if request.method == "GET":
+        query = request.GET.get('q', '')
+        if query:
+            instructor = Instructor.objects.get(user=request.user)
+            cursos = Curso.objects.filter(nombre__icontains=query, instructor=instructor)
+            cursos_list = list(cursos.values('nombre', 'descripcion', 'id'))
+            return JsonResponse({'cursos': cursos_list})
+        else:
+            instructor = Instructor.objects.get(user=request.user)
+            todos_cursos = Curso.objects.filter(instructor=instructor)
+            cursos_list = list(todos_cursos.values('nombre', 'descripcion', 'id'))
+            return JsonResponse({'cursos': cursos_list})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+#
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':
