@@ -8,7 +8,7 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <div class="container">
-        <h1 id="tit">Contenido curso</h1>
+        <h1 id="tit">Contenido del curso: {{ curso.nombre }}</h1>
         <div class="accordion" id="accordionExample">
             {% for seccion in secciones %}
                 <div class="accordion-item">

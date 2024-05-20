@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime
 
+from PIL import Image
 from botocore.exceptions import BotoCoreError, ClientError
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -19,7 +20,6 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
 from moviepy.editor import VideoFileClip
-from PIL import Image
 
 from spaces import client, space_name
 from .decorators import group_required
@@ -701,8 +701,25 @@ def agregarSeccion(request, curso_id):
 def eliminar_curso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
     try:
+        # Define the bucket and the prefix for the objects to delete
+        bucket_name = space_name
+        prefix = f"{curso_id}/"
+
+        # List all objects in the bucket under the course folder
+        objects_to_delete = client.list_objects(Bucket=bucket_name, Prefix=prefix)
+
+        # Iterate over each object and delete it
+        for obj in objects_to_delete.get('Contents', []):
+            client.delete_object(Bucket=bucket_name, Key=obj['Key'])
+
+        # Delete the course from the database
         curso.delete()
+
         return JsonResponse({'success': True})
+    except (BotoCoreError, ClientError) as e:
+        # If there was an error with DigitalOcean Spaces, return an error
+        return JsonResponse({'success': False, 'error': str(e)})
     except Exception as e:
+        # If there was an error with deleting the course from the database, return an error
         return JsonResponse({'success': False, 'error': str(e)})
 
