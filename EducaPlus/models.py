@@ -47,3 +47,23 @@ class Cart(models.Model):
 
     def remove_course(self, course):
         self.courses.remove(course)
+
+
+class Seccion(models.Model):
+    nombre = models.CharField(max_length=200)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+
+
+class Archivo(models.Model):
+    TIPOS_DE_ARCHIVO = [
+        ('imagen', 'Imagen'),
+        ('video', 'Video'),
+        ('audio', 'Audio'),
+        ('ppt', 'Ppt'),
+        ('pdf', 'Pdf'),
+    ]
+
+    nombre = models.CharField(max_length=100)
+    url = models.URLField()
+    tipo = models.CharField(max_length=15, choices=TIPOS_DE_ARCHIVO, default='imagen')
+    seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE)

@@ -35,6 +35,10 @@
     color: var(--blue-chill-50);
 }
 
+.buy-button:hover {
+    background-color: var(--blue-chill-600) !important;
+}
+
 #giphy-container {
     position: fixed;
     top: 0;
