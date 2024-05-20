@@ -658,7 +658,7 @@ def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, f
     elif file_extension in ['.pdf']:
         file_type = 'pdf'
     else:
-        file_type = 'imagen'
+        return {'error': f"Tipo de archivo {file_extension} no soportado"}
     try:
         client.put_object(Body=file_bytes, Bucket=bucket_name, Key=key, ACL='public-read')
         url = f"https://{bucket_name}.nyc3.cdn.digitaloceanspaces.com/{key}"
