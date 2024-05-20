@@ -26,6 +26,42 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart, Seccion, Archivo
 
 
+#Eliminar curso
+def eliminar_curso(request, curso_id):
+    if request.method == "POST":
+        curso = get_object_or_404(Curso, id=curso_id)
+        curso.delete()
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=400)
+
+
+#Buscar cursos estudiante
+def buscar_cursos(request):
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        q = request.GET.get('q', '')
+        cursos = Curso.objects.filter(nombre__icontains=q)
+        resultados = [{'id': curso.id, 'nombre': curso.nombre} for curso in cursos]
+        return JsonResponse(resultados, safe=False)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+  
+
+#buscar cursos instructor
+def search_courses(request):
+    if request.method == "GET":
+        query = request.GET.get('q', '')
+        if query:
+            instructor = Instructor.objects.get(user=request.user)
+            cursos = Curso.objects.filter(nombre__icontains=query, instructor=instructor)
+            cursos_list = list(cursos.values('nombre', 'descripcion', 'id'))
+            return JsonResponse({'cursos': cursos_list})
+        else:
+            instructor = Instructor.objects.get(user=request.user)
+            todos_cursos = Curso.objects.filter(instructor=instructor)
+            cursos_list = list(todos_cursos.values('nombre', 'descripcion', 'id'))
+            return JsonResponse({'cursos': cursos_list})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+  
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':
@@ -43,31 +79,43 @@ def verificar_correo_teach(request):
 
     return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 
-
+#Correccion intentos fallidos inicio de sesion
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+
+        # Obtener o inicializar el contador de intentos fallidos
+        failed_attempts = request.session.get('failed_attempts', 0)
+
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            request.session['failed_attempts'] = 0  # Reiniciar el contador en caso de éxito
             if user.groups.filter(name='Instructores').exists():
                 login(request, user)
-                return JsonResponse(
-                    {'success': True, 'userType': 'Instructor'})
+                return JsonResponse({'success': True, 'userType': 'Instructor'})
             elif user.groups.filter(name='Estudiantes').exists():
                 login(request, user)
-                return JsonResponse(
-                    {'success': True, 'userType': 'Estudiante'})
+                return JsonResponse({'success': True, 'userType': 'Estudiante'})
         else:
+            # Incrementar el contador de intentos fallidos
+            failed_attempts += 1
+            request.session['failed_attempts'] = failed_attempts
+
             # Verificar el tipo de error
             try:
                 existing_user = User.objects.get(email=email)
                 if existing_user:
-                    return JsonResponse(
-                        {'success': False, 'errorType': 'incorrectPassword'})
+                    if failed_attempts >= 5:
+                        return JsonResponse({'success': False, 'errorType': 'tooManyAttempts'})
+                    return JsonResponse({'success': False, 'errorType': 'incorrectPassword'})
             except User.DoesNotExist:
+                if failed_attempts >= 5:
+                    return JsonResponse({'success': False, 'errorType': 'tooManyAttempts'})
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
+
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
+
 
 
 @csrf_exempt
@@ -648,3 +696,13 @@ def agregarSeccion(request, curso_id):
     else:
         # Si el método no es POST, devolver una respuesta HTTP 405 (Método no permitido)
         return HttpResponseNotAllowed(['POST'])
+
+        
+def eliminar_curso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    try:
+        curso.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+

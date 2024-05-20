@@ -14,21 +14,37 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
+
+<!-- Modal de Advertencia -->
+<div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="warningModalLabel">Inicio de sesión requerido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Por favor, inicia sesión para poder realizar una búsqueda.
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
     <div class="container-fluid d-flex justify-content-between">
         <div>
-            <a class="navbar-brand" href="/">Home</a>
+            <a class="navbar-brand nav-link-hover" href="/">Home</a>
         </div>
-        <form class="d-flex" action="/search" method="get">
+        <form class="d-flex" id="searchForm" action="/search" method="get">
             <input class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..."
-                   aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
+                   aria-label="Search" >
+
         </form>
         <div>
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#teachModal">Enseña en
-                        EducaPlus</a>
+                    <a href="#" class="nav-link nav-link-hover" data-bs-toggle="modal" data-bs-target="#teachModal">Enseña en EducaPlus</a>
                 </li>
                 <li class="nav-item">
                     <button type="button" class="btn btn-outline-success custom-button" data-bs-toggle="modal"
@@ -500,6 +516,9 @@
                         $('#loginError').text('Correo electrónico no encontrado');
                     } else if (data.errorType === 'incorrectPassword') {
                         $('#loginError').text('Contraseña incorrecta');
+                    } else if (data.errorType === 'tooManyAttempts') {
+                        alert('Demasiados intentos fallidos, Se recargara la pagina');
+                        location.reload();
                     }
                 }
             },
@@ -510,6 +529,7 @@
         });
     });
 });
+
     //verificar correo existente instructor
     $(document).ready(function () {
     $('#teachForm').on('submit', function (e) {
@@ -619,6 +639,18 @@
     }
 });
 ////mensaje de registro exitoso
+    $(document).ready(function(){
+        // Bloquear la entrada en el campo de búsqueda y mostrar el modal de advertencia
+        $('#searchForm').on('click', function(event){
+            event.preventDefault(); // Prevenir la acción por defecto
+            $('#warningModal').modal('show'); // Mostrar el modal de advertencia
+        });
+
+        // Deshabilitar la entrada de texto en el campo de búsqueda
+        $('#searchForm input[type="search"]').on('keypress', function(event) {
+            event.preventDefault();
+        });
+    });
     </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>

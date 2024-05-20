@@ -106,3 +106,7 @@
     content: " *";
     color: red;
 }
+
+.nav-link-hover:hover {
+    color: #438e96 !important;
+}
