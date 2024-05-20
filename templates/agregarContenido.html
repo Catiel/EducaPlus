@@ -11,7 +11,7 @@
         <h1 id="tit">Contenido curso</h1>
         <div class="accordion" id="accordionExample">
             {% for seccion in secciones %}
-                <div class="accordion-item">
+                <div class="accordion-item" id="section{{ seccion.id }}">
                     <h2 class="accordion-header" id="heading{{ forloop.counter }}">
                         <button class="accordion-button accordion-button-custom collapsed" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}"
@@ -58,18 +58,17 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                            <button id= "add-content-button" class="btn btn-primary add-content-button"
-                                    data-section="{{ seccion.id }}">Agregar contenido
+                            <button class="btn btn-primary add-content-button" data-section="{{ seccion.id }}">Agregar
+                                contenido
                             </button>
                             <!-- Formulario oculto para cargar archivos a la sección -->
                             <form class="upload-form" data-section="{{ seccion.id }}" style="display: none;"
                                   method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <input type="hidden" name="section_id" value="{{ seccion.id }}">
-                                <label for="file">Selecciona un archivo:</label>
-                                <input type="file" name="file"
-                                       accept=".jpg,.jpeg,.png,.mp4,.mp3,.ppt,.pdf" multiple>
-                                <input type="submit" value="Subir">
+                                <label for="file{{ seccion.id }}" class="btn btn-primary">Selecciona un archivo:</label>
+                                <input type="file" id="file{{ seccion.id }}" name="file"
+                                       accept=".jpg,.jpeg,.png,.mp4,.mp3,.ppt,.pdf" style="display: none;">
                             </form>
                         </div>
                     </div>
@@ -90,7 +89,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Formulario para agregar una nueva sección -->
                     <form method="post" action="{% url 'add_section' curso.id %}">
                         {% csrf_token %}
                         <div class="mb-3">
@@ -104,22 +102,40 @@
         </div>
     </div>
     <script>
-        // Obtener todos los botones de agregar contenido
+        // Obtén todos los botones de agregar contenido
         var addContentButtons = document.getElementsByClassName('add-content-button');
 
-        // Agregar un evento de clic a cada botón de agregar contenido
+        // Agrega un evento de clic a cada botón de agregar contenido
         for (var i = 0; i < addContentButtons.length; i++) {
-            addContentButtons[i].addEventListener('click', function () {
-                // Obtener el ID de la sección del atributo 'data-section' del botón
+            addContentButtons[i].addEventListener('click', function (event) {
+                // Evita la acción por defecto del botón
+                event.preventDefault();
+
+                // Obtén el ID de la sección del atributo 'data-section' del botón
                 var sectionId = this.getAttribute('data-section');
 
-                // Obtener el formulario de carga de archivos correspondiente
-                var uploadForm = document.querySelector('.upload-form[data-section="' + sectionId + '"]');
+                // Obtén el input de tipo 'file' correspondiente
+                var fileInput = document.querySelector('input[type="file"][id="file' + sectionId + '"]');
 
-                // Mostrar el formulario de carga de archivos
-                uploadForm.style.display = 'block';
+                // Simula un click en el input de tipo 'file'
+                fileInput.click();
             });
         }
+
+        // Obtén todos los elementos de entrada de tipo 'file'
+        var fileInputs = document.querySelectorAll('input[type="file"]');
+
+        // Agrega un evento de cambio a cada elemento de entrada
+        for (var i = 0; i < fileInputs.length; i++) {
+            fileInputs[i].addEventListener('change', function () {
+                // Obtén el formulario que contiene este input
+                var form = this.closest('form');
+
+                // Envía el formulario
+                form.submit();
+            });
+        }
+
         toastr.options = {
             "positionClass": "toast-bottom-left",
             "closeButton": true,
