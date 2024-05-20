@@ -78,6 +78,10 @@
                         </div>
                     </div>
                 </div>
+            {% empty %}
+                <div style="text-align: center; padding: 20px; border-radius: 5px; margin-top: 20px;">
+                    <h5 style="color: #888;">No hay secciones por ahora, agrega uno.</h5>
+                </div>
             {% endfor %}
             <button id="add-section-modal-button" class="btn btn-primary fixed-bottom-button" data-bs-toggle="modal"
                     data-bs-target="#addSectionModal">Agregar sección
