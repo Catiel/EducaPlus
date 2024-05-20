@@ -32,4 +32,7 @@ urlpatterns = [
     path('curso/<int:curso_id>/obtenerDatosCurso/', views.obtenerDatosCurso, name='obtenerDatosCurso'),
     path('search/', views.search_courses, name='search_courses'),
     path('buscar_cursos/', views.buscar_cursos, name='buscar_cursos'),
+    path('indexLog/', views.indexLog, name='indexLog'),
+    path('cursosEstudiante/', views.cursosEstudiante, name='cursosEstudiante'),
 ]
+
