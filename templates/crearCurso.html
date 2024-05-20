@@ -49,12 +49,34 @@
                     </div>
                 {% empty %}
                     <div class="col-12 text-center mt-5">
-                        <p>Aún no has creado ningún curso.</p>
-                    </div>
+                        <p>No tiene cursos creados</p>
+                   </div>
                 {% endfor %}
             </div>
         </div>
     </div>
+
+    <!-- Modal HTML -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-center" id="confirmModalLabel">¿Deseas eliminar este curso?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Eliminarás definitivamente el curso y todo el contenido que tenga. No podrás recuperar ningún dato que este guardado en el curso.
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" >Eliminar</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% if messages %}
         <script>
             {% for message in messages %}
@@ -64,16 +86,25 @@
             {% endfor %}
         </script>
     {% endif %}
-        <script>
+
+    <script>
+        var cursoIdToDelete = null;
+
         function eliminarCurso(cursoId) {
-            if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
+            cursoIdToDelete = cursoId;
+            $('#confirmModal').modal('show');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (cursoIdToDelete !== null) {
                 $.ajax({
-                    url: "{% url 'eliminar_curso' 0 %}".replace("0", cursoId),
+                    url: "{% url 'eliminar_curso' 0 %}".replace("0", cursoIdToDelete),
                     type: "POST",
                     data: {
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     success: function(response) {
+                        $('#confirmModal').modal('hide');
                         if (response.success) {
                             toastr.success('Curso eliminado exitosamente.');
                             location.reload();  // Recargar la página para reflejar los cambios
@@ -82,10 +113,11 @@
                         }
                     },
                     error: function() {
+                        $('#confirmModal').modal('hide');
                         toastr.error('Hubo un problema al eliminar el curso.');
                     }
                 });
             }
-        }
+        });
     </script>
 {% endblock %}

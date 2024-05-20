@@ -569,14 +569,10 @@ def editarCurso(request, curso_id):
         return render(request, 'editarDatosCurso.html', {'curso': curso})
 
         
-def eliminarCurso(request, course_id):
-        # Obtén el curso por su ID
-        course = get_object_or_404(Curso, id=course_id)
-        # Verifica si el usuario actual es el propietario del curso
-        if request.user == course.owner:
-            course.delete()
-            # Redirige al usuario a la página de inicio después de eliminar el curso
-            return redirect('home')
-        else:
-            # Si el usuario no es el propietario del curso, muestra un mensaje de error
-            return HttpResponseForbidden("No tienes permiso para eliminar este curso")
+def eliminar_curso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    try:
+        curso.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
