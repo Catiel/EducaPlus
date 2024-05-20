@@ -22,7 +22,7 @@
                         <button class="btn btn-primary add-content-button" data-section="{{ seccion.id }}"
                                 title="Nota: Solo se pueden subir archivos de tipo .jpg, .jpeg, .png, .mp4, .mp3, .ppt, .pdf. El tamaño minimo de imágenes es de 1024x768 y de videos es 480p">
                             Agregar
-                            contenido
+                            archivo
                         </button>
                     </h2>
                     <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
@@ -63,7 +63,7 @@
                                 </div>
                             {% empty %}
                                 <div style="text-align: center; padding: 20px; background-color: #f8f8f8; border-radius: 5px; margin-top: 20px;">
-                                    <h5 style="color: #888;">Todavía no se agrego ningún contenido en esta sección.</h5>
+                                    <h5 style="color: #888;">Todavía no se agrego ningún archivo en esta sección.</h5>
                                 </div>
                             {% endfor %}
                             <!-- Formulario oculto para cargar archivos a la sección -->

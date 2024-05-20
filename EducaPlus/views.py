@@ -641,7 +641,7 @@ def agregarSeccion(request, curso_id):
         # Guardar la sección en la base de datos
         seccion.save()
 
-        messages.success(request, 'Sección agregada con éxito.', extra_tags='seccion_agregada')
+        messages.success(request, 'Nueva sección agregada.', extra_tags='seccion_agregada')
 
         # Redirigir al usuario a la página de agregar contenido
         return redirect('agregar_contenido', curso_id=curso_id)
