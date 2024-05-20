@@ -15,6 +15,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+#search-results2 {
+    position: absolute;
+    top: 100%;
+    left: 19%;
+    z-index: 1000;
+    width: 200px; /* Establece un ancho fijo según lo que necesites */
+    max-width: 45%; /* O establece un ancho máximo en porcentaje */
+    background-color: #fff;
+}
+
+</style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -22,11 +34,12 @@
         <div>
             <a class="navbar-brand" href="/indexLog/">Home</a>
         </div>
-        <form class="d-flex" action="/search" method="get">
-            <input class="form-control me-2 custom-search-bar" type="search" name="q" placeholder="Buscar..."
+        <form class="d-flex" action="/search" method="get"  id="search-form2">
+            <input class="form-control me-2 custom-search-bar" type="search" name="q" id="search-input2" placeholder="Buscar..."
                    aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
+                    <div id="search-results2" class="list-group position-absolute w-100"></div>
         </form>
+
         <div>
             <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
                 <li class="nav-item">
@@ -171,7 +184,7 @@
             var nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
             
             if (!nombrePattern.test(nombreInput)) {
-                alert('El nombre debe contener solo letras y tener entre 2 y 50 caracteres.');
+                //alert('El nombre debe contener solo letras y tener entre 2 y 50 caracteres.');
                 e.preventDefault(); // Evitar que se envíe el formulario si la validación falla
             }
         });
@@ -182,7 +195,7 @@
             var soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
             if (!soloLetras.test(apellidoValue) || apellidoValue.length < 2 || apellidoValue.length > 50) {
                 event.preventDefault();
-                alert('Por favor ingrese un apellido válido (solo letras, mínimo 2 caracteres y máximo 50 caracteres).');
+                //alert('Por favor ingrese un apellido válido (solo letras, mínimo 2 caracteres y máximo 50 caracteres).');
             }
         });
     });
@@ -212,6 +225,52 @@
         today = yyyy + '-' + mm + '-' + dd;
         dob.setAttribute("max", today);
     };
+    
+    //busqueda de curso
+    //Separacion de busqueda segun la pagina que se encuentre
+$(document).ready(function () {
+    var currentPath = window.location.pathname;
+    
+    // Solo ejecutar la lógica de sugerencias en la página indexLog
+    if (currentPath === '{% url "indexLog" %}') {
+        $('#search-input2').on('input', function () {
+            var query = $(this).val();
+            if (query.length > 1) {
+                $.ajax({
+                    url: '{% url "buscar_cursos" %}',
+                    data: {
+                        'q': query
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#search-results2').empty();
+                        data.forEach(function (curso) {
+                            $('#search-results2').append('<a href="/compraCursos/' + curso.id + '/" class="list-group-item list-group-item-action">' + curso.nombre + '</a>');
+                        });
+                    }
+                });
+            } else {
+                $('#search-results2').empty();
+            }
+        });
+    }
+    
+    // Lógica de búsqueda para cursosEstudiante
+    if (currentPath === '{% url "cursosEstudiante" %}') {
+        $('#search-input2').on('input', function () {
+            var searchTerm = $(this).val().toLowerCase();
+            $('.student-course-card').each(function () {
+                var courseName = $(this).data('course-name').toLowerCase();
+                if (courseName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    }
+});
+    //
 </script>
 </body>
 </html>

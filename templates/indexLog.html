@@ -63,7 +63,7 @@
                                                 <div class="card-body">
                                                     <p class="card-text">
                                                         Precio: {% if curso.precio == 0 %}Gratis{% else %}
-                                                        {{ curso.precio }}${% endif %}
+                                                        {{ curso.precio }}Bs{% endif %}
                                                     </p>
                                                     <a href="{% url 'compraCursos' curso.id %}"
                                                        class="btn btn-primary buy-button">Comprar</a>
