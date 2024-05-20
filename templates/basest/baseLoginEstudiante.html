@@ -227,29 +227,49 @@
     };
     
     //busqueda de curso
-
+    //Separacion de busqueda segun la pagina que se encuentre
 $(document).ready(function () {
-    $('#search-input2').on('input', function () {
-        var query = $(this).val();
-        if (query.length > 1) {
-            $.ajax({
-                url: '{% url "buscar_cursos" %}',
-                data: {
-                    'q': query
-                },
-                dataType: 'json',
-                success: function (data) {
-                    $('#search-results2').empty();
-                    data.forEach(function (curso) {
-                        $('#search-results2').append('<a href="/compraCursos/' + curso.id + '/" class="list-group-item list-group-item-action">' + curso.nombre + '</a>');
-                    });
+    var currentPath = window.location.pathname;
+    
+    // Solo ejecutar la lógica de sugerencias en la página indexLog
+    if (currentPath === '{% url "indexLog" %}') {
+        $('#search-input2').on('input', function () {
+            var query = $(this).val();
+            if (query.length > 1) {
+                $.ajax({
+                    url: '{% url "buscar_cursos" %}',
+                    data: {
+                        'q': query
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#search-results2').empty();
+                        data.forEach(function (curso) {
+                            $('#search-results2').append('<a href="/compraCursos/' + curso.id + '/" class="list-group-item list-group-item-action">' + curso.nombre + '</a>');
+                        });
+                    }
+                });
+            } else {
+                $('#search-results2').empty();
+            }
+        });
+    }
+    
+    // Lógica de búsqueda para cursosEstudiante
+    if (currentPath === '{% url "cursosEstudiante" %}') {
+        $('#search-input2').on('input', function () {
+            var searchTerm = $(this).val().toLowerCase();
+            $('.student-course-card').each(function () {
+                var courseName = $(this).data('course-name').toLowerCase();
+                if (courseName.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
                 }
             });
-        } else {
-            $('#search-results2').empty();
-        }
-    });
-});    
+        });
+    }
+});
     //
 </script>
 </body>
