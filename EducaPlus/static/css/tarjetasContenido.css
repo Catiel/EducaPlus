@@ -131,3 +131,8 @@ h1 {
     margin: 10px 0; /* Ajusta estos valores según sea necesario */
     padding: 5px; /* Ajusta este valor según sea necesario */
 }
+audio {
+    width: 100%;
+    height: 60px;
+    border-radius: 5px;
+}
