@@ -179,6 +179,18 @@
                 // Oculta el formulario que contiene este botón
                 var form = this.closest('form');
                 form.style.display = 'none';
+
+                // Obtén el input de tipo 'file' del formulario y borra los archivos seleccionados
+                var fileInput = form.querySelector('input[type="file"]');
+                fileInput.value = '';
+
+                // Obtén el contenedor de los elementos de la lista y borra su contenido
+                var fileItems = document.getElementById('fileItems' + form.getAttribute('data-section'));
+                fileItems.innerHTML = '';
+
+                // Muestra el mensaje por defecto
+                var defaultMessage = document.getElementById('defaultMessage' + form.getAttribute('data-section'));
+                defaultMessage.style.display = 'block';
             });
         }
 
@@ -214,14 +226,6 @@
 
                 // Limpia el contenedor de los elementos de la lista
                 fileItems.innerHTML = '';
-
-                // Si se seleccionaron archivos, oculta el mensaje por defecto
-                if (this.files.length > 0) {
-                    defaultMessage.style.display = 'none';
-                } else {
-                    // Si no se seleccionaron archivos, muestra el mensaje por defecto
-                    defaultMessage.style.display = 'block';
-                }
 
                 // Crea una nueva lista de archivos válidos
                 var validFiles = [];
@@ -291,6 +295,13 @@
                         listItem.className = 'file-list-item';
                         fileItems.appendChild(listItem);
                     }
+                }
+                // Si se seleccionaron archivos, oculta el mensaje por defecto
+                if (validFiles.length > 0) {
+                    defaultMessage.style.display = 'none';
+                } else {
+                    // Si no se seleccionaron archivos, muestra el mensaje por defecto
+                    defaultMessage.style.display = 'block';
                 }
 
                 // Crea un nuevo objeto FileList con los archivos válidos
