@@ -19,11 +19,33 @@
                                 aria-controls="collapse{{ forloop.counter }}">
                             Sección {{ forloop.counter }}: {{ seccion.nombre }}
                         </button>
-                        <button class="btn btn-primary add-content-button" data-section="{{ seccion.id }}"
-                                title="Nota: Solo se pueden subir archivos de tipo .jpg, .jpeg, .png, .mp4, .mp3, .ppt, .pdf. El tamaño minimo de imágenes es de 1024x768 y de videos es 480p">
-                            Agregar
-                            archivo
+                        <button class="btn btn-primary add-content-button small-right-button"
+                                data-section="{{ seccion.id }}"
+                                title="Nota: Solo se pueden subir archivos de tipo .jpg, .jpeg, .png, .mp4, .mp3, .ppt, .pdf">
+                            Agregar archivo
                         </button>
+                        <form class="upload-form" data-section="{{ seccion.id }}" style="display: none;"
+                              method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="section_id" value="{{ seccion.id }}">
+                            <button type="button" class="btn btn-primary file-select-button">Selecciona un archivo:
+                            </button>
+                            <input type="file" id="file{{ seccion.id }}" name="file"
+                                   accept=".jpg,.jpeg,.png,.mp4,.mp3,.ppt,.pdf" style="display: none;" multiple>
+                            <!-- Contenedor para los nombres de los archivos -->
+                            <div id="fileList{{ seccion.id }}">
+                                <p class="file-list-title">Lista de archivos</p>
+                                <p id="defaultMessage{{ seccion.id }}" class="default-message">No hay ningún archivo
+                                    seleccionado</p>
+                                <ul id="fileItems{{ seccion.id }}"></ul>
+                            </div>
+                            <div class="button-upload">
+                                <button type="button" class="btn btn-secondary cancel-button cancel-upload-button">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-secondary upload-button">Subir</button>
+                            </div>
+                        </form>
                     </h2>
                     <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
                          aria-labelledby="heading{{ forloop.counter }}">
@@ -67,14 +89,6 @@
                                 </div>
                             {% endfor %}
                             <!-- Formulario oculto para cargar archivos a la sección -->
-                            <form class="upload-form" data-section="{{ seccion.id }}" style="display: none;"
-                                  method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="hidden" name="section_id" value="{{ seccion.id }}">
-                                <label for="file{{ seccion.id }}" class="btn btn-primary">Selecciona un archivo:</label>
-                                <input type="file" id="file{{ seccion.id }}" name="file"
-                                       accept=".jpg,.jpeg,.png,.mp4,.mp3,.ppt,.pdf" style="display: none;">
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -112,6 +126,23 @@
         </div>
     </div>
     <script>
+
+        // Obtén todos los formularios de carga
+        var uploadForms = document.getElementsByClassName('upload-form');
+
+        // Agrega un evento de envío a cada formulario de carga
+        for (var i = 0; i < uploadForms.length; i++) {
+            uploadForms[i].addEventListener('submit', function (event) {
+                // Obtén el input de tipo 'file' de este formulario
+                var fileInput = this.querySelector('input[type="file"]');
+
+                // Si no se ha seleccionado ningún archivo, cancela el envío del formulario y muestra un mensaje
+                if (fileInput.files.length === 0) {
+                    event.preventDefault();
+                    toastr.error('Por favor, selecciona al menos un archivo antes de subir.');
+                }
+            });
+        }
         // Obtén todos los botones de agregar contenido
         var addContentButtons = document.getElementsByClassName('add-content-button');
 
@@ -124,10 +155,44 @@
                 // Obtén el ID de la sección del atributo 'data-section' del botón
                 var sectionId = this.getAttribute('data-section');
 
-                // Obtén el input de tipo 'file' correspondiente
-                var fileInput = document.querySelector('input[type="file"][id="file' + sectionId + '"]');
+                // Obtén el formulario correspondiente
+                var form = document.querySelector('form[data-section="' + sectionId + '"]');
 
-                // Simula un click en el input de tipo 'file'
+                // Si el formulario ya está visible, lo oculta. Si no, lo muestra.
+                if (form.style.display === 'block') {
+                    form.style.display = 'none';
+                } else {
+                    form.style.display = 'block';
+                }
+            });
+        }
+
+        // Obtén todos los botones de cancelar
+        var cancelButtons = document.getElementsByClassName('cancel-button');
+
+        // Agrega un evento de clic a cada botón de cancelar
+        for (var i = 0; i < cancelButtons.length; i++) {
+            cancelButtons[i].addEventListener('click', function (event) {
+                // Evita la acción por defecto del botón
+                event.preventDefault();
+
+                // Oculta el formulario que contiene este botón
+                var form = this.closest('form');
+                form.style.display = 'none';
+            });
+        }
+
+        // Obtén todos los botones de seleccionar archivo
+        var fileSelectButtons = document.getElementsByClassName('file-select-button');
+
+        // Agrega un evento de clic a cada botón de seleccionar archivo
+        for (var i = 0; i < fileSelectButtons.length; i++) {
+            fileSelectButtons[i].addEventListener('click', function (event) {
+                // Evita la acción por defecto del botón
+                event.preventDefault();
+
+                // Obtén el input de tipo 'file' correspondiente y simula un clic en él
+                var fileInput = this.nextElementSibling;
                 fileInput.click();
             });
         }
@@ -141,8 +206,101 @@
                 // Obtén el formulario que contiene este input
                 var form = this.closest('form');
 
-                // Envía el formulario
-                form.submit();
+                // Obtén el contenedor de los elementos de la lista
+                var fileItems = document.getElementById('fileItems' + form.getAttribute('data-section'));
+
+                // Obtén el mensaje por defecto
+                var defaultMessage = document.getElementById('defaultMessage' + form.getAttribute('data-section'));
+
+                // Limpia el contenedor de los elementos de la lista
+                fileItems.innerHTML = '';
+
+                // Si se seleccionaron archivos, oculta el mensaje por defecto
+                if (this.files.length > 0) {
+                    defaultMessage.style.display = 'none';
+                } else {
+                    // Si no se seleccionaron archivos, muestra el mensaje por defecto
+                    defaultMessage.style.display = 'block';
+                }
+
+                // Crea una nueva lista de archivos válidos
+                var validFiles = [];
+
+                // Contadores de errores
+                var errorCounts = {
+                    lowResolutionImage: 0,
+                    lowResolutionVideo: 0,
+                    unsupportedFileType: 0
+                };
+
+                // Verifica el tipo de archivo y el tamaño de la imagen o el video
+                for (var j = 0; j < this.files.length; j++) {
+                    var file = this.files[j];
+
+                    if (file.type === 'image/jpeg' || file.type === 'image/png') {
+                        var url = URL.createObjectURL(file);
+                        var img = new Image();
+                        img.onload = function () {
+                            if (this.width < 1024 || this.height < 768) {
+                                errorCounts.lowResolutionImage++;
+                                if (errorCounts.lowResolutionImage === 1) {
+                                    toastr.error('La resolución de la imagen debe ser al menos 1024x768');
+                                }
+                            } else {
+                                // Agrega el archivo a la lista de archivos válidos
+                                validFiles.push(file);
+
+                                var listItem = document.createElement('li');
+                                listItem.textContent = file.name;
+                                listItem.className = 'file-list-item';
+                                fileItems.appendChild(listItem);
+                            }
+                        };
+                        img.src = url;
+                    } else if (file.type === 'video/mp4') {
+                        var url = URL.createObjectURL(file);
+                        var video = document.createElement('video');
+                        video.onloadedmetadata = function () {
+                            if (this.videoHeight < 480) {
+                                errorCounts.lowResolutionVideo++;
+                                if (errorCounts.lowResolutionVideo === 1) {
+                                    toastr.error('La resolución del video debe ser al menos 480p');
+                                }
+                            } else {
+                                // Agrega el archivo a la lista de archivos válidos
+                                validFiles.push(file);
+
+                                var listItem = document.createElement('li');
+                                listItem.textContent = file.name;
+                                listItem.className = 'file-list-item';
+                                fileItems.appendChild(listItem);
+                            }
+                        };
+                        video.src = url;
+                    } else if (file.type !== 'audio/mpeg' && file.type !== 'application/pdf' && file.type !== 'application/vnd.ms-powerpoint') {
+                        errorCounts.unsupportedFileType++;
+                        if (errorCounts.unsupportedFileType === 1) {
+                            toastr.error('Tipo de archivo no soportado');
+                        }
+                    } else {
+                        // Agrega el archivo a la lista de archivos válidos
+                        validFiles.push(file);
+
+                        var listItem = document.createElement('li');
+                        listItem.textContent = file.name;
+                        listItem.className = 'file-list-item';
+                        fileItems.appendChild(listItem);
+                    }
+                }
+
+                // Crea un nuevo objeto FileList con los archivos válidos
+                var newFiles = new DataTransfer();
+                for (var k = 0; k < validFiles.length; k++) {
+                    newFiles.items.add(validFiles[k]);
+                }
+
+                // Asigna el nuevo objeto FileList al input de tipo 'file'
+                this.files = newFiles.files;
             });
         }
 

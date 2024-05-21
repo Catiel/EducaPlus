@@ -34,6 +34,7 @@ h1 {
     padding: 10px 15px;
     border-radius: 20px;
     cursor: pointer;
+    justify-content: space-between;
 }
 
 .accordion-body {
@@ -135,4 +136,45 @@ audio {
     width: 100%;
     height: 60px;
     border-radius: 5px;
+}
+
+.button-upload {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px;
+}
+
+.upload-button{
+    background-color: #438e96;
+    color: #f2f9f9;
+    border-radius: 10px;
+}
+
+.cancel-button{
+    background-color: #438e96;
+    color: #f2f9f9;
+    border-radius: 10px;
+}
+
+.file-list-item {
+    font-size: 18px;
+    margin-top: 20px; /* Ajusta este valor según sea necesario */
+}
+
+.file-list-title {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 24px;  // Ajusta este valor según sea necesario
+}
+
+.default-message {
+    text-align: center;
+    font-size: 14px;  // Ajusta este valor según sea necesario
+}
+
+.small-right-button {
+    width: 150px;
+    height: 50px;
+    border-radius: 20px;
+    margin-left: auto;
 }
