@@ -49,18 +49,14 @@ def buscar_cursos(request):
 def search_courses(request):
     if request.method == "GET":
         query = request.GET.get('q', '')
+        instructor = Instructor.objects.get(user=request.user)
         if query:
-            instructor = Instructor.objects.get(user=request.user)
             cursos = Curso.objects.filter(nombre__icontains=query, instructor=instructor)
-            cursos_list = list(cursos.values('nombre', 'descripcion', 'id'))
-            return JsonResponse({'cursos': cursos_list})
         else:
-            instructor = Instructor.objects.get(user=request.user)
-            todos_cursos = Curso.objects.filter(instructor=instructor)
-            cursos_list = list(todos_cursos.values('nombre', 'descripcion', 'id'))
-            return JsonResponse({'cursos': cursos_list})
+            cursos = Curso.objects.filter(instructor=instructor)
+        cursos_list = list(cursos.values('nombre', 'descripcion', 'id'))
+        return JsonResponse({'cursos': cursos_list})
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
   
 @csrf_exempt
 def verificar_correo_teach(request):
