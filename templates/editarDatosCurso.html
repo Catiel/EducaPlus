@@ -74,9 +74,9 @@
                 </div>
                 <div class="mb-3" id="courseCostDiv"
                      style="{% if curso.precio > 0 %}display: block;{% else %}display: none;{% endif %}">
-                    <label for="courseCost" class="form-label required">Costo del curso (en dólares)</label>
+                    <label for="courseCost" class="form-label required">Costo del curso (en bolivianos)</label>
                     <input type="number" class="form-control" id="courseCost" name="courseCost" required
-                           oninput="validateInput(this)" placeholder="Ejemplo: 50 (significa 50 dólares)"
+                           oninput="validateInput(this)" placeholder="Ejemplo: 50 (significa 50 bolivianos)"
                            value="{{ curso.precio }}" max="1000000000">
                 </div>
             </form>
