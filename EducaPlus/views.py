@@ -1,6 +1,8 @@
 import os
 import re
+import tempfile
 from datetime import datetime
+from urllib.parse import quote
 
 from PIL import Image
 from botocore.exceptions import BotoCoreError, ClientError
@@ -11,6 +13,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.mail import send_mail
 from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
@@ -20,7 +23,6 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
 from moviepy.editor import VideoFileClip
-from urllib.parse import quote
 
 from spaces import client, space_name
 from .decorators import group_required
@@ -650,7 +652,13 @@ def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, f
             return {'error': f"La resolución de la imagen {file_name} debe ser al menos 1024x768"}
     elif file_extension in ['.mp4']:
         file_type = 'video'
-        clip = VideoFileClip(uploaded_file.temporary_file_path())
+        if isinstance(uploaded_file, InMemoryUploadedFile):
+            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            temp_file.write(file_bytes)
+            temp_file.close()
+            clip = VideoFileClip(temp_file.name)
+        else:
+            clip = VideoFileClip(uploaded_file.temporary_file_path())
         if clip.size[1] < 480:
             return {'error': f"La resolución del video {file_name} debe ser al menos 480p"}
     elif file_extension in ['.mp3']:
