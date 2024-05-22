@@ -20,6 +20,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
 from moviepy.editor import VideoFileClip
+from urllib.parse import quote
 
 from spaces import client, space_name
 from .decorators import group_required
@@ -43,7 +44,7 @@ def buscar_cursos(request):
         resultados = [{'id': curso.id, 'nombre': curso.nombre} for curso in cursos]
         return JsonResponse(resultados, safe=False)
     return JsonResponse({'error': 'Invalid request'}, status=400)
-  
+
 
 #buscar cursos instructor
 def search_courses(request):
@@ -57,7 +58,8 @@ def search_courses(request):
         cursos_list = list(cursos.values('nombre', 'descripcion', 'id'))
         return JsonResponse({'cursos': cursos_list})
     return JsonResponse({'error': 'Invalid request'}, status=400)
-  
+
+
 @csrf_exempt
 def verificar_correo_teach(request):
     if request.method == 'POST':
@@ -74,6 +76,7 @@ def verificar_correo_teach(request):
                 status=400)
 
     return JsonResponse({'error': 'Solicitud inválida'}, status=400)
+
 
 #Correccion intentos fallidos inicio de sesion
 def login_view(request):
@@ -111,7 +114,6 @@ def login_view(request):
                 return JsonResponse({'success': False, 'errorType': 'emailNotFound'})
 
     return JsonResponse({'success': False, 'errorType': 'incorrectCredentials'})
-
 
 
 @csrf_exempt
@@ -619,34 +621,38 @@ def agregarContenido(request, curso_id):
             section = Seccion.objects.get(id=section_id)
         except Seccion.MultipleObjectsReturned:
             section = Seccion.objects.filter(id=section_id).first()
+        error_messages = []  # Lista para almacenar los mensajes de error
         for uploaded_file in request.FILES.getlist('file'):
             file_name = uploaded_file.name
             response = upload_to_course_bucket(uploaded_file, curso_id, section_id, section.nombre, file_name)
             if 'error' in response:
-                messages.error(request, response['error'])
-                return redirect('agregar_contenido', curso_id=curso_id)
-        messages.success(request, 'Archivo subido exitosamente', extra_tags='archivo_subido')
+                error_messages.append(response['error'])  # Agregar el mensaje de error a la lista
+            else:
+                messages.success(request, f'Archivo {file_name} subido exitosamente', extra_tags='archivo_subido')
+        for error in error_messages:  # Mostrar todos los mensajes de error
+            messages.error(request, error)
         return redirect('agregar_contenido', curso_id=curso_id)
     return render(request, 'agregarContenido.html', {'secciones': secciones, 'curso': curso})
 
 
 def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, file_name):
     bucket_name = space_name
+    file_name = sanitize_filename(file_name)
     key = f'{curso_id}/{section_name}/{section_id}/{file_name}'
     uploaded_file.seek(0)
     file_bytes = uploaded_file.read()
     file_extension = os.path.splitext(file_name)[1]
-    if file_extension in ['.jpg', '.jpeg', '.png']:
+    if file_extension in ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG']:
         file_type = 'imagen'
         image = Image.open(uploaded_file)
         width, height = image.size
         if width < 1024 or height < 768:
-            return {'error': "La resolución de la imagen debe ser al menos 1024x768"}
+            return {'error': f"La resolución de la imagen {file_name} debe ser al menos 1024x768"}
     elif file_extension in ['.mp4']:
         file_type = 'video'
         clip = VideoFileClip(uploaded_file.temporary_file_path())
         if clip.size[1] < 480:
-            return {'error': "La resolución del video debe ser al menos 480p"}
+            return {'error': f"La resolución del video {file_name} debe ser al menos 480p"}
     elif file_extension in ['.mp3']:
         file_type = 'audio'
     elif file_extension in ['.ppt']:
@@ -693,7 +699,7 @@ def agregarSeccion(request, curso_id):
         # Si el método no es POST, devolver una respuesta HTTP 405 (Método no permitido)
         return HttpResponseNotAllowed(['POST'])
 
-        
+
 def eliminar_curso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
     try:
@@ -719,3 +725,9 @@ def eliminar_curso(request, curso_id):
         # If there was an error with deleting the course from the database, return an error
         return JsonResponse({'success': False, 'error': str(e)})
 
+
+def sanitize_filename(filename):
+    base_name, extension = os.path.splitext(filename)
+    safe_base_name = re.sub(r'\W+', '_', base_name)
+    safe_filename = safe_base_name + extension
+    return quote(safe_filename, safe='')

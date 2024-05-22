@@ -126,39 +126,39 @@
         </div>
     </div>
     <script>
-
-        // Obtén todos los formularios de carga
+        // Get all upload forms
         var uploadForms = document.getElementsByClassName('upload-form');
 
-        // Agrega un evento de envío a cada formulario de carga
+        // Add a submit event to each upload form
         for (var i = 0; i < uploadForms.length; i++) {
             uploadForms[i].addEventListener('submit', function (event) {
-                // Obtén el input de tipo 'file' de este formulario
+                // Get the file input of this form
                 var fileInput = this.querySelector('input[type="file"]');
 
-                // Si no se ha seleccionado ningún archivo, cancela el envío del formulario y muestra un mensaje
+                // If no file has been selected, cancel the form submission and show a message
                 if (fileInput.files.length === 0) {
                     event.preventDefault();
-                    toastr.error('Por favor, selecciona al menos un archivo antes de subir.');
+                    toastr.error('Por favor selecciona por lo menos un archivo antes de subir.');
                 }
             });
         }
-        // Obtén todos los botones de agregar contenido
+
+        // Get all add content buttons
         var addContentButtons = document.getElementsByClassName('add-content-button');
 
-        // Agrega un evento de clic a cada botón de agregar contenido
+        // Add a click event to each add content button
         for (var i = 0; i < addContentButtons.length; i++) {
             addContentButtons[i].addEventListener('click', function (event) {
-                // Evita la acción por defecto del botón
+                // Prevent the button's default action
                 event.preventDefault();
 
-                // Obtén el ID de la sección del atributo 'data-section' del botón
+                // Get the section ID from the button's 'data-section' attribute
                 var sectionId = this.getAttribute('data-section');
 
-                // Obtén el formulario correspondiente
+                // Get the corresponding form
                 var form = document.querySelector('form[data-section="' + sectionId + '"]');
 
-                // Si el formulario ya está visible, lo oculta. Si no, lo muestra.
+                // If the form is already visible, hide it. If not, show it.
                 if (form.style.display === 'block') {
                     form.style.display = 'none';
                 } else {
@@ -167,151 +167,79 @@
             });
         }
 
-        // Obtén todos los botones de cancelar
+        // Get all cancel buttons
         var cancelButtons = document.getElementsByClassName('cancel-button');
 
-        // Agrega un evento de clic a cada botón de cancelar
+        // Add a click event to each cancel button
         for (var i = 0; i < cancelButtons.length; i++) {
             cancelButtons[i].addEventListener('click', function (event) {
-                // Evita la acción por defecto del botón
+                // Prevent the button's default action
                 event.preventDefault();
 
-                // Oculta el formulario que contiene este botón
+                // Hide the form that contains this button
                 var form = this.closest('form');
                 form.style.display = 'none';
 
-                // Obtén el input de tipo 'file' del formulario y borra los archivos seleccionados
+                // Get the file input from the form and clear the selected files
                 var fileInput = form.querySelector('input[type="file"]');
                 fileInput.value = '';
 
-                // Obtén el contenedor de los elementos de la lista y borra su contenido
+                // Get the list item container and clear its content
                 var fileItems = document.getElementById('fileItems' + form.getAttribute('data-section'));
                 fileItems.innerHTML = '';
 
-                // Muestra el mensaje por defecto
+                // Show the default message
                 var defaultMessage = document.getElementById('defaultMessage' + form.getAttribute('data-section'));
                 defaultMessage.style.display = 'block';
             });
         }
 
-        // Obtén todos los botones de seleccionar archivo
+        // Get all file select buttons
         var fileSelectButtons = document.getElementsByClassName('file-select-button');
 
-        // Agrega un evento de clic a cada botón de seleccionar archivo
+        // Add a click event to each file select button
         for (var i = 0; i < fileSelectButtons.length; i++) {
             fileSelectButtons[i].addEventListener('click', function (event) {
-                // Evita la acción por defecto del botón
+                // Prevent the button's default action
                 event.preventDefault();
 
-                // Obtén el input de tipo 'file' correspondiente y simula un clic en él
+                // Get the corresponding file input and simulate a click on it
                 var fileInput = this.nextElementSibling;
                 fileInput.click();
             });
         }
 
-        // Obtén todos los elementos de entrada de tipo 'file'
+        // Get all file inputs
         var fileInputs = document.querySelectorAll('input[type="file"]');
 
-        // Agrega un evento de cambio a cada elemento de entrada
+        // Add a change event to each file input
         for (var i = 0; i < fileInputs.length; i++) {
             fileInputs[i].addEventListener('change', function () {
-                // Obtén el formulario que contiene este input
+                // Get the form that contains this input
                 var form = this.closest('form');
 
-                // Obtén el contenedor de los elementos de la lista
+                // Get the list item container
                 var fileItems = document.getElementById('fileItems' + form.getAttribute('data-section'));
 
-                // Obtén el mensaje por defecto
-                var defaultMessage = document.getElementById('defaultMessage' + form.getAttribute('data-section'));
-
-                // Limpia el contenedor de los elementos de la lista
+                // Clear the list item container
                 fileItems.innerHTML = '';
 
-                // Crea una nueva lista de archivos válidos
-                var validFiles = [];
-
-                // Contadores de errores
-                var errorCounts = {
-                    lowResolutionImage: 0,
-                    lowResolutionVideo: 0,
-                    unsupportedFileType: 0
-                };
-
-                // Verifica el tipo de archivo y el tamaño de la imagen o el video
+                // For each file, create a list item and add it to the list item container
                 for (var j = 0; j < this.files.length; j++) {
                     var file = this.files[j];
-
-                    if (file.type === 'image/jpeg' || file.type === 'image/png') {
-                        var url = URL.createObjectURL(file);
-                        var img = new Image();
-                        img.onload = function () {
-                            if (this.width < 1024 || this.height < 768) {
-                                errorCounts.lowResolutionImage++;
-                                if (errorCounts.lowResolutionImage === 1) {
-                                    toastr.error('La resolución de la imagen debe ser al menos 1024x768');
-                                }
-                            } else {
-                                // Agrega el archivo a la lista de archivos válidos
-                                validFiles.push(file);
-
-                                var listItem = document.createElement('li');
-                                listItem.textContent = file.name;
-                                listItem.className = 'file-list-item';
-                                fileItems.appendChild(listItem);
-                            }
-                        };
-                        img.src = url;
-                    } else if (file.type === 'video/mp4') {
-                        var url = URL.createObjectURL(file);
-                        var video = document.createElement('video');
-                        video.onloadedmetadata = function () {
-                            if (this.videoHeight < 480) {
-                                errorCounts.lowResolutionVideo++;
-                                if (errorCounts.lowResolutionVideo === 1) {
-                                    toastr.error('La resolución del video debe ser al menos 480p');
-                                }
-                            } else {
-                                // Agrega el archivo a la lista de archivos válidos
-                                validFiles.push(file);
-
-                                var listItem = document.createElement('li');
-                                listItem.textContent = file.name;
-                                listItem.className = 'file-list-item';
-                                fileItems.appendChild(listItem);
-                            }
-                        };
-                        video.src = url;
-                    } else if (file.type !== 'audio/mpeg' && file.type !== 'application/pdf' && file.type !== 'application/vnd.ms-powerpoint') {
-                        errorCounts.unsupportedFileType++;
-                        if (errorCounts.unsupportedFileType === 1) {
-                            toastr.error('Tipo de archivo no soportado');
-                        }
-                    } else {
-                        // Agrega el archivo a la lista de archivos válidos
-                        validFiles.push(file);
-
-                        var listItem = document.createElement('li');
-                        listItem.textContent = file.name;
-                        listItem.className = 'file-list-item';
-                        fileItems.appendChild(listItem);
-                    }
+                    var listItem = document.createElement('li');
+                    listItem.textContent = file.name;
+                    listItem.className = 'file-list-item';
+                    fileItems.appendChild(listItem);
                 }
-                // Si se seleccionaron archivos, oculta el mensaje por defecto
-                if (validFiles.length > 0) {
+
+                // If files were selected, hide the default message
+                var defaultMessage = document.getElementById('defaultMessage' + form.getAttribute('data-section'));
+                if (this.files.length > 0) {
                     defaultMessage.style.display = 'none';
                 } else {
-                    // Si no se seleccionaron archivos, muestra el mensaje por defecto
                     defaultMessage.style.display = 'block';
                 }
-
-                // Crea un nuevo objeto FileList con los archivos válidos
-                var newFiles = new DataTransfer();
-                for (var k = 0; k < validFiles.length; k++) {
-                    newFiles.items.add(validFiles[k]);
-                }
-
-                // Asigna el nuevo objeto FileList al input de tipo 'file'
-                this.files = newFiles.files;
             });
         }
 
@@ -319,6 +247,7 @@
             "positionClass": "toast-bottom-left",
             "closeButton": true,
             newestOnTop: true,
+            timeOut: 7000
         }
 
         function removeLeadingSpaces(input) {
@@ -326,6 +255,17 @@
                 input.value = input.value.slice(1);
             }
         }
+
+        $(document).ready(function () {
+            $('#addSectionModal').on('shown.bs.modal', function () {
+                $('#sectionName').focus();
+            });
+        });
+        $(document).ready(function () {
+            $('#addSectionModal').on('hidden.bs.modal', function () {
+                $('#sectionName').val('');
+            });
+        });
     </script>
     {% if messages %}
         <script>
