@@ -3,6 +3,7 @@ import re
 import tempfile
 from datetime import datetime
 from urllib.parse import quote
+from unidecode import unidecode
 
 from PIL import Image
 from botocore.exceptions import BotoCoreError, ClientError
@@ -736,6 +737,7 @@ def eliminar_curso(request, curso_id):
 
 def sanitize_filename(filename):
     base_name, extension = os.path.splitext(filename)
-    safe_base_name = re.sub(r'\W+', '_', base_name)
+    normalized_base_name = unidecode(base_name)  # Normalizar la cadena de texto
+    safe_base_name = re.sub(r'\W+', '_', normalized_base_name)
     safe_filename = safe_base_name + extension
     return quote(safe_filename, safe='')
