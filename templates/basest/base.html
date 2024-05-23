@@ -44,16 +44,13 @@
         <div>
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a href="#" class="nav-link nav-link-hover" data-bs-toggle="modal" data-bs-target="#teachModal">Enseña en EducaPlus</a>
-                </li>
-                <li class="nav-item">
                     <button type="button" class="btn btn-outline-success custom-button" data-bs-toggle="modal"
                             data-bs-target="#loginModal">Iniciar sesión
                     </button>
                 </li>
                 <li class="nav-item">
                     <button type="button" class="btn btn-outline-success custom-button button-register"
-                            data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse
+                            data-bs-toggle="modal" data-bs-target="#registerModalUN">Registrarse
                     </button>
                 </li>
             </ul>
@@ -61,151 +58,158 @@
     </div>
 </nav>
 {% block content %}{% endblock %}
-<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+<div class="modal fade" id="registerModalUN" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="d-flex justify-content-center align-items-center w-100">
-                    <h5 class="modal-title" id="registerModalLabel">Estudiante</h5>
-                </div>
+                <ul class="nav nav-tabs nav-fill w-100" id="myTab" role="tablist">
+                    <li class="nav-item w-50 text-center" role="presentation">
+                        <a class="nav-link active text-center custom-tab" id="student-tab" data-bs-toggle="tab" href="#registerModal" role="tab"
+                           aria-controls="student" aria-selected="true">Estudiante</a>
+                    </li>
+                    <li class="nav-item w-50 text-center" role="presentation">
+                        <a class="nav-link text-center custom-tab" id="instructor-tab" data-bs-toggle="tab" href="#teachModal" role="tab"
+                           aria-controls="instructor" aria-selected="false">Instructor</a>
+                    </li>
+                </ul>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/register/" method="post" id="register">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="registerName" class="form-label required">Nombre</label>
-                            <input type="text" class="form-control" id="registerName" name="name"
-                                   required maxlength="20">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="registerSurname" class="form-label required">Apellidos</label>
-                            <input type="text" class="form-control" id="registerSurname" name="surname"
-                                   required maxlength="20">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="registerEmail" class="form-label required">Correo</label>
-                        <input type="email" class="form-control" id="registerEmail" name="email" autocomplete="email"
-                               required>
-                        <div id="emailError" class="text-danger"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="registerPassword" class="form-label required">Contraseña</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="registerPassword" name="password"
-                                   autocomplete="new-password" required maxlength="15">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordToggle"><i
-                                        class="bi bi-eye-fill"></i></button>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="registerModal" role="tabpanel" aria-labelledby="student-tab">
+                        <form action="/register/" method="post" id="register">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="registerName" class="form-label required">Nombre</label>
+                                    <input type="text" class="form-control" id="registerName" name="name"
+                                           required maxlength="20">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="registerSurname" class="form-label required">Apellidos</label>
+                                    <input type="text" class="form-control" id="registerSurname" name="surname"
+                                           required maxlength="20">
+                                </div>
                             </div>
-                        </div>
-                        <span id="registerPasswordError"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="registerPasswordConfirm" class="form-label required">Repetir contraseña</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="registerPasswordConfirm"
-                                   name="password_confirm"
-                                   oninput="validatePassword()"
-                                   autocomplete="new-password" required maxlength="15">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggle"><i
-                                        class="bi bi-eye-fill"></i></button>
+                            <div class="mb-3">
+                                <label for="registerEmail" class="form-label required">Correo</label>
+                                <input type="email" class="form-control" id="registerEmail" name="email"
+                                       autocomplete="email"
+                                       required>
+                                <div id="emailError" class="text-danger"></div>
                             </div>
-                        </div>
-                        <span id="registerPasswordConfirmError"></span>
+                            <div class="mb-3">
+                                <label for="registerPassword" class="form-label required">Contraseña</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="registerPassword" name="password"
+                                           autocomplete="new-password" required maxlength="15">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="passwordToggle"><i
+                                                class="bi bi-eye-fill"></i></button>
+                                    </div>
+                                </div>
+                                <span id="registerPasswordError"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerPasswordConfirm" class="form-label required">Repetir
+                                    contraseña</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="registerPasswordConfirm"
+                                           name="password_confirm"
+                                           oninput="validatePassword()"
+                                           autocomplete="new-password" required maxlength="15">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                id="passwordConfirmToggle"><i
+                                                class="bi bi-eye-fill"></i></button>
+                                    </div>
+                                </div>
+                                <span id="registerPasswordConfirmError"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerBirthdate" class="form-label required">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" id="registerBirthdate" name="birthdate"
+                                       required>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
+                            </div>
+                            <div id="successMessage" class="text-success text-center"></div>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label for="registerBirthdate" class="form-label required">Fecha de nacimiento</label>
-                        <input type="date" class="form-control" id="registerBirthdate" name="birthdate" required>
+                    <div class="tab-pane fade" id="teachModal" role="tabpanel" aria-labelledby="instructor-tab">
+                        <form action="/teach/" method="post" id="teachForm">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label required">Nombre</label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                           required maxlength="20">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="surname" class="form-label required">Apellidos</label>
+                                    <input type="text" class="form-control" id="surname" name="surname"
+                                           required maxlength="20">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="teachEmail" class="form-label required">Correo</label>
+                                <input type="email" class="form-control" id="teachEmail" name="email"
+                                       autocomplete="email"
+                                       required>
+                                <div id="emailErrorTeach" class="text-danger"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label required">Contraseña</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           autocomplete="new-password" required maxlength="15">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="passwordToggleB"><i
+                                                class="bi bi-eye-fill"></i></button>
+                                    </div>
+                                </div>
+                                <span id="passwordError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordConfirm" class="form-label required">Repetir contraseña</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="passwordConfirm"
+                                           name="passwordConfirm"
+                                           autocomplete="new-password"
+                                           oninput="validatePassword()"
+                                           required maxlength="15">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                id="passwordConfirmToggleB"><i
+                                                class="bi bi-eye-fill"></i></button>
+                                    </div>
+                                </div>
+                                <span id="passwordConfirmError" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerBirthdate1" class="form-label required">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" id="registerBirthdate1" name="birthdate1"
+                                       required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="specialization" class="form-label required">Área de Especialización</label>
+                                <select class="form-control" id="specialization" name="specialization">
+                                    <option value="Tecnología">Tecnología</option>
+                                    <option value="Economía">Economía</option>
+                                    <option value="Humanidades">Humanidades</option>
+                                    <option value="Medicina">Medicina</option>
+                                    <option value="Ciencias jurídicas">Ciencias jurídicas</option>
+                                    <option value="Arquitectura">Arquitectura</option>
+                                </select>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
+                            </div>
+                            <div id="successMessageTeach" class="text-success text-center"></div>
+                        </form>
                     </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
-                    </div>
-                    <div id="successMessage" class="text-success text-center"></div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="teachModal" tabindex="-1" aria-labelledby="teachModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="d-flex justify-content-center align-items-center w-100">
-                    <h5 class="modal-title" id="teachModalLabel">Instructor</h5>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/teach/" method="post" id="teachForm">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label required">Nombre</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                   required maxlength="20">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="surname" class="form-label required">Apellidos</label>
-                            <input type="text" class="form-control" id="surname" name="surname"
-                                   required maxlength="20">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="teachEmail" class="form-label required">Correo</label>
-                        <input type="email" class="form-control" id="teachEmail" name="email" autocomplete="email"
-                               required>
-                        <div id="emailErrorTeach" class="text-danger"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label required">Contraseña</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="password" name="password"
-                                   autocomplete="new-password" required maxlength="15">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordToggleB"><i
-                                        class="bi bi-eye-fill"></i></button>
-                            </div>
-                        </div>
-                        <span id="passwordError" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="passwordConfirm" class="form-label required">Repetir contraseña</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm"
-                                   autocomplete="new-password"
-                                   oninput="validatePassword()"
-                                   required maxlength="15">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="passwordConfirmToggleB"><i
-                                        class="bi bi-eye-fill"></i></button>
-                            </div>
-                        </div>
-                        <span id="passwordConfirmError" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="registerBirthdate1" class="form-label required">Fecha de nacimiento</label>
-                        <input type="date" class="form-control" id="registerBirthdate1" name="birthdate1" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="specialization" class="form-label required">Área de Especialización</label>
-                        <select class="form-control" id="specialization" name="specialization">
-                            <option value="Tecnología">Tecnología</option>
-                            <option value="Economía">Economía</option>
-                            <option value="Humanidades">Humanidades</option>
-                            <option value="Medicina">Medicina</option>
-                            <option value="Ciencias jurídicas">Ciencias jurídicas</option>
-                            <option value="Arquitectura">Arquitectura</option>
-                        </select>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-outline-success custom-button">Registrarse</button>
-                    </div>
-                    <div id="successMessageTeach" class="text-success text-center"></div>
-                </form>
             </div>
         </div>
     </div>

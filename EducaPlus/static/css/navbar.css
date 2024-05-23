@@ -110,3 +110,18 @@
 .nav-link-hover:hover {
     color: #438e96 !important;
 }
+
+.custom-tab {
+    color: #000;
+    background-color: #fff;
+}
+
+.custom-tab:hover {
+    color: #fff;
+    background-color: var(--blue-chill-950);
+}
+
+.custom-tab.active {
+    color: #fff;
+    background-color: #000;
+}
