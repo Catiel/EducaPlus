@@ -16,7 +16,7 @@
                 <input type="hidden" name="curso_id" value="{{ curso.id }}">
                 <input type="hidden" name="estudiante_id" value="{{ request.user.student.id }}">
                 <input type="hidden" id="curso-precio" name="precio" value="{{ curso.precio }}">
-                <h2 id="tit">Checkout</h2>
+                <h2 id="tit">Confirma tu compra</h2>
                 <div class="form-group" {% if curso.precio == 0 %}style="display: none;"{% endif %}>
                     <label for="cardName" class="required">Nombre en la tarjeta</label>
                     <input type="text" class="form-control" id="cardName"
@@ -52,7 +52,7 @@
                     <a href="{% url 'indexLog' %}" class="btn btn-primary"
                        style="display: flex; justify-content: center; align-items: center;">Cancelar</a>
                     <button type="submit" class="btn btn-primary">
-                        {% if curso.precio == 0 %}Obtener<br>gratis{% else %}Completar<br>checkout{% endif %}
+                        {% if curso.precio == 0 %}Obtener<br>gratis{% else %}Completar<br>compra{% endif %}
                     </button>
                 </div>
             </form>
