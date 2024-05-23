@@ -59,6 +59,7 @@
                                                     {% if archivo.tipo == 'video' %}
                                                         <video width="700" height="500" controls>
                                                             <source src="{{ archivo.url }}" type="video/mp4">
+                                                            <source src="{{ archivo.url }}" type="video/mpeg">
                                                             Tu navegador no soporta el elemento de video.
                                                         </video>
                                                     {% elif archivo.tipo == 'imagen' %}
