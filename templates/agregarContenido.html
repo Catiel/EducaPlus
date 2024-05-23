@@ -21,7 +21,7 @@
                         </button>
                         <button class="btn btn-primary add-content-button small-right-button"
                                 data-section="{{ seccion.id }}"
-                                title="Nota: Solo se pueden subir archivos de tipo .jpg, .jpeg, .png, .mp4, .mp3, .ppt, .pdf">
+                                title="Nota: Solo se pueden subir archivos de tipo .jpg, .jpeg, .png, .mp4, .mpeg, .mp3, .ppt, .pdf">
                             Agregar archivo
                         </button>
                         <form class="upload-form" data-section="{{ seccion.id }}" style="display: none;"
@@ -31,7 +31,7 @@
                             <button type="button" class="btn btn-primary file-select-button">Selecciona un archivo:
                             </button>
                             <input type="file" id="file{{ seccion.id }}" name="file"
-                                   accept=".jpg,.jpeg,.png,.mp4,.mp3,.ppt,.pdf" style="display: none;" multiple>
+                                   accept=".jpg,.jpeg,.png,.mp4, .mpeg, .mp3,.ppt,.pdf" style="display: none;" multiple>
                             <!-- Contenedor para los nombres de los archivos -->
                             <div id="fileList{{ seccion.id }}">
                                 <p class="file-list-title">Lista de archivos</p>

@@ -651,7 +651,7 @@ def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, f
         width, height = image.size
         if width < 1024 or height < 768:
             return {'error': f"La resolución de la imagen {file_name} debe ser al menos 1024x768"}
-    elif file_extension in ['.mp4']:
+    elif file_extension in ['.mp4', '.MP4', '.mpeg', '.MPEG']:
         file_type = 'video'
         if isinstance(uploaded_file, InMemoryUploadedFile):
             temp_file = tempfile.NamedTemporaryFile(delete=False)
