@@ -1,4 +1,7 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 from . import views
 
@@ -37,5 +40,6 @@ urlpatterns = [
     path('buscar_cursos/', views.buscar_cursos, name='buscar_cursos'),
     path('indexLog/', views.indexLog, name='indexLog'),
     path('cursosEstudiante/', views.cursosEstudiante, name='cursosEstudiante'),
+    path('get_student_image/', views.get_student_image, name='get_student_image'),
+    path('get_instructor_image/', views.get_instructor_image, name='get_instructor_image'),
 ]
-

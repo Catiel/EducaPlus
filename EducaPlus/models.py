@@ -5,12 +5,14 @@ from django.db import models
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birthdate = models.DateField(null=True, blank=True)
+    foto_perfil = models.BinaryField(null=True, blank=True, editable=True)
 
 
 class Instructor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birthdate = models.DateField(null=True, blank=True)
     specialization = models.CharField(max_length=100, null=True, blank=True)
+    foto_perfil = models.BinaryField(null=True, blank=True, editable=True)
 
     def __str__(self):
         return self.user.username

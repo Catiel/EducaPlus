@@ -3,7 +3,7 @@ import re
 import tempfile
 from datetime import datetime
 from urllib.parse import quote
-from unidecode import unidecode
+import base64
 
 from PIL import Image
 from botocore.exceptions import BotoCoreError, ClientError
@@ -24,6 +24,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
 from moviepy.editor import VideoFileClip
+from unidecode import unidecode
 
 from spaces import client, space_name
 from .decorators import group_required
@@ -450,7 +451,6 @@ def check_same_password(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 
-@csrf_exempt
 @login_required
 def obtener_datos_usuario(request):
     # Obtener el estudiante actual
@@ -458,15 +458,23 @@ def obtener_datos_usuario(request):
 
     # Verificar si el estudiante existe
     if estudiante:
+        # Convertir los datos binarios de la imagen en una cadena base64
+        if estudiante.foto_perfil:
+            foto_perfil_base64 = base64.b64encode(estudiante.foto_perfil).decode('utf-8')
+            # Crear una URL de datos para la imagen
+            foto_perfil_url = f'data:image/jpeg;base64,{foto_perfil_base64}'
+        else:
+            foto_perfil_url = None
+
         data = {
             'nombre': request.user.first_name,
             'apellido': request.user.last_name,
-            'fecha_nacimiento': estudiante.birthdate.strftime('%Y-%m-%d')
+            'fecha_nacimiento': estudiante.birthdate.strftime('%Y-%m-%d'),
+            'foto_perfil': foto_perfil_url,
         }
-        print(data)  # Debugging para verificar los datos antes de enviar la respuesta
         return JsonResponse(data)
     else:
-        return JsonResponse({'error': 'No se pudo obtener los datos del estudiante'}, status=400)
+        return JsonResponse({'error': 'Invalid Method'})
 
 
 @login_required
@@ -474,36 +482,49 @@ def obtener_datos_instructor(request):
     instructor = request.user.instructor
 
     if instructor:
+        # Convertir los datos binarios de la imagen en una cadena base64
+        if instructor.foto_perfil:
+            foto_perfil_base64 = base64.b64encode(instructor.foto_perfil).decode('utf-8')
+            # Crear una URL de datos para la imagen
+            foto_perfil_url = f'data:image/jpeg;base64,{foto_perfil_base64}'
+        else:
+            foto_perfil_url = None
+
         data = {
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
             'date_of_birth': instructor.birthdate.strftime('%Y-%m-%d'),
-            'specialization': instructor.specialization  # Ajusta este campo según tu modelo de usuario
+            'specialization': instructor.specialization,
+            'foto_perfil': foto_perfil_url,
         }
         return JsonResponse(data)
     else:
-        return JsonResponse({'error': 'No se pudo obtener los datos del instructor'}, status=400)
+        return JsonResponse({'error': 'Invalid Method'})
 
 
 @login_required
 def updateEstudiante(request):
     if request.method == 'POST':
-        # Obtener el usuario y estudiante actual
-        user = request.user
-        estudiante = user.student
+        nombre = request.POST.get('nombre')
+        apellido = request.POST.get('apellido')
+        fecha_nacimiento = request.POST.get('fecha_nacimiento')
+        foto_perfil = request.FILES.get('foto_perfil')  # Recibir el archivo de la foto de perfil
 
-        # Actualizar los datos del usuario y estudiante
-        user.first_name = request.POST['nombre']
-        user.last_name = request.POST['apellido']
-        user.save()
-        fecha_nacimiento_str = request.POST['fecha_nacimiento']
+        # Obtener el estudiante actual
+        estudiante = request.user.student
 
-        try:
-            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
-            estudiante.birthdate = fecha_nacimiento
-            estudiante.save()
-        except ValueError:
-            print(f"Error: La fecha {fecha_nacimiento_str} no está en el formato correcto 'YYYY-MM-DD'")
+        # Actualizar los datos del estudiante
+        request.user.first_name = nombre
+        request.user.last_name = apellido
+        estudiante.birthdate = fecha_nacimiento
+
+        # Leer el archivo de la imagen y guardar sus bytes en la base de datos
+        if foto_perfil:
+            foto_perfil_bytes = foto_perfil.read()
+            estudiante.foto_perfil = foto_perfil_bytes
+
+        request.user.save()
+        estudiante.save()
 
         # Agregar mensaje de éxito
         messages.success(request, '¡Los cambios se guardaron correctamente!')
@@ -511,8 +532,7 @@ def updateEstudiante(request):
         # Redirigir al usuario a la página que desees
         return redirect('indexLog')
     else:
-        # Devolver una respuesta HTTP con un código de estado 405 (Método no permitido)
-        return HttpResponseNotAllowed(['POST'])
+        return JsonResponse({'error': 'Invalid Method'})
 
 
 @login_required
@@ -525,7 +545,15 @@ def updateInstructor(request):
         # Actualizar los datos del usuario e instructor con los datos del formulario
         user.first_name = request.POST.get('firstName', '')
         user.last_name = request.POST.get('lastName', '')
+        foto_perfil = request.FILES.get('foto_perfil')  # Recibir el archivo de la foto de perfil
+
+        # Leer el archivo de la imagen y guardar sus bytes en la base de datos
+        if foto_perfil:
+            foto_perfil_bytes = foto_perfil.read()
+            instructor.foto_perfil = foto_perfil_bytes
+
         user.save()
+        instructor.save()
 
         # Convertir la fecha de nacimiento a formato de fecha
         fecha_nacimiento_str = request.POST.get('dob', '')
@@ -539,6 +567,7 @@ def updateInstructor(request):
         # Actualizar la especialización del instructor
         instructor.specialization = request.POST.get('specialization', '')
         instructor.save()
+
         # Agregar mensaje de éxito utilizando el framework de mensajes de Django
         messages.success(request, '¡Los cambios se guardaron correctamente!')
 
@@ -741,3 +770,45 @@ def sanitize_filename(filename):
     safe_base_name = re.sub(r'\W+', '_', normalized_base_name)
     safe_filename = safe_base_name + extension
     return quote(safe_filename, safe='')
+
+
+@login_required
+def get_student_image(request):
+    estudiante = request.user.student
+
+    if estudiante:
+        # Convertir los datos binarios de la imagen en una cadena base64
+        if estudiante.foto_perfil:
+            foto_perfil_base64 = base64.b64encode(estudiante.foto_perfil).decode('utf-8')
+            # Crear una URL de datos para la imagen
+            foto_perfil_url = f'data:image/jpeg;base64,{foto_perfil_base64}'
+        else:
+            foto_perfil_url = None
+
+        data = {
+            'foto_perfil': foto_perfil_url,
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'Invalid Method'})
+
+
+@login_required
+def get_instructor_image(request):
+    instructor = request.user.instructor
+
+    if instructor:
+        # Convertir los datos binarios de la imagen en una cadena base64
+        if instructor.foto_perfil:
+            foto_perfil_base64 = base64.b64encode(instructor.foto_perfil).decode('utf-8')
+            # Crear una URL de datos para la imagen
+            foto_perfil_url = f'data:image/jpeg;base64,{foto_perfil_base64}'
+        else:
+            foto_perfil_url = None
+
+        data = {
+            'foto_perfil': foto_perfil_url,
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'Invalid Method'})
