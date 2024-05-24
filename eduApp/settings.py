@@ -80,24 +80,24 @@ DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if DEVELOPMENT_MODE is True:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'educapluslocal',
-            'USER': 'postgres',
-            'PASSWORD': 'S^ExgeKiqpsa$&iNB9a',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
+# if DEVELOPMENT_MODE is True:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'educaplu',
+        'USER': 'postgres',
+        'PASSWORD': 'S^ExgeKiqpsa$&iNB9a',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
-else:
-    if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-        if os.getenv("DATABASE_URL", None) is None:
-            raise Exception("DATABASE_URL environment variable not defined")
-        DATABASES = {
-            "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
-        }
+}
+# else:
+#     if len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+#         if os.getenv("DATABASE_URL", None) is None:
+#             raise Exception("DATABASE_URL environment variable not defined")
+#         DATABASES = {
+#             "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+#         }
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -133,6 +133,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'EducaPlus' / 'static']
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

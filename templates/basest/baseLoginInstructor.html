@@ -10,9 +10,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <!-- Enlace al archivo de iconos de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-personalizado">
@@ -26,8 +26,15 @@
                     <a href="{% url 'crearDatosCursos' %}" class="btn btn-outline-success custom-button">Nuevo curso</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{% static 'images/person-circle.svg' %}" alt="User Icon" width="25" height="25" class="d-inline-block align-text-top">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img id="navbar-picture" src="{{ instructor.foto_perfil.url }}"
+                             class="icono-perfil me-2"
+                             style="width: 25px; height: 25px; display: {% if instructor.foto_perfil %}block{% else %}none{% endif %}; border-radius: 50%; object-fit: cover;">
+                        <img id="navbardefault-picture" src="{% static 'images/person-circle.svg' %}" alt="User Icon"
+                             width="25" height="25"
+                             class="icono-perfil me-2"
+                             style="display: {% if instructor.foto_perfil %}none{% else %}block{% endif %}; border-radius: 50%;">
                         {{ request.user.first_name.split|first }} {{ request.user.last_name.split|first }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -42,67 +49,75 @@
         </div>
     </div>
 </nav>
-{% block content %}{% endblock %}
-<!-- Editar datos personales del instructor-->
 <div class="modal fade" id="dialogo2">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100" id="exModalLabel">DATOS PERSONALES</h5>
+                <h5 class="modal-title w-100" id="exModalLabel">Perfil</h5>
                 <button type="button" class="btn-close" name="button" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
                     <!-- Agregar el formulario con el atributo action y el token CSRF -->
-                    <form id="editarPerfilForm" method="post" action="{% url 'updateInstructor' %}">
+                    <form method="POST" enctype="multipart/form-data" action="{% url 'updateInstructor' %}">
                         {% csrf_token %} <!-- Agregar el token CSRF -->
 
                         <!-- Contenido del formulario -->
-                        <div class="col-9 col-md-7 offset-md-0 d-flex align-items-center justify-content-end">    <!-- Ajusta el tamaño de la columna y añade justify-content-end -->
-                            <div class="profile-icon-container position-relative">
-                                <i class="bi bi-person-circle bi-lg icono-perfil" style="font-size: 100px;"></i>
+                        <div class="row mb-3">
+                            <label class="col-3 col-form-label visually-hidden">
+                                DATOS PERSONALES
+                            </label>
+                            <div class="d-flex justify-content-center">
+                                <div class="profile-icon-container position-relative">
+                                    <img id="profile-picture" src="{{ instructor.foto_perfil.url }}"
+                                         class="icono-perfil"
+                                         style="width: 250px; height: 250px; display: {% if instructor.foto_perfil %}block{% else %}none{% endif %}; border-radius: 50%; object-fit: cover;">
+                                    <img id="default-picture" src="{% static 'images/person-circle.svg' %}"
+                                         alt="User Icon" width="150" height="150"
+                                         class="bi bi-person-circle bi-lg icono-perfil"
+                                         style="display: {% if instructor.foto_perfil %}none{% else %}block{% endif %};">
+                                    <input type="file" id="profile-picture-input" name="foto_perfil"
+                                           accept="image/jpeg, image/png" style="display: none;">
+                                    <i class="bi bi-pencil-square" id="edit-icon" title="Editar foto de perfil"
+                                       style="position: absolute; bottom: 0; right: 0; cursor: pointer;"></i>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="firstName" class="form-label">Nombre*:</label>
-                                <input type="text" class="form-control" id="firstName" name="firstName" value="{{ instructor.first_name }}" 
-                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}" 
-                                    title="Debe contener solo letras (mayúsculas o minúsculas), incluir espacios si es necesario, y tener entre 2 y 50 caracteres." 
-                                    required>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="lastName" class="form-label">Apellidos*:</label>
-                                <input type="text" class="form-control" id="lastName" name="lastName" 
-                                    value="{{ instructor.last_name }}" 
-                                    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}" 
-                                    title="Debe contener solo letras (mayúsculas o minúsculas), incluir espacios si es necesario, y tener entre 2 y 50 caracteres."
-                                    required>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="dob" class="form-label">Fecha de nacimiento*:</label>
-                                <input type="date" class="form-control" id="dob" name="dob" value="{{ instructor.date_of_birth|date:'Y-m-d' }}" required>
-                            </div>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">Nombre*:</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName"
+                                   value="{{ instructor.first_name }}"
+                                   pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}"
+                                   title="Debe contener solo letras (mayúsculas o minúsculas), incluir espacios si es necesario, y tener entre 2 y 50 caracteres."
+                                   required>
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="specialization" class="form-label">Área de especialización*:</label>
-                                <select id="specialization" name="specialization" class="form-select" required>
-                                    <option value="Tecnología">Tecnología</option>
-                                    <option value="Economía">Economía</option>
-                                    <option value="Humanidades">Humanidades</option>
-                                    <option value="Medicina">Medicina</option>
-                                    <option value="Ciencias jurídicas">Ciencias jurídicas</option>
-                                    <option value="Arquitectura">Arquitectura</option>
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Apellidos*:</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName"
+                                   value="{{ instructor.last_name }}"
+                                   pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}"
+                                   title="Debe contener solo letras (mayúsculas o minúsculas), incluir espacios si es necesario, y tener entre 2 y 50 caracteres."
+                                   required>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Fecha de nacimiento*:</label>
+                            <input type="date" class="form-control" id="dob" name="dob"
+                                   value="{{ instructor.date_of_birth|date:'Y-m-d' }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="specialization" class="form-label">Área de especialización*:</label>
+                            <select id="specialization" name="specialization" class="form-select" required>
+                                <option value="Tecnología">Tecnología</option>
+                                <option value="Economía">Economía</option>
+                                <option value="Humanidades">Humanidades</option>
+                                <option value="Medicina">Medicina</option>
+                                <option value="Ciencias jurídicas">Ciencias jurídicas</option>
+                                <option value="Arquitectura">Arquitectura</option>
+                            </select>
                         </div>
 
                         <div class="row">
@@ -111,12 +126,12 @@
                             </div>
                         </div>
                     </form>
-                    <!-- Fin del formulario -->
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% block content %}{% endblock %}
 <script>
     $(document).ready(function () {
         $('#dialogo2').on('show.bs.modal', function (event) {
@@ -130,6 +145,17 @@
                     modal.find('#lastName').val(data.last_name);
                     modal.find('#dob').val(data.date_of_birth);
                     modal.find('#specialization').val(data.specialization);
+                    
+                    var profilePicture = document.getElementById('profile-picture');
+                    var defaultPicture = document.getElementById('default-picture');
+                    if (data.foto_perfil) {
+                        profilePicture.src = data.foto_perfil;
+                        profilePicture.style.display = 'block';
+                        defaultPicture.style.display = 'none';
+                    } else {
+                        profilePicture.style.display = 'none';
+                        defaultPicture.style.display = 'block';
+                    }
                 },
                 error: function (xhr, errmsg, err) {
                     console.log(xhr.status + ": " + xhr.responseText);  // Manejo de errores
@@ -137,6 +163,48 @@
             });
         });
     });
+    
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',  // Cambia a GET
+            url: '/get_instructor_image/',  // Verifica que esta URL sea correcta
+            success: function (data) {
+                console.log(data);
+                // Añade estas líneas para manejar la imagen de perfil
+                var navbarPicture = document.getElementById('navbar-picture');
+                var navbardefault = document.getElementById('navbardefault-picture');
+                if (data.foto_perfil) {
+                    navbarPicture.src = data.foto_perfil;
+                    navbarPicture.style.display = 'block';
+                    navbardefault.style.display = 'none';
+                } else {
+                    navbarPicture.style.display = 'none';
+                    navbardefault.style.display = 'block';
+                }
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);  // Manejo de errores
+            }
+        });
+    });
+    
+    document.getElementById('edit-icon').addEventListener('click', function () {
+        document.getElementById('profile-picture-input').click();
+    });
+
+    document.getElementById('profile-picture-input').addEventListener('change', function (e) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var profilePicture = document.getElementById('profile-picture');
+            var defaultPicture = document.getElementById('default-picture');
+            profilePicture.src = e.target.result;
+            profilePicture.style.display = 'block';
+            defaultPicture.style.display = 'none';
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    });
+    
+    
     function validateFirstName() {
         var firstNameInput = document.getElementById('firstName');
         var firstNameValue = firstNameInput.value.trim();
