@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     
     <link rel="stylesheet" type="text/css" href="{% static 'css/estiloModal.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -70,7 +71,7 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <form method="POST" enctype="multipart/form-data" action="{% url 'updateEstudiante' %}">
+                    <form method="POST" id = "editarPerfilForm" enctype="multipart/form-data" action="{% url 'updateEstudiante' %}">
                         {% csrf_token %}
                         <div class="row mb-3">
                             <label class="col-3 col-form-label visually-hidden">
@@ -140,7 +141,6 @@
     </div>
 </div>
 {% block content %}{% endblock %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         toastr.options = {
@@ -217,7 +217,7 @@
         });
     });
     $(document).ready(function() {
-        $('form').submit(function(e) {
+        $('#profileForm').submit(function (e) {
             var nombreInput = $('#nombre').val();
             var nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
 
@@ -228,7 +228,7 @@
         });
     });
     $(document).ready(function() {
-        $('form').submit(function(event) {
+        $('#profileForm').submit(function(event) {
             var apellidoValue = $('#apellido').val();
             var soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
             if (!soloLetras.test(apellidoValue) || apellidoValue.length < 2 || apellidoValue.length > 50) {

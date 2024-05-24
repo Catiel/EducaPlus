@@ -59,7 +59,7 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <!-- Agregar el formulario con el atributo action y el token CSRF -->
-                    <form method="POST" enctype="multipart/form-data" action="{% url 'updateInstructor' %}">
+                    <form method="POST" id = "editarPerfilForm" enctype="multipart/form-data" action="{% url 'updateInstructor' %}">
                         {% csrf_token %} <!-- Agregar el token CSRF -->
 
                         <!-- Contenido del formulario -->

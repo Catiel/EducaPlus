@@ -91,7 +91,7 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <form method="POST" enctype="multipart/form-data" action="{% url 'updateEstudiante' %}">
+                    <form method="POST" id = "editarPerfilForm" enctype="multipart/form-data" action="{% url 'updateEstudiante' %}">
                         {% csrf_token %}
                         <div class="row mb-3">
                             <label class="col-3 col-form-label visually-hidden">
@@ -238,7 +238,7 @@
         });
     });
     $(document).ready(function() {
-        $('form').submit(function(e) {
+        $('#editarPerfilForm').submit(function(e) {
             var nombreInput = $('#nombre').val();
             var nombrePattern = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
 
@@ -249,7 +249,7 @@
         });
     });
     $(document).ready(function() {
-        $('form').submit(function(event) {
+        $('#editarPerfilForm').submit(function(event) {
             var apellidoValue = $('#apellido').val();
             var soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
             if (!soloLetras.test(apellidoValue) || apellidoValue.length < 2 || apellidoValue.length > 50) {
