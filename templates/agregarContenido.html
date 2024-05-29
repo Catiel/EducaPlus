@@ -64,7 +64,7 @@
                                                         </video>
                                                     {% elif archivo.tipo == 'imagen' %}
                                                         <a href="{{ archivo.url }}"
-                                                           data-lightbox="image-{{ forloop.counter }}">
+                                                           data-lightbox="image-{{ forloop.counter }}-{{ archivo.id }}">
                                                             <div style="width:700px; height:500px; border: none; ">
                                                                 <img src="{{ archivo.url }}" alt="{{ archivo.nombre }}"
                                                                      style="width: 100%; height: 100%; object-fit: contain;">
