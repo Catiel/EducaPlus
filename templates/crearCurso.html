@@ -39,7 +39,6 @@
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                         <li><a class="dropdown-item" href="{% url 'obtenerDatosCurso' curso.id %}">Editar
                                             datos</a></li>
-                                        <li><a class="dropdown-item" href="#">Editar contenido</a> </li>
                                         <li><a class="dropdown-item" href="{% url 'agregar_contenido' curso.id %}">Agregar contenido</a></li>
                                         <li><a class="dropdown-item" href="#" onclick="eliminarCurso('{{ curso.id }}')">Eliminar curso</a></li>
                                     </ul>
@@ -58,7 +57,7 @@
 
     <!-- Modal HTML -->
     <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title w-100 text-center" id="confirmModalLabel">¿Deseas eliminar este curso?</h5>
@@ -67,7 +66,7 @@
                 <div class="modal-body">
                     Eliminarás definitivamente el curso y todo el contenido que tenga. No podrás recuperar ningún dato que este guardado en el curso.
                 </div>
-                <div class="modal-footer d-flex justify-content-center">
+                <div class="modal-footer d-flex justify-content-md-around">
                     <button type="button" class="btn btn-danger" id="confirmDeleteBtn" >Eliminar</button>
                     <button type="button" class="btn btn-outline-success" id="cancelBtn" data-bs-dismiss="modal">Cancelar</button>
                 </div>
