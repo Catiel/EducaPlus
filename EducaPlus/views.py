@@ -31,14 +31,6 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart, Seccion, Archivo
 
 
-#Eliminar curso
-def eliminar_curso(request, curso_id):
-    if request.method == "POST":
-        curso = get_object_or_404(Curso, id=curso_id)
-        curso.delete()
-        return JsonResponse({"success": True})
-    return JsonResponse({"success": False}, status=400)
-
 
 #Buscar cursos estudiante
 def buscar_cursos(request):
@@ -212,7 +204,6 @@ def logout_view(request):
     return redirect('index')
 
 
-# Create your views here.
 def index(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Estudiantes').exists():
@@ -220,7 +211,8 @@ def index(request):
         elif request.user.groups.filter(name='Instructores').exists():
             return redirect('crearCursos')
 
-    categorias, cursos = obtener_categorias_cursos_ordenados()
+    categorias = Curso.objects.values_list('categoria', flat=True).distinct().order_by('categoria')
+    cursos = Curso.objects.all().order_by('nombre')
     return render(request, 'index.html',
                   {'cursos': cursos, 'categorias': categorias})
 
@@ -228,20 +220,10 @@ def index(request):
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def indexLog(request):
-    categorias, cursos = obtener_categorias_cursos_ordenados()
+    categorias = Curso.objects.values_list('categoria', flat=True).distinct().order_by('categoria')
+    cursos = Curso.objects.all().order_by('nombre')
     return render(request, 'indexLog.html',
                   {'cursos': cursos, 'categorias': categorias})
-
-
-def obtener_categorias_cursos_ordenados():
-    orden_categorias = ['Tecnología', 'Economía', 'Humanidades', 'Medicina',
-                        'Ciencias jurídicas', 'Arquitectura']
-    categorias = list(
-        Curso.objects.values_list('categoria', flat=True).distinct())
-    categorias.sort(key=lambda x: orden_categorias.index(
-        x) if x in orden_categorias else len(orden_categorias))
-    cursos = Curso.objects.all().order_by('nombre')
-    return categorias, cursos
 
 
 @login_required
@@ -254,7 +236,7 @@ def compraCursos(request, curso_id):
 @login_required
 @group_required('Estudiantes', redirect_route='crearCursos')
 def cursosEstudiante(request):
-    compras = Compra.objects.filter(estudiante_id=request.user.student.id)
+    compras = Compra.objects.filter(estudiante_id=request.user.student.id).order_by('-fecha_transaccion')
     cursos = [compra.curso for compra in compras]
     return render(request, 'cursosEstudiante.html', {'cursos': cursos})
 
