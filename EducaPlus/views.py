@@ -244,7 +244,7 @@ def cursosEstudiante(request):
 @login_required
 @group_required('Instructores', redirect_route='indexLog')
 def crearCursos(request):
-    cursos_del_instructor = Curso.objects.filter(instructor__user=request.user)
+    cursos_del_instructor = Curso.objects.filter(instructor__user=request.user).order_by('-id')
     return render(request, 'crearCurso.html',
                   {'cursos_del_instructor': cursos_del_instructor})
 
