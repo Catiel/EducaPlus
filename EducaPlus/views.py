@@ -31,8 +31,6 @@ from .decorators import group_required
 from .models import Student, Instructor, Curso, Compra, Cart, Seccion, Archivo
 
 
-
-#Buscar cursos estudiante
 def buscar_cursos(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         q = request.GET.get('q', '')
@@ -42,7 +40,6 @@ def buscar_cursos(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-#buscar cursos instructor
 def search_courses(request):
     if request.method == "GET":
         query = request.GET.get('q', '')
@@ -74,7 +71,6 @@ def verificar_correo_teach(request):
     return JsonResponse({'error': 'Solicitud inválida'}, status=400)
 
 
-#Correccion intentos fallidos inicio de sesion
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -683,7 +679,7 @@ def upload_to_course_bucket(uploaded_file, curso_id, section_id, section_name, f
         return {'error': f"Tipo de archivo {file_extension} no soportado"}
     try:
         client.put_object(Body=file_bytes, Bucket=bucket_name, Key=key, ACL='public-read')
-        url = f"https://{bucket_name}.nyc3.cdn.digitaloceanspaces.com/{key}"
+        url = f"https://{bucket_name}.nyc3.cdn.digitaloceanspaces.com/contenidoo/{key}"
         seccion = Seccion.objects.get(id=section_id)
         Archivo.objects.create(nombre=file_name, url=url, tipo=file_type, seccion=seccion)
         return {'success': url}
